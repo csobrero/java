@@ -14,6 +14,7 @@
 
 	<!--import resource="classpath:META-INF/cxf/cxf-servlet.xml" /-->
 	<import resource="classpath:/applicationContext.xml" />
+	<!--import resource="classpath:/persistence.xml"/-->
 
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
