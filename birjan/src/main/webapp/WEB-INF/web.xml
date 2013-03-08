@@ -54,7 +54,7 @@
 
 	<servlet-mapping>
 		<servlet-name>springGwtRemoteServiceServlet</servlet-name>
-		<url-pattern>/gwtspring/springGwtServices/*</url-pattern>
+		<url-pattern>/birjan/springGwtServices/*</url-pattern>
 	</servlet-mapping>
 
 
