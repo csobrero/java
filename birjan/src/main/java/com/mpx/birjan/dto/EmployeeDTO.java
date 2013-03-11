@@ -1,19 +1,24 @@
 package com.mpx.birjan.dto;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "EMPLOYEE")
-public class EmployeeDTO implements java.io.Serializable {
+public class EmployeeDTO implements Serializable {
 
 	private static final long serialVersionUID = 7440297955003302414L;
 
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "employee_id")
-	private long employeeId;
+	private Long employeeId;
 
 	@Column(name = "employee_name", nullable = false, length = 30)
 	private String employeeName;
@@ -27,7 +32,7 @@ public class EmployeeDTO implements java.io.Serializable {
 	public EmployeeDTO() {
 	}
 
-	public EmployeeDTO(int employeeId) {
+	public EmployeeDTO(long employeeId) {
 		this.employeeId = employeeId;
 	}
 
@@ -39,11 +44,11 @@ public class EmployeeDTO implements java.io.Serializable {
 		this.job = job;
 	}
 
-	public long getEmployeeId() {
+	public Long getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(long employeeId) {
+	public void setEmployeeId(Long employeeId) {
 		this.employeeId = employeeId;
 	}
 

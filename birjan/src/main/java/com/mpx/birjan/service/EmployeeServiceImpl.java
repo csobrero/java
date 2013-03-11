@@ -27,7 +27,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	public EmployeeDTO findEmployee(long employeeId) {
 
-		return employeeDAO.findById(employeeId);
+		return employeeDAO.getById(employeeId);
 
 	}
 
@@ -35,12 +35,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public void saveEmployee(long employeeId, String name, String surname,
 			String jobDescription) throws Exception {
 
-		EmployeeDTO employeeDTO = employeeDAO.findById(employeeId);
+		EmployeeDTO employeeDTO = employeeDAO.getById(employeeId);
 
 		if (employeeDTO == null) {
 			employeeDTO = new EmployeeDTO(employeeId, name, surname,
 					jobDescription);
-			employeeDAO.persist(employeeDTO);
+			employeeDAO.create(employeeDTO);
 		}
 
 	}
@@ -49,7 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public void updateEmployee(long employeeId, String name, String surname,
 			String jobDescription) throws Exception {
 
-		EmployeeDTO employeeDTO = employeeDAO.findById(employeeId);
+		EmployeeDTO employeeDTO = employeeDAO.getById(employeeId);
 
 		if (employeeDTO != null) {
 			employeeDTO.setEmployeeName(name);
@@ -62,10 +62,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void deleteEmployee(long employeeId) throws Exception {
 
-		EmployeeDTO employeeDTO = employeeDAO.findById(employeeId);
+		EmployeeDTO employeeDTO = employeeDAO.getById(employeeId);
 
 		if (employeeDTO != null)
-			employeeDAO.remove(employeeDTO);
+			employeeDAO.delete(employeeDTO);
 
 	}
 
@@ -76,7 +76,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		EmployeeDTO employeeDTO = new EmployeeDTO(employeeId, name, surname,
 				jobDescription);
 
-		employeeDAO.merge(employeeDTO);
+		employeeDAO.update(employeeDTO);
 
 	}
 
