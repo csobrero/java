@@ -1,25 +1,18 @@
 package com.mpx.birjan.service.dao;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-public abstract class AbstractJpaDAO<T extends Serializable> implements DAO<T> {
+public abstract class AbstractJpaDAO<T extends Serializable> implements
+		IGenericDAO<T> {
 
 	private Class<T> clazz;
 
 	@PersistenceContext
 	EntityManager entityManager;
-
-	@SuppressWarnings("unchecked")
-	public AbstractJpaDAO() {
-		ParameterizedType genericSuperclass = (ParameterizedType) getClass()
-				.getGenericSuperclass();
-		this.clazz = ((Class<T>) genericSuperclass.getActualTypeArguments()[0]);
-	}
 
 	@Override
 	public T getById(final Long id) {
@@ -54,19 +47,29 @@ public abstract class AbstractJpaDAO<T extends Serializable> implements DAO<T> {
 
 		this.delete(entity);
 	}
-	
+
 	public void flush(T entity) {
 		this.entityManager.flush();
-//		return entity;
+		// return entity;
 	}
-	
+
 	public void refresh(T entity) {
 		this.entityManager.refresh(entity);
 	}
 
 	@Override
 	public Class<T> getClazz() {
+		// if (clazz == null) {
+		// ParameterizedType genericSuperclass = (ParameterizedType) getClass()
+		// .getGenericSuperclass();
+		// this.clazz = ((Class<T>)
+		// genericSuperclass.getActualTypeArguments()[0]);
+		// }
 		return clazz;
 	}
 
+	@Override
+	public void setClazz(final Class<T> clazzToSet) {
+		this.clazz = clazzToSet;
+	}
 }

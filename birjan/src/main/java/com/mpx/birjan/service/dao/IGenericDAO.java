@@ -3,7 +3,7 @@ package com.mpx.birjan.service.dao;
 import java.io.Serializable;
 import java.util.List;
 
-interface DAO<T extends Serializable> {
+public interface IGenericDAO<T extends Serializable> {
 
 	T getById(final Long id);
 
@@ -18,5 +18,7 @@ interface DAO<T extends Serializable> {
 	void deleteById(final Long entityId);
 
 	Class<T> getClazz();
+
+	void setClazz(Class<T> classToSet);
 
 }

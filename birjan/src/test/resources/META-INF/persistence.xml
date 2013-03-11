@@ -8,6 +8,9 @@
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>com.mpx.birjan.dto.EmployeeDTO</class>
+		<class>com.mpx.birjan.bean.Person</class>
+		<class>com.mpx.birjan.bean.Wager</class>
+		<class>com.mpx.birjan.bean.Game</class>
 		
 		
 		<properties>

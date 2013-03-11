@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.mpx.birjan.dto.EmployeeDTO;
 
-@RemoteServiceRelativePath("springGwtServices/employeeService")
+//@RemoteServiceRelativePath("springGwtServices/employeeService")
 public interface EmployeeService extends RemoteService {
 
 	public EmployeeDTO findEmployee(long employeeId);
