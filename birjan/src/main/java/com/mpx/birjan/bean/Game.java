@@ -2,11 +2,11 @@ package com.mpx.birjan.bean;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.pojomatic.annotations.AutoProperty;
 
@@ -17,16 +17,16 @@ public class Game extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = -8656741444856723949L;
 
-	@Column(nullable = false)
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Lottery lottery;
 
-	@Column(nullable = false)
+	@NotNull
 	private int[] numbers;
 
 	public Game() {
 	}
-	
+
 	public Game(Lottery lottery, int[] numbers) {
 		super();
 		this.lottery = lottery;
