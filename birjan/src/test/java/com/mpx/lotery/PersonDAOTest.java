@@ -5,9 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,7 +23,7 @@ public class PersonDAOTest {
 
 	private IGenericDAO<Person> personDao;
 
-	@Autowired
+	@Resource(name="genericJpaDAO")
 	public final void setEmployeeDao(final IGenericDAO<Person> daoToSet) {
 		personDao = daoToSet;
 		personDao.setClazz(Person.class);

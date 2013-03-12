@@ -1,6 +1,7 @@
 package com.mpx.birjan.service.dao;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -12,33 +13,33 @@ public abstract class AbstractJpaDAO<T extends Serializable> implements
 	private Class<T> clazz;
 
 	@PersistenceContext
-	EntityManager entityManager;
+	EntityManager em;
 
 	@Override
 	public T getById(final Long id) {
-		return this.entityManager.find(this.getClazz(), id);
+		return this.em.find(this.getClazz(), id);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<T> getAll() {
-		return this.entityManager.createQuery(
-				"from " + this.getClazz().getName()).getResultList();
+		return this.em.createQuery("from " + this.getClazz().getName())
+				.getResultList();
 	}
 
 	@Override
 	public void create(final T entity) {
-		this.entityManager.persist(entity);
+		this.em.persist(entity);
 	}
 
 	@Override
 	public void update(final T entity) {
-		this.entityManager.merge(entity);
+		this.em.merge(entity);
 	}
 
 	@Override
 	public void delete(final T entity) {
-		this.entityManager.remove(entity);
+		this.em.remove(entity);
 	}
 
 	@Override
@@ -49,22 +50,22 @@ public abstract class AbstractJpaDAO<T extends Serializable> implements
 	}
 
 	public void flush(T entity) {
-		this.entityManager.flush();
+		this.em.flush();
 		// return entity;
 	}
 
 	public void refresh(T entity) {
-		this.entityManager.refresh(entity);
+		this.em.refresh(entity);
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Class<T> getClazz() {
-		// if (clazz == null) {
-		// ParameterizedType genericSuperclass = (ParameterizedType) getClass()
-		// .getGenericSuperclass();
-		// this.clazz = ((Class<T>)
-		// genericSuperclass.getActualTypeArguments()[0]);
-		// }
+		if (clazz == null) {
+			ParameterizedType genericSuperclass = (ParameterizedType) getClass()
+					.getGenericSuperclass();
+			this.clazz = ((Class<T>) genericSuperclass.getActualTypeArguments()[0]);
+		}
 		return clazz;
 	}
 

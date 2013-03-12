@@ -44,6 +44,10 @@
 					<artifactId>xml-apis</artifactId>
 					<groupId>xml-apis</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>antlr</artifactId>
+					<groupId>antlr</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -63,6 +67,11 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>4.3.1.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<version>1.2.0.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
@@ -270,6 +279,9 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<compilerArguments>
+						<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+					</compilerArguments>
 					<encoding>UTF-8</encoding>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>

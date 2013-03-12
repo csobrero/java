@@ -3,6 +3,7 @@ package com.mpx.birjan.bean;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -22,6 +23,7 @@ public class Person extends AbstractEntity implements Serializable {
 
 	private String surname;
 
+	@Column(unique=true)
 	private String movile;
 
 	@Property(policy = PojomaticPolicy.NONE)
