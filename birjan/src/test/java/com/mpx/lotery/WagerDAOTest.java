@@ -38,7 +38,7 @@ public class WagerDAOTest {
 	@Rollback(value = false)
 	public void wagerCreate() {
 		Game game = new Game(Lottery.NACIONAL, new int[] { 26 });
-		Person person = new Person("Carlos", "Paredes", "1554337788");
+		Person person = new Person(null, "Carlos", "Paredes", "1554337788");
 		Wager wager = new Wager(1f, game, person);
 
 		wagerDao.create(wager);

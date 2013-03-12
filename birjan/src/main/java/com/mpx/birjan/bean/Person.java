@@ -24,14 +24,16 @@ public class Person extends AbstractEntity implements Serializable {
 
 	private String movile;
 
-	@Property(policy=PojomaticPolicy.NONE)
+	@Property(policy = PojomaticPolicy.NONE)
 	@OneToMany(mappedBy = "person")
 	private List<Wager> wagers;
 
 	public Person() {
 	}
 
-	public Person(String name, String surname, String movile) {
+	public Person(Long id, String name, String surname, String movile) {
+		if (id != null)
+			this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.movile = movile;

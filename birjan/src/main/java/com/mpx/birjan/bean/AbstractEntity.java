@@ -23,7 +23,7 @@ public abstract class AbstractEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Property(policy = PojomaticPolicy.EQUALS_TO_STRING)
-	private long id;
+	protected long id;
 
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -31,6 +31,14 @@ public abstract class AbstractEntity {
 
 	public long getId() {
 		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public Date getCreated() {
+		return created;
 	}
 
 	@PrePersist

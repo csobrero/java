@@ -7,17 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.mpx.birjan.service.dao.IGenericDAO;
 
-public class AbstractService<T extends Serializable> {
+public abstract class AbstractService<T extends Serializable> {
 
 	private IGenericDAO<T> dao;
 
 	@Autowired
-	public final void setDao(final IGenericDAO<T> dao) {
+	public void setDao(final IGenericDAO<T> dao) {
 		this.dao = dao;
 		ParameterizedType genericSuperclass = (ParameterizedType) getClass()
 				.getGenericSuperclass();
+		@SuppressWarnings("unchecked")
 		Class<T> t = ((Class<T>) genericSuperclass.getActualTypeArguments()[0]);
 		this.dao.setClazz(t);
+	}
+
+	public IGenericDAO<T> getDao() {
+		return dao;
 	}
 
 }
