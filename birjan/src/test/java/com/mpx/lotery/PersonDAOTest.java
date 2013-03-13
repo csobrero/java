@@ -19,6 +19,7 @@ import com.mpx.birjan.service.dao.IGenericDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-appCtx.xml")
+@Transactional
 public class PersonDAOTest {
 
 	private IGenericDAO<Person> personDao;

@@ -24,6 +24,7 @@ import com.mpx.birjan.service.dao.IGenericDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-appCtx.xml")
+@Transactional
 public class WagerDAOTest {
 
 	private IGenericDAO<Wager> wagerDao;
@@ -38,7 +39,7 @@ public class WagerDAOTest {
 	@Transactional
 	@Rollback(value = false)
 	public void wagerCreate() {
-		Game game = new Game(Lottery.NACIONAL, new int[] { 26 });
+		Game game = new Game(Lottery.NACIONAL_PRIMERA, new Integer[] { 26 });
 		Person person = new Person(null, "Carlos", "Paredes", "1554337788");
 		Wager wager = new Wager(1f, game, person);
 
@@ -56,7 +57,7 @@ public class WagerDAOTest {
 		assertNotNull(wager.getId());
 		assertNull(wager.getWinAmount());
 		assertNotNull(wager.getGame());
-		assertEquals(26, wager.getGame().getNumbers()[0]);
+		assertEquals(new Integer(26), wager.getGame().getNumbers()[0]);
 		assertNotNull(wager.getPerson());
 		assertNotNull(wager.getPerson().getName());
 	}

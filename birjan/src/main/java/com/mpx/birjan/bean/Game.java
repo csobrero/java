@@ -16,37 +16,41 @@ import org.pojomatic.annotations.AutoProperty;
 public class Game extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = -8656741444856723949L;
+	
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private Status status;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Lottery lottery;
 
 	@NotNull
-	private int[] numbers;
+	private Integer[] numbers;
 
 	public Game() {
 	}
-
-	public Game(Lottery lottery, int[] numbers) {
-		super();
+	
+	public Game(Lottery lottery, Integer[] numbers) {
+		this.status = Status.VALID;
 		this.lottery = lottery;
 		this.numbers = numbers;
 	}
 
-	public int[] getNumbers() {
+	public Integer[] getNumbers() {
 		return numbers;
-	}
-
-	public void setNumbers(int[] numbers) {
-		this.numbers = numbers;
 	}
 
 	public Lottery getLottery() {
 		return lottery;
 	}
 
-	public void setLottery(Lottery lottery) {
-		this.lottery = lottery;
+	public final Status getStatus() {
+		return status;
+	}
+
+	public final void setStatus(Status status) {
+		this.status = status;
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface IGenericDAO<T extends Serializable> {
 
-	T getById(final Long id);
+	T getById(final long id);
 
 	List<T> getAll();
 
@@ -15,7 +15,7 @@ public interface IGenericDAO<T extends Serializable> {
 
 	void delete(final T entity);
 
-	void deleteById(final Long entityId);
+	void deleteById(final long entityId);
 
 	Class<T> getClazz();
 

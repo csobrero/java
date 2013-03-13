@@ -16,7 +16,7 @@ public abstract class AbstractJpaDAO<T extends Serializable> implements
 	EntityManager em;
 
 	@Override
-	public T getById(final Long id) {
+	public T getById(final long id) {
 		return this.em.find(this.getClazz(), id);
 	}
 
@@ -43,7 +43,7 @@ public abstract class AbstractJpaDAO<T extends Serializable> implements
 	}
 
 	@Override
-	public void deleteById(final Long entityId) {
+	public void deleteById(final long entityId) {
 		final T entity = this.getById(entityId);
 
 		this.delete(entity);
