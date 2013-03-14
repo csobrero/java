@@ -1,27 +1,29 @@
 package com.mpx.birjan.bean;
 
-import java.sql.Time;
-
-import org.joda.time.Hours;
-import org.joda.time.TimeOfDay;
-
 public enum Lottery {
 
-	NACIONAL_PRIMERA, NACIONAL_MATUTINA, NACIONAL_VESPERTINA, NACIONAL_NOCTURNA, 
-	PROVINCIAL_PRIMERA, PROVINCIAL_MATUTINA, PROVINCIAL_VESPERTINA, PROVINCIAL_NOCTURNA;
+	NACIONAL_PRIMERA(Rule.NAP), 
+	NACIONAL_MATUTINA(Rule.NAM), 
+	NACIONAL_VESPERTINA(Rule.NAV), 
+	NACIONAL_NOCTURNA(Rule.NAN), 
+	PROVINCIAL_PRIMERA(Rule.NAP), 
+	PROVINCIAL_MATUTINA(Rule.NAM), 
+	PROVINCIAL_VESPERTINA(Rule.NAV), 
+	PROVINCIAL_NOCTURNA(Rule.NAN);
+
+	private Rule rule;
+
+	Lottery(Rule rule) {
+		this.rule = rule;
+	}
 
 	private static final float DEFAULT_WIN_RATIO = 70;
 
 	public float getWinRatio() {
 		return DEFAULT_WIN_RATIO;
 	}
-	
-	public Hours[] getValid(){
-		this.name().contains("PRIMERA");
-		TimeOfDay tod = new TimeOfDay();
-		
-		
-		return null;
-	}
 
+	public final Rule getRule() {
+		return rule;
+	}
 }

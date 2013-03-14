@@ -20,6 +20,7 @@ import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.Wager;
+import com.mpx.birjan.service.dao.GameDao;
 import com.mpx.birjan.service.dao.IGenericDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)

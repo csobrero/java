@@ -1,4 +1,4 @@
-package com.mpx.birjan.service;
+package com.mpx.birjan.service.impl;
 
 import javax.annotation.Resource;
 
@@ -13,6 +13,7 @@ import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wager;
+import com.mpx.birjan.service.ITicketService;
 import com.mpx.birjan.service.dao.IGenericDAO;
 import com.mpx.birjan.service.dao.PersonDao;
 
