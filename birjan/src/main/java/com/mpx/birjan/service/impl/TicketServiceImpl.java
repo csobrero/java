@@ -29,7 +29,7 @@ public class TicketServiceImpl implements ITicketService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public long createGame(Lottery lottery, Integer[] numbers) {
+	public long createGame(Lottery lottery, String numbers) {
 		Preconditions.checkNotNull(lottery);
 		Preconditions.checkNotNull(numbers);
 
@@ -53,7 +53,7 @@ public class TicketServiceImpl implements ITicketService {
 	 */
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public long updateGame(long gameId, Lottery lottery, Integer[] numbers) {
+	public long updateGame(long gameId, Lottery lottery, String numbers) {
 		Preconditions.checkNotNull(lottery);
 		Preconditions.checkNotNull(numbers);
 

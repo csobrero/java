@@ -32,8 +32,7 @@ public class TicketServiceTest {
 		long personId = personService.saveOrUpdatePerson(null, "dummy", null,
 				"11211");
 
-		long gameId = ticketService.createGame(Lottery.NACIONAL_PRIMERA, new Integer[] {
-				26, null, 3 });
+		long gameId = ticketService.createGame(Lottery.NACIONAL_PRIMERA, "26");
 
 		long ticketId = ticketService.createWager(1f, gameId, personId);
 		assertNotNull(ticketId);

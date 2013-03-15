@@ -40,7 +40,7 @@ public class WagerDAOTest {
 	@Transactional
 	@Rollback(value = false)
 	public void wagerCreate() {
-		Game game = new Game(Lottery.NACIONAL_PRIMERA, new Integer[] { 26 });
+		Game game = new Game(Lottery.NACIONAL_PRIMERA, "26");
 		Person person = new Person(null, "Carlos", "Paredes", "1554337788");
 		Wager wager = new Wager(1f, game, person);
 
@@ -58,7 +58,7 @@ public class WagerDAOTest {
 		assertNotNull(wager.getId());
 		assertNull(wager.getWinAmount());
 		assertNotNull(wager.getGame());
-		assertEquals(new Integer(26), wager.getGame().getNumbers()[0]);
+		assertEquals("26", wager.getGame().getNumbers());
 		assertNotNull(wager.getPerson());
 		assertNotNull(wager.getPerson().getName());
 	}

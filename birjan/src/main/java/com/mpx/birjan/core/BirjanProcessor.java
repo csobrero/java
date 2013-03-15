@@ -1,5 +1,7 @@
 package com.mpx.birjan.core;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.joda.time.DateTime;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wager;
@@ -27,11 +30,40 @@ public class BirjanProcessor {
 	private GameDao gameDao;
 
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void processWinners(Lottery lottery, DateTime date) {
+	public int processWinners(Lottery lottery, DateTime date) {
 
-		gameDao.findByFilter(lottery, Status.OPEN,
+		Game winGame = retrieveWinGame(lottery, date);
+		
+		if(winGame!=null){
+			List<Game> list = retrieveCandidates(lottery, date);
+			
+			if(!list.isEmpty()){
+				for (Game candidate : list) {
+					
+				}
+			}
+			
+		}
+		
+		
+		
+		return 0;
+
+	}
+
+	private List<Game> retrieveCandidates(Lottery lottery, DateTime date) {
+		return gameDao.findByFilter(lottery, Status.VALID,
 				lottery.getRule().getFrom(date), lottery.getRule().getTo(date));
+	}
 
+	private Game retrieveWinGame(Lottery lottery, DateTime date) {
+		List<Game> list = gameDao.findByFilter(lottery, Status.OPEN,
+				lottery.getRule().getFrom(date), lottery.getRule().getTo(date));
+		
+		if(list.size()==1)
+			return list.get(0);
+		
+		return null;
 	}
 
 	@Resource(name = "genericJpaDAO")

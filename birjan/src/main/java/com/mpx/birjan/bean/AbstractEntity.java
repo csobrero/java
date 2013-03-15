@@ -27,7 +27,7 @@ public abstract class AbstractEntity {
 
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+	protected Date created;
 
 	public Long getId() {
 		return id;

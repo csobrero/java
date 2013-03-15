@@ -1,6 +1,7 @@
 package com.mpx.birjan.bean;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.joda.time.DateTime;
 import org.pojomatic.annotations.AutoProperty;
 
 @Entity
@@ -26,18 +28,18 @@ public class Game extends AbstractEntity implements Serializable {
 	private Lottery lottery;
 
 	@NotNull
-	private Integer[] numbers;
+	private String numbers;
 
 	public Game() {
 	}
 	
-	public Game(Lottery lottery, Integer[] numbers) {
+	public Game(Lottery lottery, String numbers) {
 		this.status = Status.VALID;
 		this.lottery = lottery;
 		this.numbers = numbers;
 	}
 
-	public Integer[] getNumbers() {
+	public String getNumbers() {
 		return numbers;
 	}
 
@@ -51,6 +53,10 @@ public class Game extends AbstractEntity implements Serializable {
 
 	public final void setStatus(Status status) {
 		this.status = status;
+		if (status == Status.OPEN) {
+			this.created = lottery.getRule().getTo(new DateTime(new Date()))
+					.toDate();
+		}
 	}
 
 }

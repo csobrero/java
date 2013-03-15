@@ -27,14 +27,14 @@ public class GameDAOTest {
 	private GameDao gameDao;
 
 	public void gameCreate() {
-		Game game = new Game(Lottery.NACIONAL_PRIMERA, new Integer[] { 26 });
+		Game game = new Game(Lottery.NACIONAL_PRIMERA, "26");
 		game.setStatus(Status.OPEN);
 		gameDao.create(game);
 
-		game = new Game(Lottery.NACIONAL_PRIMERA, new Integer[] { 26 });
+		game = new Game(Lottery.NACIONAL_PRIMERA, "26");
 		gameDao.create(game);
 
-		game = new Game(Lottery.NACIONAL_NOCTURNA, new Integer[] { 26 });
+		game = new Game(Lottery.NACIONAL_NOCTURNA, "26");
 		game.setStatus(Status.OPEN);
 		gameDao.create(game);
 	}
