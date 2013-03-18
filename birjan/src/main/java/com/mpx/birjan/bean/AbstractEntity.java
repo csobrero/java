@@ -43,7 +43,8 @@ public abstract class AbstractEntity {
 
 	@PrePersist
 	protected void onCreate() {
-		this.created = new Date();
+		if (this.created == null)
+			this.created = new Date();
 	}
 
 	@Override

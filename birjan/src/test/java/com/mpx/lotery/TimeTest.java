@@ -37,9 +37,9 @@ public class TimeTest {
 	@Test
 	public void arraycompare3() {
 		
-		String x = "1234222200014783474845897855";
+		String x = "12342222000147834748123422220001478347481234222200014783474812342222000147834748";
 		
-		String c = "xxx5xx22xx01xx27xx5845896855";
+		String c = "xxx5xx22xx01xx27xx58xxx5xx22xx01xx27xx58xxx5xx22xx01xx27xx58xxx5xx22xx01xx27xx58";
 		
 		Map<Integer, Integer> hits = matchWinNumbers(x, c);
 		
@@ -51,7 +51,7 @@ public class TimeTest {
 			String candidate) {
 		Map<Integer, Integer> hits = null;
 		int k = 0;
-		for (int i = 3; i < 28; i += 4) {
+		for (int i = 3; i < 80; i += 4) {
 			if (candidate.charAt(i) == patterns.charAt(i)) {
 				k = 1;
 				for (int j = (i - 1); j > (i - 4); j--) {
@@ -81,13 +81,43 @@ public class TimeTest {
 	@Test
 	public void arraycompare() {
 		Random r = new Random();
-		List<String> winList = new ArrayList<String>();
-		for (int i = 0; i < 20; i++) {
-			winList.add(randomInteger(0, 9999, r));
+		
+		String x = getRandomInteger(r);
+		
+		List<String> list = new ArrayList<String>();
+		
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < 1000000; i++) {
+			list.add(getRandomInteger(r));
 		}
+		System.out.println("time taken: " + (System.currentTimeMillis()-start) + "ms");
+		
+		
+		start = System.currentTimeMillis();
+		int winners = 0;
+		List<Map<Integer, Integer>> l = new ArrayList<Map<Integer,Integer>>();
+		for (String c : list) {
+			Map<Integer, Integer> m = matchWinNumbers(x, c);
+			if(m!=null){
+				winners += m.size();
+				
+			}
+		}
+		System.out.println("winners: " + winners);
+		
+		
+		//System.out.println(list.size());
+		
+		
 
-		Integer[] win = new Integer[] { 1223 };
+	}
 
+	private String getRandomInteger(Random r) {
+		String str = "";
+		for (int i = 0; i < 20; i++) {
+			str += randomInteger(0, 9999, r);
+		}
+		return str;
 	}
 
 	private static String randomInteger(int aStart, int aEnd, Random aRandom) {

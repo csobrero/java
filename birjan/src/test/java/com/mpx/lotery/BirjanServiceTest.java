@@ -16,7 +16,7 @@ import com.mpx.birjan.service.ITicketService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-appCtx.xml")
-public class TicketServiceTest {
+public class BirjanServiceTest {
 
 	@Autowired
 	private ITicketService ticketService;

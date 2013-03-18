@@ -20,7 +20,6 @@ import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.Wager;
-import com.mpx.birjan.service.dao.GameDao;
 import com.mpx.birjan.service.dao.IGenericDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -40,9 +39,10 @@ public class WagerDAOTest {
 	@Transactional
 	@Rollback(value = false)
 	public void wagerCreate() {
-		Game game = new Game(Lottery.NACIONAL_PRIMERA, "26");
 		Person person = new Person(null, "Carlos", "Paredes", "1554337788");
-		Wager wager = new Wager(1f, game, person);
+		Wager wager = new Wager(1f, person);
+		Game game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
+		wager.setGame(game);
 
 		wagerDao.create(wager);
 

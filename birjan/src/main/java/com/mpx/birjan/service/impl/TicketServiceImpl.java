@@ -1,5 +1,7 @@
 package com.mpx.birjan.service.impl;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,50 +31,27 @@ public class TicketServiceImpl implements ITicketService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public long createGame(Lottery lottery, String numbers) {
+	public long createGame(final Lottery lottery, final String numbers, float betAmount, Long personId) {
 		Preconditions.checkNotNull(lottery);
 		Preconditions.checkNotNull(numbers);
+		
+		Person person = personDao.getById(personId);
+		Wager wager = new Wager(betAmount, person);
 
-		Game game = new Game(lottery, numbers);
+		Game game = new Game(lottery, wager, numbers);
 		gameDao.create(game);
 
-		return game.getId();
+		return game.getWager().getId();
 
 	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void invalidGame(long gameId) {
-		Game game = gameDao.getById(gameId);
-		game.setStatus(Status.INVALID);
-		gameDao.update(game);
-	}
-
-	/**
-	 * Will invalidate gameId then will create a new game.
-	 */
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public long updateGame(long gameId, Lottery lottery, String numbers) {
+	
+//	@Override
+	public void setWinnerGame(final Lottery lottery, final String numbers, final Date date) {
 		Preconditions.checkNotNull(lottery);
 		Preconditions.checkNotNull(numbers);
+		Preconditions.checkNotNull(date);
 
-		invalidGame(gameId);
-
-		return createGame(lottery, numbers);
-	}
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public long createWager(float betAmount, long gameId, Long personId) {
-
-		Person person = (personId != null) ? personDao.getById(personId) : null;
-		Game game = gameDao.getById(gameId);
-
-		Wager wage = new Wager(betAmount, game, person);
-		wagerDao.create(wage);
-
-		return wage.getId();
+		gameDao.create(new Game(lottery, numbers, date));
 	}
 
 	@Resource(name = "genericJpaDAO")

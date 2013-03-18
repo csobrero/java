@@ -1,9 +1,12 @@
-package com.mpx.birjan.bean;
+package com.mpx.birjan.core;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 
-import com.mpx.birjan.bean.Rule.Nacional.VARIANT;
+import com.mpx.birjan.core.Rule.Nacional.VARIANT;
 
 public abstract class Rule {
 
@@ -11,10 +14,14 @@ public abstract class Rule {
 
 	public abstract DateTime getTo(DateTime date);
 	
+	public abstract float calculateWinAmount(float betAmount, Map<Integer, Integer> winPositions);
+	
 	public static final Rule NAP = new Nacional(VARIANT.PRIMERA);
 	public static final Rule NAM = new Nacional(VARIANT.MATUTINA);
 	public static final Rule NAV = new Nacional(VARIANT.VESPERTINA);
 	public static final Rule NAN = new Nacional(VARIANT.NOCTURNA);
+	
+	public static final int[] defaultWinRatios = {7,70,650,3500};
 
 	/**
 	 * Rules for NATIONAL lottery.
@@ -71,6 +78,16 @@ public abstract class Rule {
 			return new DateTime(date.year().get(), date.monthOfYear().get(),
 					date.dayOfMonth().get(), variant.hourFrom,
 					variant.minutesFrom, hourTo, variant.minutesTo);
+		}
+	
+		@Override
+		public float calculateWinAmount(float betAmount, Map<Integer, Integer> winPositions){
+			
+			for (Entry<Integer, Integer> entry : winPositions.entrySet()) {
+				betAmount=betAmount*defaultWinRatios[entry.getValue()];
+			}
+			
+			return betAmount;
 		}
 	}
 

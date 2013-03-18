@@ -1,5 +1,7 @@
 package com.mpx.birjan.bean;
 
+import com.mpx.birjan.core.Rule;
+
 public enum Lottery {
 
 	NACIONAL_PRIMERA(Rule.NAP), 

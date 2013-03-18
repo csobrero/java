@@ -3,13 +3,14 @@ package com.mpx.birjan.bean;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.joda.time.DateTime;
 import org.pojomatic.annotations.AutoProperty;
 
 @Entity
@@ -18,10 +19,13 @@ import org.pojomatic.annotations.AutoProperty;
 public class Game extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = -8656741444856723949L;
-	
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Status status;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	private Wager wager;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -30,13 +34,18 @@ public class Game extends AbstractEntity implements Serializable {
 	@NotNull
 	private String numbers;
 
-	public Game() {
+	public Game(Lottery lottery, String numbers, Date date) {
+		this.status = Status.OPEN;
+		this.lottery = lottery;
+		this.numbers = numbers;
+		this.created = date;
 	}
-	
-	public Game(Lottery lottery, String numbers) {
+
+	public Game(Lottery lottery, Wager wager, String numbers) {
 		this.status = Status.VALID;
 		this.lottery = lottery;
 		this.numbers = numbers;
+		this.wager = wager;
 	}
 
 	public String getNumbers() {
@@ -53,10 +62,14 @@ public class Game extends AbstractEntity implements Serializable {
 
 	public final void setStatus(Status status) {
 		this.status = status;
-		if (status == Status.OPEN) {
-			this.created = lottery.getRule().getTo(new DateTime(new Date()))
-					.toDate();
-		}
+	}
+
+	public Wager getWager() {
+		return wager;
+	}
+
+	public void setWager(Wager wager) {
+		this.wager = wager;
 	}
 
 }

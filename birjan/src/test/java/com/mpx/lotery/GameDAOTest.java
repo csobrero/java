@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Status;
+import com.mpx.birjan.bean.Wager;
 import com.mpx.birjan.service.dao.GameDao;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,14 +28,16 @@ public class GameDAOTest {
 	private GameDao gameDao;
 
 	public void gameCreate() {
-		Game game = new Game(Lottery.NACIONAL_PRIMERA, "26");
+		Wager wager = new Wager(1f, null);
+		
+		Game game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
 		game.setStatus(Status.OPEN);
 		gameDao.create(game);
 
-		game = new Game(Lottery.NACIONAL_PRIMERA, "26");
+		game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
 		gameDao.create(game);
 
-		game = new Game(Lottery.NACIONAL_NOCTURNA, "26");
+		game = new Game(Lottery.NACIONAL_NOCTURNA, wager, "26");
 		game.setStatus(Status.OPEN);
 		gameDao.create(game);
 	}
