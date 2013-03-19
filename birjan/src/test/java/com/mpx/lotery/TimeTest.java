@@ -106,7 +106,7 @@ public class TimeTest {
 		Random r = new Random();
 		for (int i = 0; i < 100; i++) {
 			System.out.println(randomInteger(0, 9, r));
-			
+			System.out.println();
 		}
 	}
 
