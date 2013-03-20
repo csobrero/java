@@ -25,7 +25,7 @@ public class Game extends AbstractEntity implements Serializable {
 	private Status status;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	private Wager wager;
+	private Wager wager;;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
