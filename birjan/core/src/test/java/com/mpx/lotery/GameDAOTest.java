@@ -48,7 +48,7 @@ public class GameDAOTest {
 		gameCreate();
 
 		List<Game> all = gameDao.getAll();
-		assertTrue(all.size() == 3);
+		assertTrue(all.size() > 3);
 
 		all = gameDao.findByFilter(Lottery.NACIONAL_PRIMERA, Status.OPEN, null, null);
 		System.out.println(all.size());
@@ -61,7 +61,7 @@ public class GameDAOTest {
 
 		all = gameDao.findByFilter(Lottery.NACIONAL_PRIMERA, null, from, to);
 		System.out.println(all.size());
-		assertTrue(all.size() == 2);
+		assertTrue(all.size() > 2);
 	}
 	
 

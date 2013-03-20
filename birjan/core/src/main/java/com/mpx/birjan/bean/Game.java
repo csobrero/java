@@ -33,6 +33,9 @@ public class Game extends AbstractEntity implements Serializable {
 
 	@NotNull
 	private String numbers;
+	
+	public Game() {
+	}
 
 	public Game(Lottery lottery, String numbers, Date date) {
 		this.status = Status.OPEN;

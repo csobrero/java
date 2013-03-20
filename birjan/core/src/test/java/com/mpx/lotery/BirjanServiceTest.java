@@ -32,7 +32,7 @@ public class BirjanServiceTest {
 	@Test
 	public void ticketCreate() {
 		long personId = personService.saveOrUpdatePerson(null, "dummy", null,
-				"11211");
+				"112117");
 
 		long ticketId = ticketService.createGame(Lottery.NACIONAL_PRIMERA, "26", 1f, personId);
 		assertNotNull(ticketId);

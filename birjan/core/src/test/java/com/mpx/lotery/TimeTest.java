@@ -17,7 +17,7 @@ import com.google.common.base.Preconditions;
 
 public class TimeTest {
 
-	@Test
+//	@Test
 	public void time() {
 		TimeOfDay tod = new TimeOfDay(23, 59, 59, 999);
 
@@ -34,7 +34,7 @@ public class TimeTest {
 		System.out.println(dateTime);
 	}
 	
-	@Test
+//	@Test
 	public void arraycompare3() {
 		
 		String x = "12342222000147834748123422220001478347481234222200014783474812342222000147834748";
@@ -78,7 +78,7 @@ public class TimeTest {
 	
 	
 
-	@Test
+//	@Test
 	public void arraycompare() {
 		Random r = new Random();
 		
@@ -131,7 +131,7 @@ public class TimeTest {
 		return String.format("%04d", fraction + aStart);
 	}
 	
-	@Test
+//	@Test
 	public void arraycompare2() {
 		Random r = new Random();
 		for (int i = 0; i < 100; i++) {
