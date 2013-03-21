@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.joda.time.DateTime;
@@ -131,13 +132,11 @@ public class TimeTest {
 		return String.format("%04d", fraction + aStart);
 	}
 	
-//	@Test
+	@Test
 	public void arraycompare2() {
-		Random r = new Random();
-		for (int i = 0; i < 100; i++) {
-			System.out.println(randomInteger(0, 9, r));
-			System.out.println();
-		}
+		String x = "0000";
+		
+		System.out.println(Pattern.matches("\\d{1,4}", x));
 	}
 
 }
