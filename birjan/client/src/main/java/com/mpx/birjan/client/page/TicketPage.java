@@ -107,7 +107,7 @@ public class TicketPage extends JFrame {
 		horizontalBox_2.add(panel);
 		
 		Box verticalBox_2 = Box.createVerticalBox();
-		panel.add(verticalBox_2);
+		panel.add(verticalBox_2);;
 		
 		JLabel lblLoteria = new JLabel("Lot");
 		lblLoteria.setAlignmentX(Component.CENTER_ALIGNMENT);
