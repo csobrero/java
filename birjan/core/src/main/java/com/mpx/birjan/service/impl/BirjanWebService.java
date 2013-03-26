@@ -1,6 +1,7 @@
 package com.mpx.birjan.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -16,5 +17,7 @@ public interface BirjanWebService {
 	
 	@WebMethod
 	public List<Person> findByFilter(String name, String surname, String movile);
+	
+	public String[] getComboOptions(String combo);
 
 }

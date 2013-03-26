@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -22,14 +24,27 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.mpx.birjan.service.impl.BirjanWebService;
+
+@Resource
 public class Ticket extends JPanel {
+	
+	private static final long serialVersionUID = 4334436586243521165L;
+
+	@Autowired
+	private BirjanWebService webService;
 
 	private JTable table;
 
-	/**
-	 * Create the panel.
-	 */
 	public Ticket() {
+		if(webService==null)
+			init();
+	}
+	
+	@PostConstruct
+	public void init() {
 
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -80,6 +95,7 @@ public class Ticket extends JPanel {
 		JComboBox comboBox = new JComboBox();
 		comboBox.setModel(new DefaultComboBoxModel(new String[] { "PRIMERA",
 				"MATUTINA", "VESPERTINA", "NOCTURNA" }));
+		String[] comboOptions = getCombo();
 		verticalBox_2.add(comboBox);
 
 		Component horizontalStrut = Box.createHorizontalStrut(120);
@@ -133,6 +149,12 @@ public class Ticket extends JPanel {
 		});
 		btnClear.setFont(new Font("Tahoma", Font.BOLD, 10));
 		horizontalBox_1.add(btnClear);
+	}
+
+	private String[] getCombo() {
+		if(webService!=null)
+			return webService.getComboOptions("nacional");
+		return null;
 	}
 
 	private void buildJTable() {

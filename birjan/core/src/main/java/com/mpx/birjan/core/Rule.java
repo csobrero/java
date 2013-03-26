@@ -1,5 +1,7 @@
 package com.mpx.birjan.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -43,6 +45,13 @@ public abstract class Rule {
 			private final int minutesFrom;
 			private final int hourTo;
 			private final int minutesTo;
+
+			public static List<String> toList() {
+				List<String> list = new ArrayList<String>();
+				for (VARIANT variant : Nacional.VARIANT.values())
+					list.add(variant.toString());
+				return list;
+			}
 		}
 
 		private VARIANT variant;
@@ -91,4 +100,11 @@ public abstract class Rule {
 		}
 	}
 
+	public static class Provincia extends Nacional{
+
+		public Provincia(VARIANT variant) {
+			super(variant);
+		}
+		
+	}
 }
