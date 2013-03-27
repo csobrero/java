@@ -1,5 +1,6 @@
 package com.mpx.birjan.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,14 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 
 	@Override
 	public String[] getComboOptions(String combo) {
-		if(combo.equalsIgnoreCase("nacional")){
-			List<String> list = Nacional.VARIANT.toList();
-			return list.toArray(new String[list.size()]);
+		List<String> list = new ArrayList<String>();
+		if(combo.equalsIgnoreCase("loteria")){
+			return new String[]{"NACIONAL","PROVINCIA"};
 		}
-		return null;
+		
+			list = Nacional.VARIANT.toList();
+			return list.toArray(new String[list.size()]);
+		
 	}
 
 }

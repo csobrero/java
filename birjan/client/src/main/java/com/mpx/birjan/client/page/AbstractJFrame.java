@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+
 public abstract class AbstractJFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -15,16 +16,15 @@ public abstract class AbstractJFrame extends JFrame {
 	protected ApplicationContext applicationContext;
 	
 	public AbstractJFrame() {
-		if(applicationContext==null)
-			init();
+		init();
 	}
 	
 	protected abstract void init();
-	
+
 	protected <T> T getBean(Class<T> clazz) {
 		try {
-			return (applicationContext != null) ? applicationContext.getBean(clazz)
-					: clazz.newInstance();
+			return (applicationContext != null) ? applicationContext
+					.getBean(clazz) : clazz.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
