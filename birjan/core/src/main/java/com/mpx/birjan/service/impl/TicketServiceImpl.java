@@ -38,7 +38,7 @@ public class TicketServiceImpl implements ITicketService {
 		Person person = personDao.getById(personId);
 		Wager wager = new Wager(betAmount, person);
 
-		Game game = new Game(lottery, wager, numbers);
+		Game game = null; //new Game(lottery, wager, numbers);
 		gameDao.create(game);
 
 		return game.getWager().getId();
@@ -46,12 +46,12 @@ public class TicketServiceImpl implements ITicketService {
 	}
 	
 //	@Override
-	public void setWinnerGame(final Lottery lottery, final String numbers, final Date date) {
+	public void setWinnerGame(final Lottery lottery, final String[] numbers, final Date date) {
 		Preconditions.checkNotNull(lottery);
 		Preconditions.checkNotNull(numbers);
 		Preconditions.checkNotNull(date);
 
-		gameDao.create(new Game(lottery, numbers, date));
+//		gameDao.create(new Game(lottery, new float[]{0}, numbers[], date));
 	}
 
 	@Resource(name = "genericJpaDAO")

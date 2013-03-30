@@ -26,29 +26,29 @@ public class BirjanController {
 
 		Game winGame = retrieveWinGame(lottery, date);
 
-		if (winGame != null) {
-			List<Game> list = retrieveCandidates(lottery, date);
-
-			if (!list.isEmpty()) {
-				for (Game candidate : list) {
-
-					Map<Integer, Integer> winPositions = matchWinNumbers(
-							winGame.getNumbers(), candidate.getNumbers());
-
-					if (winPositions != null) {
-
-						float betAmount = candidate.getWager().getBetAmount();
-						float winAmount = lottery.getRule().calculateWinAmount(betAmount, winPositions);
-
-						candidate.getWager().setWinAmount(winAmount);
-						candidate.setStatus(Status.WINNER);
-
-					} else {
-						candidate.setStatus(Status.LOSER);
-					}
-				}
-			}
-		}
+//		if (winGame != null) {
+//			List<Game> list = retrieveCandidates(lottery, date);
+//
+//			if (!list.isEmpty()) {
+//				for (Game candidate : list) {
+//
+//					Map<Integer, Integer> winPositions = matchWinNumbers(
+//							winGame.getNumbers(), candidate.getNumbers());
+//
+//					if (winPositions != null) {
+//
+//						float betAmount = candidate.getWager().getBetAmount();
+//						float winAmount = lottery.getRule().calculateWinAmount(betAmount, winPositions);
+//
+//						candidate.getWager().setWinAmount(winAmount);
+//						candidate.setStatus(Status.WINNER);
+//
+//					} else {
+//						candidate.setStatus(Status.LOSER);
+//					}
+//				}
+//			}
+//		}
 	}
 
 	private Map<Integer, Integer> matchWinNumbers(String patterns,

@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.TimeOfDay;
@@ -132,11 +133,55 @@ public class TimeTest {
 		return String.format("%04d", fraction + aStart);
 	}
 	
+
+	
+	@Test
+	public void arraycompare22() {
+		Integer x= 3600;
+		
+		System.out.println(x.toHexString(86400));
+	}
+	
 	@Test
 	public void arraycompare2() {
-		String x = "0000";
+//		String random = RandomStringUtils.random(6, "QWERTY");
+//		System.out.println(random);
+//		
+		String s = "A";
+		char[] charArray = s.toCharArray();
+		for (char d : charArray) {
+			System.out.println((int)d);			
+		}
+//		
+//		for (int i = 48; i < 91; i++) {
+//			System.out.println((char)i);
+//		}  XXXXXXXX  CC
+//		
+//		int x = 0;
 		
-		System.out.println(Pattern.matches("\\d{1,4}", x));
+		DateTime dt = new DateTime(2012, 12, 1, 23, 59, 59, 0);
+		System.out.println(dt.toString());
+		
+		int[] n = new int[3];
+//		n[0] = dt.getYear()-2000;
+		n[0] = dt.getMonthOfYear();
+		n[1] = dt.getDayOfMonth();
+		n[2] = dt.getHourOfDay();
+		String hex = Integer.toHexString(dt.getSecondOfMinute()*dt.getMinuteOfHour()).toUpperCase();
+		
+		String hash = "XX"; 
+		for (int i : n) {
+			hash+=(char)((i<10)?i+48:i+55);
+		}
+		
+		System.out.println(hash+hex);
+		
+//		for (int i = 0; i < 36; i++) {
+//			char c = (char)((i<10)?i+48:i+55);
+//			System.out.println(c);
+//		}
+		
+		
 	}
 
 }

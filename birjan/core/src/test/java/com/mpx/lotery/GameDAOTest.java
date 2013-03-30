@@ -30,16 +30,16 @@ public class GameDAOTest {
 	public void gameCreate() {
 		Wager wager = new Wager(1f, null);
 		
-		Game game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
-		game.setStatus(Status.OPEN);
-		gameDao.create(game);
-
-		game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
-		gameDao.create(game);
-
-		game = new Game(Lottery.NACIONAL_NOCTURNA, wager, "26");
-		game.setStatus(Status.OPEN);
-		gameDao.create(game);
+//		Game game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
+//		game.setStatus(Status.OPEN);
+//		gameDao.create(game);
+//
+//		game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
+//		gameDao.create(game);
+//
+//		game = new Game(Lottery.NACIONAL_NOCTURNA, wager, "26");
+//		game.setStatus(Status.OPEN);
+//		gameDao.create(game);
 	}
 
 	@Test

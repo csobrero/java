@@ -1,6 +1,6 @@
 package com.mpx.lotery;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +20,20 @@ public class WebServiceClientTest {
 	@Test
 	public void ticketServiceNotNull() {
 		assertNotNull(webService);
+	}
+
+	@Test
+	public void ticketServiceNotNull2() throws InterruptedException {
+		Float[] betAmount = new Float[20];
+		String[] numbers = new String[20];
+		betAmount[1] = 1f;
+		numbers[1] = "1";
+		String id = webService.createGame("nacional_matutina", betAmount, numbers, null);
+		System.out.println(id);
+		Thread.sleep(1000);
+		id = webService.createGame("nacional_matutina", betAmount, numbers, null);
+		System.out.println(id);
+		assertNotNull(id);
 	}
 	
 

@@ -15,10 +15,6 @@ public abstract class AbstractJFrame extends JFrame {
 	@Autowired
 	protected ApplicationContext applicationContext;
 	
-	public AbstractJFrame() {
-		init();
-	}
-	
 	protected abstract void init();
 
 	protected <T> T getBean(Class<T> clazz) {

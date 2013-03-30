@@ -41,7 +41,7 @@ public class WagerDAOTest {
 	public void wagerCreate() {
 		Person person = new Person(null, "Carlos", "Paredes", "1554337788");
 		Wager wager = new Wager(1f, person);
-		Game game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
+		Game game = null; //new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
 		wager.setGame(game);
 
 		wagerDao.create(wager);

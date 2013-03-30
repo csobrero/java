@@ -27,7 +27,6 @@ public class MainPage extends AbstractJFrame {
 	private Ticket centerPanel;
 
 	public MainPage() {
-		init();
 	}
 	
 	public static void main(String[] args) {
@@ -47,8 +46,6 @@ public class MainPage extends AbstractJFrame {
 	
 	@PostConstruct
 	public void init() {
-		if(applicationContext==null)
-			return;
 		
 		this.setBounds(100, 100, 800, 600);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,8 +71,6 @@ public class MainPage extends AbstractJFrame {
 		menuBar.add(helpmenu);
 		contentPane.add(menuBar, BorderLayout.NORTH);
 
-		if(centerPanel==null)
-			centerPanel = new Ticket();
 		contentPane.add(centerPanel, BorderLayout.CENTER);
 
 		JPanel bottomPanel = new JPanel();

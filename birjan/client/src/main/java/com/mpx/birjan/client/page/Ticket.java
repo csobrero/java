@@ -1,10 +1,14 @@
 package com.mpx.birjan.client.page;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
@@ -36,6 +40,9 @@ public class Ticket extends JPanel {
 
 	@Autowired
 	private BirjanWebService webService;
+	
+	@Autowired
+	private PrintTicketPanel centerPanel;
 
 	private JTable table;
 
@@ -100,6 +107,7 @@ public class Ticket extends JPanel {
 				String selected = ((String)comboBox_1.getSelectedItem());
 				comboBox_2.setModel(new DefaultComboBoxModel(getCombo(selected)));
 				comboBox_2.setEnabled(true);
+				comboBox_2.requestFocusInWindow();
 			}
 		});
 		vb_2.add(comboBox_1);
@@ -113,7 +121,8 @@ public class Ticket extends JPanel {
 				String selected = ((String)comboBox_2.getSelectedItem());
 				buildJTable(createModel(false));
 				table.changeSelection(0, 1, false, false);
-				table.requestFocus();
+				table.requestFocusInWindow();
+				btnClear.setEnabled(true);
 			}
 		});
 		vb_2.add(comboBox_2);
@@ -148,11 +157,13 @@ public class Ticket extends JPanel {
 		btnDone = new JButton("Done");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				Vector dataVector = ((DefaultTableModel) table.getModel())
-						.getDataVector();
-
-				System.out.println("call service");
+				String hash = done();
+				centerPanel.setHash(hash);
+				centerPanel.validate();
+				Container container = Ticket.this.getParent();
+				container.remove(Ticket.this);
+				container.add(centerPanel, BorderLayout.CENTER);
+				container.validate();
 			}
 		});
 		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -164,7 +175,7 @@ public class Ticket extends JPanel {
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				buildJTable(createModel(false));
+				reset();
 			}
 		});
 		btnClear.setFont(new Font("Tahoma", Font.BOLD, 10));
@@ -176,10 +187,34 @@ public class Ticket extends JPanel {
 	public void reset(){
 		buildJTable(createModel(true));
 		comboBox_1.setModel(new DefaultComboBoxModel(getCombo("LOTERIA")));
+		comboBox_1.requestFocusInWindow();
 		comboBox_2.setModel(new DefaultComboBoxModel());
 		comboBox_2.setEnabled(false);
 		btnClear.setEnabled(false);
 		btnDone.setEnabled(false);
+	}
+	
+	private String done() {
+		List<List<Object>> dataVector = ((DefaultTableModel) table
+				.getModel()).getDataVector();
+		Float[] betAmount = new Float[20];
+		String[] numbers = new String[20];
+		for (List<Object> obj : dataVector) {
+			if (obj.get(1) != null && obj.get(2) != null && obj.get(3) != null) {
+				betAmount[(Integer) obj.get(3)] = (Float) obj.get(1);
+				numbers[(Integer) obj.get(3)] = (String) obj.get(2);
+			}
+		}
+
+		String lottery = comboBox_1.getSelectedItem().toString();
+		String variant = comboBox_2.getSelectedItem().toString();
+
+		String hash = webService.createGame(lottery + "_" + variant,
+				betAmount, numbers, null);
+		
+		reset();
+		
+		return hash;
 	}
 	
 	private String[] getCombo(String comboName) {
@@ -227,12 +262,22 @@ public class Ticket extends JPanel {
 						}
 					}
 				});
+		
+		table.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_ENTER:
+					if (btnDone.isEnabled())
+						done();
+					break;
+				case KeyEvent.VK_ESCAPE:
+						reset();
+					break;
+				}
 
-		// DefaultTableCellRenderer centerRenderer = new
-		// DefaultTableCellRenderer();
-		// centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		// table.setDefaultRenderer(String.class, centerRenderer);
-		// table.setDefaultRenderer(Integer.class, centerRenderer);
+			}
+		});
 
 		table.getModel().addTableModelListener(new TableModelListener() {
 
@@ -254,7 +299,6 @@ public class Ticket extends JPanel {
 						table.changeSelection((row + 1), 1, false, false);
 						table.requestFocus();
 						btnDone.setEnabled(true);
-						btnClear.setEnabled(true);
 					}
 				}
 			}

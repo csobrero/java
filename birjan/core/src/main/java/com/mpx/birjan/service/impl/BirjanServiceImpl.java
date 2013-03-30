@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,23 +42,27 @@ public class BirjanServiceImpl implements IBirjanService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public long createGame(final Lottery lottery, final String numbers,
-			float betAmount, final Long personId) {
-		Preconditions.checkNotNull(lottery);
-		Preconditions.checkNotNull(numbers);
+	public String createGame(final Lottery lottery, Float[] betAmount,
+			final String[] numbers, final Long personId) {
 
-		Person person = personDao.getById(personId);
-		Wager wager = new Wager(betAmount, person);
+		float totalBet = 0;
+		for (Float amount : betAmount)
+			totalBet += amount!=null?amount:0;
+		
+		Person person = (personId != null) ? personDao.getById(personId) : null;
+		
+		Wager wager = new Wager(totalBet, person);
 
-		Game game = new Game(lottery, wager, numbers);
+		Game game = new Game(lottery, wager, betAmount, numbers);
 		gameDao.create(game);
+		
 
-		return game.getWager().getId();
+		return game.getHash();
 
 	}
 
 	@Override
-	public void setWinnerGame(final Lottery lottery, final String numbers,
+	public void setWinnerGame(final Lottery lottery, final String[] numbers,
 			final Date date) {
 		Preconditions.checkNotNull(lottery);
 		Preconditions.checkNotNull(numbers);

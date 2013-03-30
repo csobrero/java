@@ -1,9 +1,7 @@
 package com.mpx.birjan.service.impl;
 
 import java.util.List;
-import java.util.Map;
 
-import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 import com.mpx.birjan.bean.Person;
@@ -11,13 +9,13 @@ import com.mpx.birjan.bean.Person;
 @WebService
 public interface BirjanWebService {
 
-	@WebMethod
-	public long saveOrUpdatePerson(Long id, String name, String surname,
-			String movile);
-	
-	@WebMethod
-	public List<Person> findByFilter(String name, String surname, String movile);
-	
-	public String[] getComboOptions(String combo);
+	long saveOrUpdatePerson(Long id, String name, String surname, String movile);
+
+	List<Person> findByFilter(String name, String surname, String movile);
+
+	String[] getComboOptions(String combo);
+
+	String createGame(String lottery, Float[] betAmount, String[] numbers,
+			Long personId);
 
 }
