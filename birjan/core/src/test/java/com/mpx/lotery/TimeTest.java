@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
 
 public class TimeTest {
 
-//	@Test
+	@Test
 	public void time() {
 		TimeOfDay tod = new TimeOfDay(23, 59, 59, 999);
 
@@ -30,6 +30,9 @@ public class TimeTest {
 		System.out.println(d);
 
 		DateTime dt = new DateTime(new Date());
+		
+//		dt = dt.plusDays(-1);
+		
 
 		DateTime dateTime = new DateTime(dt.year().get(), dt.monthOfYear()
 				.get(), dt.dayOfMonth().get(), 23, 59, 59, 999);

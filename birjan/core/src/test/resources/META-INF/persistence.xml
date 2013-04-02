@@ -10,6 +10,7 @@
 		<class>com.mpx.birjan.bean.Person</class>
 		<class>com.mpx.birjan.bean.Wager</class>
 		<class>com.mpx.birjan.bean.Game</class>
+		<class>com.mpx.birjan.bean.Draw</class>
 		
 		
 		<properties>

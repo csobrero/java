@@ -28,10 +28,10 @@ public class WebServiceClientTest {
 		String[] numbers = new String[20];
 		betAmount[1] = 1f;
 		numbers[1] = "1";
-		String id = webService.createGame("nacional_matutina", betAmount, numbers, null);
+		String id = webService.createGame("nacional","matutina", "31", new Object[][]{});
 		System.out.println(id);
 		Thread.sleep(1000);
-		id = webService.createGame("nacional_matutina", betAmount, numbers, null);
+		id = webService.createGame("nacional","matutina", "31", new Object[][]{});
 		System.out.println(id);
 		assertNotNull(id);
 	}

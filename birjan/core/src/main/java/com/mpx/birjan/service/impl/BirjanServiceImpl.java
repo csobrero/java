@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.SerializationUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,33 +43,42 @@ public class BirjanServiceImpl implements IBirjanService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public String createGame(final Lottery lottery, Float[] betAmount,
-			final String[] numbers, final Long personId) {
+	public String createGame(String lotteryName, String variant, String day,
+			Object[][] data) {
+		
+//		Person person = (personId != null) ? personDao.getById(personId) : null;
 
 		float totalBet = 0;
-		for (Float amount : betAmount)
-			totalBet += amount!=null?amount:0;
+		for (Object[] row : data) {
+			totalBet += (Float)row[1];			
+		}
 		
-		Person person = (personId != null) ? personDao.getById(personId) : null;
+		Wager wager = new Wager(totalBet);
 		
-		Wager wager = new Wager(totalBet, person);
+		Date date = BirjanUtils.getDate(day);
+		
+		Lottery lottery = Lottery.valueOf((lotteryName+"_"+variant).toUpperCase());
+		
+		byte[] serialData = SerializationUtils.serialize(data);
 
-		Game game = new Game(lottery, wager, betAmount, numbers);
+		Game game = new Game(lottery, date, wager, serialData);
 		gameDao.create(game);
 		
 
+		System.out.println(game.getHash());
 		return game.getHash();
-
 	}
 
 	@Override
-	public void setWinnerGame(final Lottery lottery, final String[] numbers,
-			final Date date) {
+	public void setWinnerGame(final Lottery lottery,
+			final Date date, final Object[][] data) {
 		Preconditions.checkNotNull(lottery);
-		Preconditions.checkNotNull(numbers);
+		Preconditions.checkNotNull(data);
 		Preconditions.checkNotNull(date);
 
-		gameDao.create(new Game(lottery, numbers, date));
+		byte[] serialData = SerializationUtils.serialize(data);
+		
+		gameDao.create(new Game(lottery, date, serialData));
 	}
 
 	@Resource(name = "genericJpaDAO")

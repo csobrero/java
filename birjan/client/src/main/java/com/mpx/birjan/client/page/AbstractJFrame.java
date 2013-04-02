@@ -12,7 +12,6 @@ public abstract class AbstractJFrame extends JFrame {
 
 	protected static final String CONFIG_PATH = "classpath*:applicationContextClient.xml";
 
-	@Autowired
 	protected ApplicationContext applicationContext;
 	
 	protected abstract void init();

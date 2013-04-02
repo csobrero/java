@@ -16,7 +16,7 @@ import com.jgoodies.forms.layout.RowSpec;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class PasswordPage {
+public class PasswordView {
 
 	private JFrame frame;
 	private final JTextField fieldUser = new JTextField();
@@ -31,7 +31,7 @@ public class PasswordPage {
 				try {
 					UIManager.setLookAndFeel(UIManager
 							.getSystemLookAndFeelClassName());
-					PasswordPage window = new PasswordPage();
+					PasswordView window = new PasswordView();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -43,7 +43,7 @@ public class PasswordPage {
 	/**
 	 * Create the application.
 	 */
-	public PasswordPage() {
+	public PasswordView() {
 		initialize();
 	}
 
@@ -78,8 +78,8 @@ public class PasswordPage {
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(fieldUser.getText().equalsIgnoreCase("1")&&fieldPassword.getText().equalsIgnoreCase("1")){
-					TicketPage ticketPage = new TicketPage();
-					ticketPage.setVisible(true);
+//					TicketPage ticketPage = new TicketPage();
+//					ticketPage.setVisible(true);
 				}
 				fieldUser.setText(null);
 				fieldPassword.setText(null);

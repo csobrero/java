@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,42 +14,53 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Status;
-import com.mpx.birjan.service.dao.GameDao;
+import com.mpx.birjan.service.dao.FilterDao;
 
 @Controller
 public class BirjanController {
 
 	@Autowired
-	private GameDao gameDao;
+	private FilterDao gameDao;
+
+	@Transactional(readOnly = true)
+	public Object[][] retrieveByHash(String hash) {
+		Game game = gameDao.findGameByHash(hash);
+		if (game != null) {
+			Object[][] data = (Object[][])SerializationUtils.deserialize(game.getData());
+			return data;
+		}
+		return null;
+	}
 
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void processWinners(Lottery lottery, DateTime date) {
 
 		Game winGame = retrieveWinGame(lottery, date);
 
-//		if (winGame != null) {
-//			List<Game> list = retrieveCandidates(lottery, date);
-//
-//			if (!list.isEmpty()) {
-//				for (Game candidate : list) {
-//
-//					Map<Integer, Integer> winPositions = matchWinNumbers(
-//							winGame.getNumbers(), candidate.getNumbers());
-//
-//					if (winPositions != null) {
-//
-//						float betAmount = candidate.getWager().getBetAmount();
-//						float winAmount = lottery.getRule().calculateWinAmount(betAmount, winPositions);
-//
-//						candidate.getWager().setWinAmount(winAmount);
-//						candidate.setStatus(Status.WINNER);
-//
-//					} else {
-//						candidate.setStatus(Status.LOSER);
-//					}
-//				}
-//			}
-//		}
+		// if (winGame != null) {
+		// List<Game> list = retrieveCandidates(lottery, date);
+		//
+		// if (!list.isEmpty()) {
+		// for (Game candidate : list) {
+		//
+		// Map<Integer, Integer> winPositions = matchWinNumbers(
+		// winGame.getNumbers(), candidate.getNumbers());
+		//
+		// if (winPositions != null) {
+		//
+		// float betAmount = candidate.getWager().getBetAmount();
+		// float winAmount = lottery.getRule().calculateWinAmount(betAmount,
+		// winPositions);
+		//
+		// candidate.getWager().setWinAmount(winAmount);
+		// candidate.setStatus(Status.WINNER);
+		//
+		// } else {
+		// candidate.setStatus(Status.LOSER);
+		// }
+		// }
+		// }
+		// }
 	}
 
 	private Map<Integer, Integer> matchWinNumbers(String patterns,
@@ -80,12 +92,12 @@ public class BirjanController {
 	}
 
 	private List<Game> retrieveCandidates(Lottery lottery, DateTime date) {
-		return gameDao.findByFilter(lottery, Status.VALID, lottery.getRule()
+		return gameDao.findGameByFilter(Status.VALID, lottery, lottery.getRule()
 				.getFrom(date), lottery.getRule().getTo(date));
 	}
 
 	private Game retrieveWinGame(Lottery lottery, DateTime date) {
-		List<Game> list = gameDao.findByFilter(lottery, Status.OPEN, lottery
+		List<Game> list = gameDao.findGameByFilter(Status.OPEN, lottery, lottery
 				.getRule().getFrom(date), lottery.getRule().getTo(date));
 
 		if (list.size() == 1)

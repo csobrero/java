@@ -2,8 +2,15 @@ package com.mpx.lotery;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -17,40 +24,59 @@ import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wager;
-import com.mpx.birjan.service.dao.GameDao;
+import com.mpx.birjan.service.dao.FilterDao;
+import com.mpx.birjan.service.dao.IGenericDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-appCtx.xml")
 @Transactional
 public class GameDAOTest {
 
+	private IGenericDAO<Game> gameDao;
+	
 	@Autowired
-	private GameDao gameDao;
+	private FilterDao filterDao;
 
-	public void gameCreate() {
-		Wager wager = new Wager(1f, null);
+	@Test
+	public void gameCreate() throws IOException, ClassNotFoundException {
+		Wager wager = new Wager(1f);
 		
-//		Game game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
-//		game.setStatus(Status.OPEN);
-//		gameDao.create(game);
-//
-//		game = new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
-//		gameDao.create(game);
-//
-//		game = new Game(Lottery.NACIONAL_NOCTURNA, wager, "26");
-//		game.setStatus(Status.OPEN);
-//		gameDao.create(game);
+		Object[][] s = new Object[][] { { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 }, { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 }, { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 }, { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 }, { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 }, { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 }, { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 }, { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 }, { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 }, { "1", 2.50f, "xxxx", 1 },
+				{ "1", 2.50f, "xxxx", 1 } };
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(s);
+		byte[] data = baos.toByteArray();
+		
+		
+		Game game = new Game(Lottery.NACIONAL_PRIMERA, new Date(), data);
+		gameDao.create(game);
+
+		Game game2 = gameDao.getById(game.getId());
+		
+		ObjectInputStream ois = new ObjectInputStream (new ByteArrayInputStream(game2.getData()));  
+		s = (Object[][]) ois.readObject ();  
+	    System.out.println();
 	}
 
 	@Test
 	public void findByFilter() {
 
-		gameCreate();
+//		gameCreate();
 
 		List<Game> all = gameDao.getAll();
 		assertTrue(all.size() > 3);
 
-		all = gameDao.findByFilter(Lottery.NACIONAL_PRIMERA, Status.OPEN, null, null);
+		all = filterDao.findGameByFilter(Status.OPEN, Lottery.NACIONAL_PRIMERA,null, null);
 		System.out.println(all.size());
 		assertTrue(all.size() == 1);
 		
@@ -59,7 +85,7 @@ public class GameDAOTest {
 				dt.dayOfMonth().get(), 0, 0, 0, 0); //today 00h
 		DateTime to = from.plusDays(1); //today 24h
 
-		all = gameDao.findByFilter(Lottery.NACIONAL_PRIMERA, null, from, to);
+		all = filterDao.findGameByFilter(null, Lottery.NACIONAL_PRIMERA, from, to);
 		System.out.println(all.size());
 		assertTrue(all.size() > 2);
 	}
@@ -78,5 +104,11 @@ public class GameDAOTest {
 //		System.out.println(all.size());
 //		assertTrue(all.size() == 1);
 //	}
+
+	@Resource(name="genericJpaDAO")
+	public final void setEmployeeDao(final IGenericDAO<Game> daoToSet) {
+		gameDao = daoToSet;
+		gameDao.setClazz(Game.class);
+	}
 
 }

@@ -32,13 +32,13 @@
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 	
-	<bean id="personWebService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<!--bean id="personWebService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
     <property name="serviceInterface" value="com.mpx.birjan.service.IPersonService"/>
     <property name="wsdlDocumentUrl" value="http://localhost:8081/birjanws?wsdl"/>
     <property name="namespaceUri" value="http://impl.service.birjan.mpx.com/"/>
     <property name="serviceName" value="birjanws"/>
     <property name="portName" value="BirjanServiceEndpointPort"/>
-</bean>
+</bean-->
 	
 	<!--bean id="employeeDAO" class="com.mpx.birjan.service.dao.EmployeeDAO">
 	

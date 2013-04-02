@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class CustomerPage extends JPanel {
+public class CustomerView extends JPanel {
 	
 	private JTextField textField;
 	private JTable table;
@@ -26,7 +26,7 @@ public class CustomerPage extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public CustomerPage() {
+	public CustomerView() {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		
 		Box verticalBox = Box.createVerticalBox();

@@ -28,4 +28,17 @@ public class BirjanUtils {
 		return hash + hex;
 	}
 
+	public static Date getDate(String day) {
+		DateTime dt = new DateTime(new Date()).minusDays(-4);
+		if(day!=null){
+			for (int i = 0; i < 11; i++) {
+				if(day.equals(dt.getDayOfMonth())){
+					return dt.toDate();
+				}
+				dt.plusDays(1);
+			}
+		}
+		return null;
+	}
+
 }
