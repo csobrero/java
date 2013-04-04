@@ -16,6 +16,8 @@ import org.joda.time.TimeOfDay;
 import org.junit.Test;
 
 import com.google.common.base.Preconditions;
+import com.mpx.birjan.core.Rule;
+import com.mpx.birjan.service.impl.BirjanUtils;
 
 public class TimeTest {
 
@@ -140,9 +142,9 @@ public class TimeTest {
 	
 	@Test
 	public void arraycompare22() {
-		Integer x= 3600;
+		List<String> list = BirjanUtils.retrieveVariantAvailability(Rule.National, "3");
 		
-		System.out.println(x.toHexString(86400));
+		System.out.println(list);
 	}
 	
 	@Test

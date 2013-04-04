@@ -63,4 +63,12 @@ public class Draw extends AbstractEntity implements Serializable {
 		return numbers;
 	}
 
+	public final void setNumbers(String[] numbers) {
+		this.numbers = numbers;
+	}
+
+	public final void setStatus(Status status) {
+		this.status = status;
+	}
+
 }

@@ -107,8 +107,9 @@ public class TicketView extends JPanel {
 		comboBox_1 = new JComboBox();
 		comboBox_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String selected = ((String)comboBox_1.getSelectedItem());
-				comboBox_2.setModel(new DefaultComboBoxModel(controller.getCombo(selected)));
+				String day = comboBox.getSelectedItem().toString().split(" ")[2];
+				String selected = comboBox_1.getSelectedItem().toString();
+				comboBox_2.setModel(new DefaultComboBoxModel(controller.getCombo(selected, day)));
 				comboBox_2.setEnabled(true);
 				comboBox_2.requestFocusInWindow();
 			}
@@ -196,7 +197,8 @@ public class TicketView extends JPanel {
 
 	public void reset(){
 		buildJTable(createModel(true));
-		comboBox_1.setModel(new DefaultComboBoxModel(controller.getCombo("LOTERIA")));
+		String day = comboBox.getSelectedItem().toString().split(" ")[2];
+		comboBox_1.setModel(new DefaultComboBoxModel(controller.getCombo("LOTERIA", day)));
 		comboBox_1.requestFocusInWindow();
 		comboBox_2.setModel(new DefaultComboBoxModel());
 		comboBox_2.setEnabled(false);

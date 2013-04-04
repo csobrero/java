@@ -17,7 +17,7 @@ import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.Wager;
-import com.mpx.birjan.core.BirjanController;
+import com.mpx.birjan.core.TransactionalManager;
 import com.mpx.birjan.service.IBirjanService;
 import com.mpx.birjan.service.dao.IGenericDAO;
 import com.mpx.birjan.service.dao.PersonDao;
@@ -26,7 +26,7 @@ import com.mpx.birjan.service.dao.PersonDao;
 public class BirjanServiceImpl implements IBirjanService {
 
 	@Autowired
-	private BirjanController controller;
+	private TransactionalManager controller;
 
 	@Autowired
 	private PersonDao personDao;
@@ -55,7 +55,7 @@ public class BirjanServiceImpl implements IBirjanService {
 		
 		Wager wager = new Wager(totalBet);
 		
-		Date date = BirjanUtils.getDate(day);
+		Date date = BirjanUtils.getDate(day).toDate();
 		
 		Lottery lottery = Lottery.valueOf((lotteryName+"_"+variant).toUpperCase());
 		

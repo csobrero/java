@@ -10,12 +10,8 @@ import com.mpx.birjan.bean.Person;
 
 @WebService
 public interface BirjanWebService {
-
-	long saveOrUpdatePerson(Long id, String name, String surname, String movile);
-
-	List<Person> findByFilter(String name, String surname, String movile);
-
-	String[] getComboOptions(String combo);
+	
+	String[] getComboOptions(String combo, String day);
 
 	String createGame(String lottery, String variant, String day,
 			Object[][] data);
@@ -26,5 +22,7 @@ public interface BirjanWebService {
 			String[] data);
 
 	String[] retrieveDraw(String lottery, String variant, String day);
+
+	void validateDraw(String lottery, String variant, String day);
 	
 }

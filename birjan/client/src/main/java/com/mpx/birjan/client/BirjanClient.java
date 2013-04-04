@@ -75,9 +75,9 @@ public class BirjanClient {
 		panel.setVisible(true);
 	}
 
-	public String[] getCombo(String comboName) {
+	public String[] getCombo(String comboName, String day) {
 		if (webService != null)
-			return webService.getComboOptions(comboName);
+			return webService.getComboOptions(comboName, day);
 		return new String[] { "" };
 	}
 
@@ -129,28 +129,39 @@ public class BirjanClient {
 		return dataVector;
 	}
 
-	public void updateDraw() {
-		
-		@SuppressWarnings("unchecked")
-		List<List<String>> vector = drawView.getTableModel().getDataVector();
-		
+	public void updateDraw(boolean viewOnly) {
 		String[] data = new String[20];
-		for (int i = 0; i < 10; i++) {
-			data[i] = vector.get(i).get(1);
-			data[i+10] = vector.get(i).get(3);
+
+		String lottery = drawView.getComboBox_1().getSelectedItem().toString();
+		String variant = drawView.getComboBox_2().getSelectedItem().toString();
+		String day = drawView.getComboBox().getSelectedItem().toString()
+				.split(" ")[2];
+
+		if (!viewOnly) {
+			@SuppressWarnings("unchecked")
+			List<List<String>> vector = drawView.getTableModel()
+					.getDataVector();
+
+			for (int i = 0; i < 10; i++) {
+				data[i] = vector.get(i).get(1);
+				data[i + 10] = vector.get(i).get(3);
+			}
+
+			webService.createDraw(lottery, variant, day, data);
 		}
 		
-		String lottery = ticketView.getComboBox_1().getSelectedItem()
-				.toString();
-		String variant = ticketView.getComboBox_2().getSelectedItem()
-				.toString();
-		String day = ticketView.getComboBox().getSelectedItem().toString().split(" ")[2];
-		
-		webService.createDraw(lottery, variant, day, data);
-		
 		data = webService.retrieveDraw(lottery, variant, day);
+
+		drawView.updateModel(data);
+
+	}
+
+	public void validateDraw() {
+		String lottery = drawView.getComboBox_1().getSelectedItem().toString();
+		String variant = drawView.getComboBox_2().getSelectedItem().toString();
+		String day = drawView.getComboBox().getSelectedItem().toString()
+				.split(" ")[2];
 		
-		drawView.reset();
-		
+		webService.validateDraw(lottery, variant, day);
 	}
 }

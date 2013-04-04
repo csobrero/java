@@ -70,6 +70,15 @@ public class DrawDAOTest {
 		assertEquals(1, filter.size());
 		
 	}
+	
+//	@Test
+	public void findAll() {
+		
+		List<Draw> all = drawDao.getAll();
+		
+		System.out.println();
+		
+	}
 
 	@Resource(name="genericJpaDAO")
 	public final void setEmployeeDao(final IGenericDAO<Draw> daoToSet) {

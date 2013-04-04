@@ -13,13 +13,16 @@ import java.util.regex.Pattern;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneLayout;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -32,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mpx.birjan.client.BirjanClient;
+import com.mpx.birjan.client.editor.NumberCellEditor;
 
 @Repository
 public class DrawView extends JPanel {
@@ -45,6 +49,8 @@ public class DrawView extends JPanel {
 
 	private JButton btnClear, btnDone;
 	private JTable table;
+
+	private JButton btnValidate;
 
 	public DrawView() {
 
@@ -92,6 +98,7 @@ public class DrawView extends JPanel {
 		comboBox.setSelectedIndex(0);
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				reset();
 			}
 		});
 		vb_2.add(comboBox);
@@ -102,9 +109,9 @@ public class DrawView extends JPanel {
 		comboBox_1 = new JComboBox();
 		comboBox_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String selected = ((String) comboBox_1.getSelectedItem());
-				comboBox_2.setModel(new DefaultComboBoxModel(controller
-						.getCombo(selected)));
+				String day = comboBox.getSelectedItem().toString().split(" ")[2];
+				String selected = comboBox_1.getSelectedItem().toString();
+				comboBox_2.setModel(new DefaultComboBoxModel(controller.getCombo(selected, day)));
 				comboBox_2.setEnabled(true);
 				comboBox_2.requestFocusInWindow();
 			}
@@ -118,11 +125,12 @@ public class DrawView extends JPanel {
 		comboBox_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buildJTable(createModel());
+				controller.updateDraw(true);
 				table.changeSelection(0, 1, false, false);
 				table.requestFocusInWindow();
 				btnClear.setEnabled(true);
-
 				btnDone.setEnabled(true);
+				table.setEnabled(true);
 			}
 		});
 		vb_2.add(comboBox_2);
@@ -157,7 +165,7 @@ public class DrawView extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (btnDone.isEnabled())
 					btnDone.setEnabled(false);// prevent double click.
-				controller.updateDraw();
+				controller.updateDraw(false);
 			}
 		});
 		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -165,15 +173,30 @@ public class DrawView extends JPanel {
 
 		Component hs_2 = Box.createHorizontalStrut(20);
 		hb_1.add(hs_2);
-
-		btnClear = new JButton("Clear");
-		btnClear.addActionListener(new ActionListener() {
+		
+				btnClear = new JButton("Clear");
+				btnClear.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						comboBox.setSelectedIndex(0);
+						reset();
+					}
+				});
+				btnClear.setFont(new Font("Tahoma", Font.BOLD, 10));
+				hb_1.add(btnClear);
+		
+		Component hs_1 = Box.createHorizontalStrut(20);
+		hb_1.add(hs_1);
+		
+		btnValidate = new JButton("Validar");
+		btnValidate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				reset();
+				if (btnValidate.isEnabled())
+					btnValidate.setEnabled(false);// prevent double click.
+				controller.validateDraw();
 			}
 		});
-		btnClear.setFont(new Font("Tahoma", Font.BOLD, 10));
-		hb_1.add(btnClear);
+		btnValidate.setVisible(false);
+		hb_1.add(btnValidate);
 	}
 
 	private String[] getdays() {
@@ -191,14 +214,37 @@ public class DrawView extends JPanel {
 	}
 
 	public void reset() {
-		buildJTable(createModel());
-		comboBox_1.setModel(new DefaultComboBoxModel(controller
-				.getCombo("LOTERIA")));
-		comboBox_1.requestFocusInWindow();
-		comboBox_2.setModel(new DefaultComboBoxModel());
-		comboBox_2.setEnabled(false);
-		btnClear.setEnabled(false);
-		btnDone.setEnabled(false);
+			buildJTable(createModel());
+			String day = comboBox.getSelectedItem().toString().split(" ")[2];
+			comboBox_1.setModel(new DefaultComboBoxModel(controller
+					.getCombo("LOTERIA", day)));
+			comboBox_1.requestFocusInWindow();
+			comboBox_2.setModel(new DefaultComboBoxModel());
+			comboBox_2.setEnabled(false);
+			btnClear.setEnabled(false);
+			btnDone.setEnabled(false);
+			table.setEnabled(false);
+		
+	}
+	
+	public void updateModel(String[] data) {
+		boolean validate = true;
+		if (data != null && data.length>0) {
+			btnDone.setEnabled(true);
+			for (int i = 0; i < data.length; i++) {
+				if (i < 10) {
+					getTableModel().setValueAt(data[i], i, 1);
+				} else {
+					getTableModel().setValueAt(data[i], i - 10, 3);
+				}
+				validate &= !data[i].equals("");
+			}
+		}
+		if(validate){
+			btnDone.setVisible(false);
+			btnClear.setVisible(false);
+			btnValidate.setVisible(true);
+		}
 	}
 
 	private void buildJTable(TableModel model) {
@@ -214,62 +260,14 @@ public class DrawView extends JPanel {
 		table.getColumnModel().getColumn(2).setMaxWidth(50);
 		table.getColumnModel().getColumn(3).setPreferredWidth(100);
 		table.getColumnModel().getColumn(3).setMaxWidth(100);
+		
+		table.getColumnModel().getColumn(1).setCellEditor(new NumberCellEditor());
+		table.getColumnModel().getColumn(3).setCellEditor(new NumberCellEditor());
 
-		DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
-			@Override
-			protected void setValue(Object value) {
-				if (value != null) {
-					if (Pattern.matches("\\d{4}", value.toString())) {
-						setText(value.toString());
-					} else
-						setText("");
-				}
-			}
-		};
-
-		table.getColumnModel().getColumn(1).setCellRenderer(cellRenderer);
-		table.getColumnModel().getColumn(3).setCellRenderer(cellRenderer);
-
-		// table.addKeyListener(new KeyAdapter() {
-		// @Override
-		// public void keyPressed(KeyEvent e) {
-		// switch (e.getKeyCode()) {
-		// case KeyEvent.VK_ENTER:
-		// if (btnDone.isEnabled())
-		// btnDone.doClick();
-		// break;
-		// case KeyEvent.VK_ESCAPE:
-		// reset();
-		// break;
-		// }
-		//
-		// }
-		// });
-
-		// table.getModel().addTableModelListener(new TableModelListener() {
-		//
-		// @Override
-		// public void tableChanged(TableModelEvent e) {
-		// if (e.getType() == TableModelEvent.UPDATE) {
-		// int row = e.getFirstRow();
-		// int column = e.getColumn();
-		// DefaultTableModel model = (DefaultTableModel) e.getSource();
-		//
-		// if (row == (model.getRowCount() - 2)
-		// && model.getValueAt(row, 3) != null
-		// && !model.getValueAt(row, 2).toString().equals("")
-		// && model.getValueAt(row, 1) != null) {
-		// model.setValueAt(String.valueOf(row + 2), row + 1, 0);
-		// model.addRow(new Object[] { "...", null, "", null });
-		// table.changeSelection((row + 1), 1, false, false);
-		// table.requestFocus();
-		// btnDone.setEnabled(true);
-		// }
-		// }
-		// }
-		// });
-
-		// table.updateUI();
+		table.getTableHeader().setReorderingAllowed(false);
+		table.setRowSelectionAllowed(false);
+		table.setColumnSelectionAllowed(false);
+		table.setEnabled(false);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
@@ -292,6 +290,7 @@ public class DrawView extends JPanel {
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
+			
 		};
 	}
 

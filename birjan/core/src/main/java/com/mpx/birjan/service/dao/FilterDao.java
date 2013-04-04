@@ -74,6 +74,10 @@ public class FilterDao {
 
 	}
 
+	public List<Draw> findDrawByFilter(Lottery lottery, Date date) {
+		return findDrawByFilter(null, lottery, date);
+	}
+	
 	public List<Draw> findDrawByFilter(Status status, Lottery lottery, Date date) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Draw> cq = cb.createQuery(Draw.class);
