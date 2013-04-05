@@ -52,10 +52,17 @@ public class MainView extends JFrame {
 				controller.actionMenu("Jugar");
 			}
 		});
+		JMenuItem checkItem4 = new JMenuItem("Balance");
+		checkItem4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.actionMenu("Jugar");
+			}
+		});
 		JMenuItem helpItem1 = new JMenuItem("Acerca");
 		filemenu.add(checkItem1);
 		filemenu.add(checkItem2);
 		filemenu.add(checkItem3);
+		filemenu.add(checkItem4);
 		helpmenu.add(helpItem1);
 		menuBar.add(filemenu);
 		menuBar.add(helpmenu);

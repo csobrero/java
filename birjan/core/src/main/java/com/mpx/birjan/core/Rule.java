@@ -1,6 +1,7 @@
 package com.mpx.birjan.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,15 +26,15 @@ public abstract class Rule {
 	public static final int[] defaultWinRatios = {7,70,650,3500};
 
 	public static List<Rule> check(Rule[] rules, DateTime date) {
-		List<Rule> list = null;
-		for (Rule rule : rules) {
-			DateTime to = rule.getTo(date);
-			if (date.compareTo(to) < 0) {
-				if (list == null)
-					list = new ArrayList<Rule>();
-				list.add(rule);
+		List<Rule> list = new ArrayList<Rule>();
+		if (date.isAfterNow())
+			list = Arrays.asList(rules);
+		else
+			for (Rule rule : rules) {
+				DateTime to = rule.getTo(date);
+				if (date.isBefore(to))
+					list.add(rule);
 			}
-		}
 		return list;
 	}
 	
@@ -52,13 +53,6 @@ public abstract class Rule {
 		private final int minutesFrom;
 		private final int hourTo;
 		private final int minutesTo;
-
-		public static List<String> toList() {
-			List<String> list = new ArrayList<String>();
-			for (VARIANT variant : Nacional.VARIANT.values())
-				list.add(variant.toString());
-			return list;
-		}
 	}
 
 	public Rule(VARIANT variant) {

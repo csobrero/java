@@ -1,7 +1,6 @@
 package com.mpx.birjan.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +23,6 @@ import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wager;
-import com.mpx.birjan.core.Rule.Nacional;
 import com.mpx.birjan.service.IPersonService;
 import com.mpx.birjan.service.dao.FilterDao;
 import com.mpx.birjan.service.dao.IGenericDAO;
@@ -60,65 +58,6 @@ public class TransactionalManager {
 
 	public List<Person> findByFilter(String name, String surname, String movile) {
 		return personService.findByFilter(name, surname, movile);
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void processWinners(Lottery lottery, DateTime date) {
-
-		Game winGame = retrieveWinGame(lottery, date);
-
-		// if (winGame != null) {
-		// List<Game> list = retrieveCandidates(lottery, date);
-		//
-		// if (!list.isEmpty()) {
-		// for (Game candidate : list) {
-		//
-		// Map<Integer, Integer> winPositions = matchWinNumbers(
-		// winGame.getNumbers(), candidate.getNumbers());
-		//
-		// if (winPositions != null) {
-		//
-		// float betAmount = candidate.getWager().getBetAmount();
-		// float winAmount = lottery.getRule().calculateWinAmount(betAmount,
-		// winPositions);
-		//
-		// candidate.getWager().setWinAmount(winAmount);
-		// candidate.setStatus(Status.WINNER);
-		//
-		// } else {
-		// candidate.setStatus(Status.LOSER);
-		// }
-		// }
-		// }
-		// }
-	}
-
-	private Map<Integer, Integer> matchWinNumbers(String patterns,
-			String candidate) {
-		Map<Integer, Integer> hits = null;
-		int k = 0;
-		for (int i = 3; i < 80; i += 4) {
-			if (candidate.charAt(i) == patterns.charAt(i)) {
-				k = 1;
-				for (int j = (i - 1); j > (i - 4); j--) {
-					if (candidate.charAt(j) == patterns.charAt(j))
-						k++;
-					else if (candidate.charAt(j) == 'x')
-						break;
-					else {
-						k = 0;
-						break;
-					}
-				}
-				if (k > 0) {
-					if (hits == null)
-						hits = new HashMap<Integer, Integer>();
-					hits.put((i + 1) / 4, k);
-					k = 0;
-				}
-			}
-		}
-		return hits;
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
@@ -166,59 +105,71 @@ public class TransactionalManager {
 		return null;
 	}
 
-	private List<Game> retrieveCandidates(Lottery lottery, DateTime date) {
-		return filterDao.findGameByFilter(Status.VALID, lottery, lottery.getRule()
-				.getFrom(date), lottery.getRule().getTo(date));
-	}
-
-	private Game retrieveWinGame(Lottery lottery, DateTime date) {
-		List<Game> list = filterDao.findGameByFilter(Status.OPEN, lottery, lottery
-				.getRule().getFrom(date), lottery.getRule().getTo(date));
-
-		if (list.size() == 1)
-			return list.get(0);
-
-		return null;
-	}
-
-	public String[] getComboOptions(String combo, String day) {
+	public String[] getComboOptions(String view, String combo, String day) {
 		List<String> list = new ArrayList<String>();
 		if(combo.equalsIgnoreCase("loteria")){
 			return new String[]{"NACIONAL","PROVINCIA"};
 		}
 		
-		list = BirjanUtils.retrieveVariantAvailability(Rule.National, day);
+		list = BirjanUtils.retrieveVariantAvailability(view, Rule.National, day);
 		
-//		list = Nacional.VARIANT.toList();
 		return list.toArray(new String[list.size()]);
 		
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public String createGame(String lotteryName, String variant, String day,
-			Object[][] data) {
-		
+			Object[][] data) {	
 //		Person person = (personId != null) ? personDao.getById(personId) : null;
-
+		
+		DateTime date = BirjanUtils.getDate(day);
+		Lottery lottery = Lottery.valueOf((lotteryName+"_"+variant).toUpperCase());
+		
+		if(!BirjanUtils.isValid(lottery, date))
+			throw new RuntimeException("Invalid entry");
+		
 		float totalBet = 0;
 		for (Object[] row : data) {
-			totalBet += (Float)row[1];			
+			totalBet += (Float)row[1];
 		}
 		
 		Wager wager = new Wager(totalBet);
 		
-		Date date = BirjanUtils.getDate(day).toDate();
-		
-		Lottery lottery = Lottery.valueOf((lotteryName+"_"+variant).toUpperCase());
-		
 		byte[] serialData = SerializationUtils.serialize(data);
 
-		Game game = new Game(lottery, date, wager, serialData);
+		Game game = new Game(lottery, date.toDate(), wager, serialData);
 		gameDao.create(game);
 		
-
 		System.out.println(game.getHash());
 		return game.getHash();
+	}
+
+	public String[] retriveBalance(String lotteryName, String variant, String day) {
+		Preconditions.checkNotNull(lotteryName);
+		Preconditions.checkNotNull(variant);
+		Preconditions.checkNotNull(day);
+		
+		Date date = BirjanUtils.getDate(day).toDate();
+		Lottery lottery = Lottery.valueOf((lotteryName+"_"+variant).toUpperCase());
+		
+		List<Game> games = filterDao.findGameByFilter(Status.OPEN, lottery, date);
+		if (games != null && !games.isEmpty()) {
+			List<String> results = new ArrayList<String>();
+			Object[][] dataVector = null;
+			Map<String, Byte[]> m = new HashMap<String, Byte[]>();
+			for (Game game : games) {
+//				m.put(game.getHash(), game.getData());
+				
+				dataVector = (Object[][]) SerializationUtils.deserialize(game
+						.getData());
+				for (Object[] data : dataVector) {
+//					model.addRow(data);
+				}
+			}
+		}
+		
+		
+		return null;
 	}
 
 	@Resource(name="genericJpaDAO")
@@ -232,5 +183,33 @@ public class TransactionalManager {
 		gameDao = daoToSet;
 		gameDao.setClazz(Game.class);
 	}
+
+//	private Map<Integer, Integer> matchWinNumbers(String patterns,
+//			String candidate) {
+//		Map<Integer, Integer> hits = null;
+//		int k = 0;
+//		for (int i = 3; i < 80; i += 4) {
+//			if (candidate.charAt(i) == patterns.charAt(i)) {
+//				k = 1;
+//				for (int j = (i - 1); j > (i - 4); j--) {
+//					if (candidate.charAt(j) == patterns.charAt(j))
+//						k++;
+//					else if (candidate.charAt(j) == 'x')
+//						break;
+//					else {
+//						k = 0;
+//						break;
+//					}
+//				}
+//				if (k > 0) {
+//					if (hits == null)
+//						hits = new HashMap<Integer, Integer>();
+//					hits.put((i + 1) / 4, k);
+//					k = 0;
+//				}
+//			}
+//		}
+//		return hits;
+//	}
 
 }

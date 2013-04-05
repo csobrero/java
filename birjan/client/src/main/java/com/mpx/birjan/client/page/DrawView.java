@@ -111,7 +111,7 @@ public class DrawView extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				String day = comboBox.getSelectedItem().toString().split(" ")[2];
 				String selected = comboBox_1.getSelectedItem().toString();
-				comboBox_2.setModel(new DefaultComboBoxModel(controller.getCombo(selected, day)));
+				comboBox_2.setModel(new DefaultComboBoxModel(controller.getCombo("draw",selected, day)));
 				comboBox_2.setEnabled(true);
 				comboBox_2.requestFocusInWindow();
 			}
@@ -217,7 +217,7 @@ public class DrawView extends JPanel {
 			buildJTable(createModel());
 			String day = comboBox.getSelectedItem().toString().split(" ")[2];
 			comboBox_1.setModel(new DefaultComboBoxModel(controller
-					.getCombo("LOTERIA", day)));
+					.getCombo("ticket", "LOTERIA", day)));
 			comboBox_1.requestFocusInWindow();
 			comboBox_2.setModel(new DefaultComboBoxModel());
 			comboBox_2.setEnabled(false);

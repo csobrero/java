@@ -13,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.pojomatic.annotations.AutoProperty;
@@ -39,6 +41,7 @@ public class Game extends AbstractEntity implements Serializable {
 	private Lottery lottery;
 
 	@NotNull
+	@Temporal(TemporalType.DATE)
 	private Date date;
 
 	@OneToOne(cascade = CascadeType.ALL)
@@ -49,10 +52,6 @@ public class Game extends AbstractEntity implements Serializable {
 	private byte[] data;
 
 	public Game() {
-	}
-
-	public Game(Lottery lottery, Date date, byte[] data) {
-		this(Status.OPEN, lottery, date, null, data);
 	}
 
 	public Game(Lottery lottery, Date date, Wager wager, byte[] data) {

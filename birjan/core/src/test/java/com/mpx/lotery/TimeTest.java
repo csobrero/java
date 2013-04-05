@@ -142,7 +142,12 @@ public class TimeTest {
 	
 	@Test
 	public void arraycompare22() {
-		List<String> list = BirjanUtils.retrieveVariantAvailability(Rule.National, "3");
+		List<String> list = BirjanUtils.retrieveVariantAvailability("ticket", Rule.National, "6");
+		
+		System.out.println(list);
+		
+
+		list = BirjanUtils.retrieveVariantAvailability("draw", Rule.National, "6");
 		
 		System.out.println(list);
 	}

@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import com.mpx.birjan.client.page.BalanceView;
 import com.mpx.birjan.client.page.CheckCodeView;
 import com.mpx.birjan.client.page.DrawView;
 import com.mpx.birjan.client.page.MainView;
@@ -42,6 +43,9 @@ public class BirjanClient {
 	
 	@Autowired
 	private CheckCodeView checkCodeView;
+	
+	@Autowired
+	private BalanceView balanceView;
 
 	@Autowired
 	private DrawView drawView;
@@ -61,8 +65,8 @@ public class BirjanClient {
 	}
 	
 	public void resetView() {
-		setView(drawView);
-		drawView.reset();
+		setView(balanceView);
+		balanceView.reset();
 	}
 
 	private void setView(JPanel panel) {
@@ -75,9 +79,9 @@ public class BirjanClient {
 		panel.setVisible(true);
 	}
 
-	public String[] getCombo(String comboName, String day) {
+	public String[] getCombo(String view, String comboName, String day) {
 		if (webService != null)
-			return webService.getComboOptions(comboName, day);
+			return webService.getComboOptions(view, comboName, day);
 		return new String[] { "" };
 	}
 
@@ -115,12 +119,18 @@ public class BirjanClient {
 	public void actionMenu(String menu) {
 		if(menu.equals("Jugar")){
 			setView(ticketView);
+			ticketView.reset();
 		}
 		if(menu.equals("Check")){
 			setView(checkCodeView);
 		}
 		if(menu.equals("Loteria")){
 			setView(drawView);
+			drawView.reset();
+		}
+		if(menu.equals("Balance")){
+			setView(balanceView);
+			balanceView.reset();
 		}
 	}
 
@@ -163,5 +173,15 @@ public class BirjanClient {
 				.split(" ")[2];
 		
 		webService.validateDraw(lottery, variant, day);
+	}
+
+	public void retriveBalance() {
+		String lottery = balanceView.getComboBox_1().getSelectedItem().toString();
+		String variant = balanceView.getComboBox_2().getSelectedItem().toString();
+		String day = balanceView.getComboBox().getSelectedItem().toString()
+				.split(" ")[2];
+		
+		String[] data = webService.retriveBalance(lottery, variant, day);
+		
 	}
 }

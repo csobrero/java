@@ -15,8 +15,8 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	private TransactionalManager txManager;
 
 	@Override
-	public String[] getComboOptions(String combo, String day) {
-		return txManager.getComboOptions(combo, day);
+	public String[] getComboOptions(String view, String combo, String day) {
+		return txManager.getComboOptions(view, combo, day);
 	}
 
 	@Override
@@ -47,6 +47,11 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	public void validateDraw(String lottery, String variant, String day) {
 		txManager.validateDraw(lottery, variant, day);
 		
+	}
+
+	@Override
+	public String[] retriveBalance(String lottery, String variant, String day) {
+		return txManager.retriveBalance(lottery, variant, day);
 	}
 
 }

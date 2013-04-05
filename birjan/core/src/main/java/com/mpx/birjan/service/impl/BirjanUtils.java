@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.joda.time.DateTime;
 
+import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.core.Rule;
 
 public class BirjanUtils {
@@ -35,7 +36,7 @@ public class BirjanUtils {
 	}
 
 	public static DateTime getDate(String day) {
-		DateTime dt = new DateTime(new Date()).minusDays(4);
+		DateTime dt = now().minusDays(4);
 		if(day!=null){
 			for (int i = 0; i < 11; i++) {
 				if(day.equals(String.valueOf(dt.getDayOfMonth()))){
@@ -59,17 +60,37 @@ public class BirjanUtils {
 		}
 	}
 
-	public static List<String> retrieveVariantAvailability(Rule[] rules, String day) {
+	public static List<String> retrieveVariantAvailability(String view,
+			Rule[] rules, String day) {
 		List<String> values = new ArrayList<String>();
 		DateTime date = BirjanUtils.getDate(day);
-		List<Rule> list = Rule.check(Rule.National, date);	
-		if(date.isAfterNow()){
-			list = Arrays.asList(Rule.National);
-		}
-		for (Rule rule : list) {
-			values.add(rule.getVariant().toString());
+		if (date != null) {
+			DateTime today = now().toDateMidnight().toDateTime();
+			DateTime tomorrow = today.plusDays(1);
+			for (Rule rule : rules) {
+				DateTime to = rule.getTo(today);
+				if (view.equals("ticket") && date.isAfter(today)
+						&& (date.isBefore(to) || date.isAfter(tomorrow)))
+					values.add(rule.getVariant().toString());
+				else if (view.equals("draw") && date.isBefore(tomorrow)
+						&& (date.isAfter(to) || date.isBefore(today)))
+					values.add(rule.getVariant().toString());
+			}
 		}
 		return values;
+	}
+
+	public static boolean isValid(Lottery lottery, DateTime date) {
+		DateTime today = now().toDateMidnight().toDateTime();
+		DateTime tomorrow = today.plusDays(1);
+		DateTime to = lottery.getRule().getTo(today);
+		if (date.isAfter(today) && (date.isBefore(to)) || date.isAfter(tomorrow))
+			return true;
+		return false;
+	}
+
+	public static DateTime now() {
+		return new DateTime(new Date());
 	}
 
 }

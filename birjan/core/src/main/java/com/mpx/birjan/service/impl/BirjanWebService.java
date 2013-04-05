@@ -11,7 +11,7 @@ import com.mpx.birjan.bean.Person;
 @WebService
 public interface BirjanWebService {
 	
-	String[] getComboOptions(String combo, String day);
+	String[] getComboOptions(String view, String combo, String day);
 
 	String createGame(String lottery, String variant, String day,
 			Object[][] data);
@@ -24,5 +24,7 @@ public interface BirjanWebService {
 	String[] retrieveDraw(String lottery, String variant, String day);
 
 	void validateDraw(String lottery, String variant, String day);
+
+	String[] retriveBalance(String lottery, String variant, String day);
 	
 }
