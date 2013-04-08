@@ -13,6 +13,8 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.TimeOfDay;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 
 import com.google.common.base.Preconditions;
@@ -38,7 +40,10 @@ public class TimeTest {
 
 		DateTime dateTime = new DateTime(dt.year().get(), dt.monthOfYear()
 				.get(), dt.dayOfMonth().get(), 23, 59, 59, 999);
-		System.out.println(dateTime);
+		
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd");
+		
+		System.out.println(fmt.print(dateTime));
 	}
 	
 //	@Test

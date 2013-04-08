@@ -7,11 +7,12 @@ import javax.jws.WebService;
 
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
+import com.mpx.birjan.bean.Wrapper;
 
 @WebService
 public interface BirjanWebService {
 	
-	String[] getComboOptions(String view, String combo, String day);
+	String[] populateCombo(String view, String combo, String day);
 
 	String createGame(String lottery, String variant, String day,
 			Object[][] data);
@@ -25,6 +26,8 @@ public interface BirjanWebService {
 
 	void validateDraw(String lottery, String variant, String day);
 
-	String[] retriveBalance(String lottery, String variant, String day);
+	Wrapper[] retriveGames(String lottery, String variant, String day);
+
+	boolean isDevelopment();
 	
 }

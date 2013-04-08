@@ -68,14 +68,14 @@ public class GameDAOTest {
 	    System.out.println();
 	}
 
-//	@Test
-//	public void findByFilter() {
-//
-////		gameCreate();
-//
-//		List<Game> all = gameDao.getAll();
-//		assertTrue(all.size() > 3);
-//
+	@Test
+	public void findByFilter() {
+
+//		gameCreate();
+
+		List<Game> all = gameDao.getAll();
+		assertTrue(all.size() > 3);
+
 //		all = filterDao.findGameByFilter(Status.OPEN, Lottery.NACIONAL_PRIMERA,null, null);
 //		System.out.println(all.size());
 //		assertTrue(all.size() == 1);
@@ -88,7 +88,7 @@ public class GameDAOTest {
 //		all = filterDao.findGameByFilter(null, Lottery.NACIONAL_PRIMERA, from, to);
 //		System.out.println(all.size());
 //		assertTrue(all.size() > 2);
-//	}
+	}
 	
 
 

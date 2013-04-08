@@ -1,6 +1,5 @@
 package com.mpx.birjan.client.page;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -13,7 +12,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,9 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ScrollPaneLayout;
-import javax.swing.border.LineBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -32,24 +28,12 @@ import javax.swing.table.TableModel;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mpx.birjan.client.BirjanClient;
-
 @Repository
-public class TicketView extends JPanel {
+public class TicketView extends AbstractView {
 	
 	private static final long serialVersionUID = 4334436586243521165L;
-	
-	@Autowired
-	private BirjanClient controller;
-
-	private JTable table;
-
-	private JComboBox comboBox_1,comboBox_2,comboBox;
-
-	private JButton btnClear,btnDone;
 	
 	public TicketView() {
 		this.setSize(800, 400);
@@ -110,7 +94,7 @@ public class TicketView extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				String day = comboBox.getSelectedItem().toString().split(" ")[2];
 				String selected = comboBox_1.getSelectedItem().toString();
-				comboBox_2.setModel(new DefaultComboBoxModel(controller.getCombo("ticket", selected, day)));
+				comboBox_2.setModel(new DefaultComboBoxModel(controller.populateCombo("ticket", selected, day)));
 				comboBox_2.setEnabled(true);
 				comboBox_2.requestFocusInWindow();
 			}
@@ -187,7 +171,7 @@ public class TicketView extends JPanel {
 		Locale locale = new Locale("es");
 		DateTime dt = new DateTime(new Date());
 		for (int i = 0; i < days.length; i++) {
-			if (dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
+			if (!development && dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
 				dt = dt.plusDays(1);
 			days[i] = dt.toString("EEEE", locale).toUpperCase() + "  "
 					+ dt.getDayOfMonth();
@@ -199,16 +183,13 @@ public class TicketView extends JPanel {
 	public void reset(){
 		buildJTable(createModel(true));
 		String day = comboBox.getSelectedItem().toString().split(" ")[2];
-		comboBox_1.setModel(new DefaultComboBoxModel(controller.getCombo("ticket", "LOTERIA", day)));
+		comboBox_1.setModel(new DefaultComboBoxModel(controller.populateCombo("ticket", "LOTERIA", day)));
 		comboBox_1.requestFocusInWindow();
 		comboBox_2.setModel(new DefaultComboBoxModel());
 		comboBox_2.setEnabled(false);
 		btnClear.setEnabled(false);
 		btnDone.setEnabled(false);
 	}
-	
-	
-
 	
 	private void buildJTable(TableModel model) {
 		table.setFont(new Font("Tahoma", Font.PLAIN, 24));
@@ -303,21 +284,5 @@ public class TicketView extends JPanel {
 						&& row != (this.getRowCount() - 1);
 			}
 		};
-	}
-
-	public DefaultTableModel getTableModel() {
-		return (DefaultTableModel)table.getModel();
-	}
-
-	public JComboBox getComboBox_1() {
-		return comboBox_1;
-	}
-
-	public JComboBox getComboBox_2() {
-		return comboBox_2;
-	}
-
-	public JComboBox getComboBox() {
-		return comboBox;
 	}
 }

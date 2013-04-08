@@ -115,7 +115,7 @@ public class PrintView extends JPanel {
 		btnPrint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				print();
-				controller.resetView();
+				controller.init();
 			}
 		});
 		horizontalBox.add(btnPrint);
@@ -126,7 +126,7 @@ public class PrintView extends JPanel {
 		btnCancel = new JButton("Cancelar");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.resetView();
+				controller.init();
 			}
 		});
 		horizontalBox.add(btnCancel);

@@ -23,6 +23,9 @@ import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wager;
+import com.mpx.birjan.bean.Wrapper;
+import com.mpx.birjan.core.Rule.Nacional;
+import com.mpx.birjan.core.Rule.VARIANT;
 import com.mpx.birjan.service.IPersonService;
 import com.mpx.birjan.service.dao.FilterDao;
 import com.mpx.birjan.service.dao.IGenericDAO;
@@ -106,15 +109,20 @@ public class TransactionalManager {
 	}
 
 	public String[] getComboOptions(String view, String combo, String day) {
-		List<String> list = new ArrayList<String>();
 		if(combo.equalsIgnoreCase("loteria")){
 			return new String[]{"NACIONAL","PROVINCIA"};
 		}
 		
-		list = BirjanUtils.retrieveVariantAvailability(view, Rule.National, day);
-		
+		List<String> list = new ArrayList<String>();
+		if (isDevelopment()) {
+			VARIANT[] values = VARIANT.values();
+			for (VARIANT variant : values) {
+				list.add(variant.name());
+			}
+		} else {
+			list = BirjanUtils.retrieveVariantAvailability(view, Rule.National, day);
+		}
 		return list.toArray(new String[list.size()]);
-		
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -125,7 +133,7 @@ public class TransactionalManager {
 		DateTime date = BirjanUtils.getDate(day);
 		Lottery lottery = Lottery.valueOf((lotteryName+"_"+variant).toUpperCase());
 		
-		if(!BirjanUtils.isValid(lottery, date))
+		if(!isDevelopment() && !BirjanUtils.isValid(lottery, date))
 			throw new RuntimeException("Invalid entry");
 		
 		float totalBet = 0;
@@ -144,7 +152,7 @@ public class TransactionalManager {
 		return game.getHash();
 	}
 
-	public String[] retriveBalance(String lotteryName, String variant, String day) {
+	public Wrapper[] retriveGames(String lotteryName, String variant, String day) {
 		Preconditions.checkNotNull(lotteryName);
 		Preconditions.checkNotNull(variant);
 		Preconditions.checkNotNull(day);
@@ -152,24 +160,15 @@ public class TransactionalManager {
 		Date date = BirjanUtils.getDate(day).toDate();
 		Lottery lottery = Lottery.valueOf((lotteryName+"_"+variant).toUpperCase());
 		
-		List<Game> games = filterDao.findGameByFilter(Status.OPEN, lottery, date);
+		List<Game> games = filterDao.findGameByFilter(Status.VALID, lottery, date);
+		Wrapper[] values = null;
 		if (games != null && !games.isEmpty()) {
-			List<String> results = new ArrayList<String>();
-			Object[][] dataVector = null;
-			Map<String, Byte[]> m = new HashMap<String, Byte[]>();
-			for (Game game : games) {
-//				m.put(game.getHash(), game.getData());
-				
-				dataVector = (Object[][]) SerializationUtils.deserialize(game
-						.getData());
-				for (Object[] data : dataVector) {
-//					model.addRow(data);
-				}
-			}
+			values = new Wrapper[games.size()];
+			for (int i = 0; i < values.length; i++) {
+				values[i] = new Wrapper(games.get(i).getHash(), games.get(i).getData());
+			}		
 		}
-		
-		
-		return null;
+		return values;
 	}
 
 	@Resource(name="genericJpaDAO")
@@ -182,6 +181,10 @@ public class TransactionalManager {
 	public final void setGameDao(final IGenericDAO<Game> daoToSet) {
 		gameDao = daoToSet;
 		gameDao.setClazz(Game.class);
+	}
+
+	public boolean isDevelopment() {
+		return true;
 	}
 
 //	private Map<Integer, Integer> matchWinNumbers(String patterns,

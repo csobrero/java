@@ -5,6 +5,7 @@ import javax.jws.WebService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mpx.birjan.bean.Wrapper;
 import com.mpx.birjan.core.TransactionalManager;
 
 @Service
@@ -15,7 +16,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	private TransactionalManager txManager;
 
 	@Override
-	public String[] getComboOptions(String view, String combo, String day) {
+	public String[] populateCombo(String view, String combo, String day) {
 		return txManager.getComboOptions(view, combo, day);
 	}
 
@@ -50,8 +51,13 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	public String[] retriveBalance(String lottery, String variant, String day) {
-		return txManager.retriveBalance(lottery, variant, day);
+	public Wrapper[] retriveGames(String lottery, String variant, String day) {
+		return txManager.retriveGames(lottery, variant, day);
+	}
+
+	@Override
+	public boolean isDevelopment() {
+		return txManager.isDevelopment();
 	}
 
 }
