@@ -38,19 +38,9 @@ import com.mpx.birjan.client.BirjanClient;
 import com.mpx.birjan.client.editor.NumberCellEditor;
 
 @Repository
-public class DrawView extends JPanel {
+public class DrawView extends AbstractView {
 
 	private static final long serialVersionUID = 4334436586243521165L;
-
-	@Autowired
-	private BirjanClient controller;
-
-	private JComboBox comboBox_1, comboBox_2, comboBox;
-
-	private JButton btnClear, btnDone;
-	private JTable table;
-
-	private JButton btnValidate;
 
 	public DrawView() {
 
@@ -160,7 +150,7 @@ public class DrawView extends JPanel {
 		Box hb_1 = Box.createHorizontalBox();
 		vb.add(hb_1);
 
-		btnDone = new JButton("Done");
+		btnDone = new JButton("Update");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnDone.isEnabled())
@@ -292,21 +282,5 @@ public class DrawView extends JPanel {
 			}
 			
 		};
-	}
-
-	public DefaultTableModel getTableModel() {
-		return (DefaultTableModel) table.getModel();
-	}
-
-	public JComboBox getComboBox_1() {
-		return comboBox_1;
-	}
-
-	public JComboBox getComboBox_2() {
-		return comboBox_2;
-	}
-
-	public JComboBox getComboBox() {
-		return comboBox;
 	}
 }

@@ -23,10 +23,11 @@
 	<bean id="personWebService"
 		class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="com.mpx.birjan.service.impl.BirjanWebService" />
-		<property name="wsdlDocumentUrl" value="http://localhost:8081/birjanws?wsdl" />
+		<property name="wsdlDocumentUrl" value="https://localhost:8081/birjanws?wsdl" />
 		<property name="namespaceUri" value="http://impl.service.birjan.mpx.com/" />
 		<property name="serviceName" value="birjanws" />
 		<property name="portName" value="BirjanServiceEndpointPort" />
+		
 	</bean>
 
 </beans>

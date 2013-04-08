@@ -114,7 +114,7 @@ public class TransactionalManager {
 		}
 		
 		List<String> list = new ArrayList<String>();
-		if (isDevelopment()) {
+		if (!isDevelopment()) {
 			VARIANT[] values = VARIANT.values();
 			for (VARIANT variant : values) {
 				list.add(variant.name());

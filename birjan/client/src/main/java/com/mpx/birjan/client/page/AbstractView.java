@@ -22,7 +22,7 @@ public abstract class AbstractView extends JPanel {
 
 	protected JComboBox comboBox, comboBox_1, comboBox_2;
 
-	protected JButton btnDone, btnClear, btnExport;
+	protected JButton btnDone, btnClear, btnExport, btnValidate;;
 	
 	protected boolean development = false;
 	
