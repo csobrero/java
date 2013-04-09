@@ -23,16 +23,50 @@
 
     <tx:annotation-driven/>
 
-    <bean class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean" id="entityManagerFactory">
+    <!--bean class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean" id="entityManagerFactory">
         <property name="persistenceUnitName" value="MyPersistenceUnit"/>
+    </bean-->
+    
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceXmlLocation" value="classpath:persistence2.xml" />
+        <property name="persistenceUnitName" value="PUnit" />             
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:file:data/birjan"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
     </bean>
 
     <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
     
-    
+    <!-- AUTH -->
 
+	<!--bean id="springSecurityHandler"
+		class="SpringPlainTextPasswordValidationCallbackHandler">
+		<property name="authenticationManager" ref="authenticationManager" />
+	</bean-->
+
+	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+		<property name="providers">
+			<bean
+				class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+				<property name="userDetailsService" ref="userDetailsService" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="userDetailsService"
+		class="org.springframework.security.provisioning.JdbcUserDetailsManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+	<!-- AUTH -->
 	<!--bean class="org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter">
 		<property name="baseAddress" value="http://localhost:8081/" />
 	</bean-->

@@ -11,6 +11,8 @@
 		<class>com.mpx.birjan.bean.Wager</class>
 		<class>com.mpx.birjan.bean.Game</class>
 		<class>com.mpx.birjan.bean.Draw</class>
+		<class>com.mpx.birjan.bean.Users</class>
+		<class>com.mpx.birjan.bean.Authorities</class>
 		
 		
 		<properties>
