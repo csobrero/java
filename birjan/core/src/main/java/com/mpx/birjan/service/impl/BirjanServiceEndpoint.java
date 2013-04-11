@@ -9,7 +9,7 @@ import com.mpx.birjan.bean.Wrapper;
 import com.mpx.birjan.core.TransactionalManager;
 
 @Service
-@WebService(serviceName = "birjanws")
+@WebService(serviceName = "birjanws", endpointInterface="com.mpx.birjan.service.impl.BirjanWebService")
 public class BirjanServiceEndpoint implements BirjanWebService {
 
 	@Autowired

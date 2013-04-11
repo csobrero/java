@@ -4,18 +4,17 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
-import java.io.FileOutputStream;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
 import javax.swing.JPanel;
+import javax.xml.ws.BindingProvider;
 
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -25,8 +24,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import com.mpx.birjan.bean.Wrapper;
-import com.mpx.birjan.client.page.ControlView;
 import com.mpx.birjan.client.page.CheckCodeView;
+import com.mpx.birjan.client.page.ControlView;
 import com.mpx.birjan.client.page.DrawView;
 import com.mpx.birjan.client.page.MainView;
 import com.mpx.birjan.client.page.PrintView;
@@ -74,6 +73,21 @@ public class BirjanClient {
 	}
 	
 	public void init() {
+		BindingProvider bindingProvider = (BindingProvider) webService;
+
+		Map<String, Object> reqCtx = bindingProvider.getRequestContext();
+
+		reqCtx.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, "true");
+		reqCtx.put(BindingProvider.USERNAME_PROPERTY, "xris");
+		reqCtx.put(BindingProvider.PASSWORD_PROPERTY, "xris");
+		
+//		Authenticator.setDefault(new Authenticator() {
+//	        @Override
+//	        protected PasswordAuthentication getPasswordAuthentication() {
+//	            return new PasswordAuthentication("xris", "xris".toCharArray());
+//	        }
+//	    });
+		
 		setView(controlView);
 		controlView.reset();
 		
@@ -82,6 +96,8 @@ public class BirjanClient {
 			ticketView.setDevelopment(development);
 			controlView.setDevelopment(development);
 		}
+		
+		
 	}
 
 	private void setView(JPanel panel) {
