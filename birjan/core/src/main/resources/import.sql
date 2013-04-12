@@ -1,0 +1,1 @@
+//insert into users (created, enabled, password, username) values (CURRENT_TIMESTAMP(3), true, "xris", "xris");

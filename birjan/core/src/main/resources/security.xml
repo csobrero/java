@@ -7,8 +7,7 @@
 
 	<global-method-security secured-annotations="enabled" />
 
-	<http entry-point-ref="authenticationEntryPoint">
-		<intercept-url pattern="/**" access="ROLE_USER" />
+	<http>
 		<session-management>
 			<concurrency-control max-sessions="1"
 				error-if-maximum-exceeded="true" />

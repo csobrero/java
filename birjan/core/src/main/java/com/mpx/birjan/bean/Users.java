@@ -2,6 +2,7 @@ package com.mpx.birjan.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -14,8 +15,11 @@ public class Users extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = 6877584950579668093L;
 
+	@Column(unique = true)
 	private String username;
+	
 	private String password;
+	
 	private boolean enabled;
 
 	public Users() {

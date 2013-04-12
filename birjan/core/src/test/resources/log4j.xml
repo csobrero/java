@@ -12,6 +12,11 @@
 			<param name="LevelMax" value="FATAL" />
 		</filter>
 	</appender>
+
+	<category name="org.springframework" additivity="false">
+		<level value="info" />
+		<appender-ref ref="STDOUT" />
+	</category>
 	
 	<category name="org.hibernate.tool.hbm2ddl" additivity="false">
 		<level value="info" />

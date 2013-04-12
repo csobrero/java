@@ -15,7 +15,7 @@
             http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
             http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 
-	<import resource="classpath:security.xml" />
+	<!--import resource="classpath:security.xml" /-->
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<!--import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" /-->
@@ -50,7 +50,7 @@
 
 	<!-- AUTH -->
 
-	<!--bean id="authenticationManager"
+	<bean id="authenticationManager"
 		class="org.springframework.security.authentication.ProviderManager">
 		<property name="providers">
 			<bean
@@ -63,7 +63,7 @@
 	<bean id="userDetailsService"
 		class="org.springframework.security.provisioning.JdbcUserDetailsManager">
 		<property name="dataSource" ref="dataSource" />
-	</bean-->
+	</bean>
 
 
 
@@ -72,10 +72,12 @@
 		<jaxws:inInterceptors>
 			<ref bean="authenticationInterceptor" />
 		</jaxws:inInterceptors>
+		<jaxws:properties>
+      <entry key="#{T(org.apache.cxf.ws.security.SecurityConstants).USERNAME_TOKEN_VALIDATOR}">
+        <ref bean="usernameTokenValidator"/>
+      </entry>
+    </jaxws:properties>
 	</jaxws:endpoint>
-	
-		<bean id="myPasswordCallback"
-      		class="com.mpx.birjan.core.ServerPasswordCallback"/>
 
 	<bean id="authenticationInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
 		<constructor-arg>
@@ -86,9 +88,6 @@
 				<entry
 					key="#{T(org.apache.ws.security.handler.WSHandlerConstants).PASSWORD_TYPE}"
 					value="#{T(org.apache.ws.security.WSConstants).PW_TEXT}" />
-				<entry key="passwordCallbackRef">
-                  <ref bean="myPasswordCallback"/>
-               </entry>
 			</map>
 		</constructor-arg>
 	</bean>

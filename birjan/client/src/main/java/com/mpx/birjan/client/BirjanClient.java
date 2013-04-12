@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +19,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import com.mpx.birjan.bean.Wrapper;
@@ -58,6 +58,9 @@ public class BirjanClient {
 	@Autowired
 	private DrawView drawView;
 
+	private String user;
+	private String password;
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -73,13 +76,17 @@ public class BirjanClient {
 	}
 	
 	public void init() {
-		BindingProvider bindingProvider = (BindingProvider) webService;
-
-		Map<String, Object> reqCtx = bindingProvider.getRequestContext();
-
-		reqCtx.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, "true");
-		reqCtx.put(BindingProvider.USERNAME_PROPERTY, "xris");
-		reqCtx.put(BindingProvider.PASSWORD_PROPERTY, "xris");
+//		BindingProvider bindingProvider = (BindingProvider) webService;
+//
+//		Map<String, Object> reqCtx = bindingProvider.getRequestContext();
+//
+//		reqCtx.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, "true");
+//		reqCtx.put(BindingProvider.USERNAME_PROPERTY, "xris");
+//		reqCtx.put(BindingProvider.PASSWORD_PROPERTY, "xris");
+		
+//		CredentialsHolder.set(new CredentialsHolder.Crendentials("xris", "xris"));
+		this.user = "xris";
+		this.password = "xris";
 		
 //		Authenticator.setDefault(new Authenticator() {
 //	        @Override
@@ -245,5 +252,13 @@ public class BirjanClient {
 			
 			controlView.setWorkbook(wb);
 		}
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public final String getUser() {
+		return user;
 	}
 }
