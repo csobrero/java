@@ -77,8 +77,6 @@ public class TicketView extends AbstractView {
 		vb_2.add(vs_6);
 		
 		comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(getdays()));
-		comboBox.setSelectedIndex(0);
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				reset();
@@ -182,6 +180,8 @@ public class TicketView extends AbstractView {
 
 	public void reset(){
 		buildJTable(createModel(true));
+		comboBox.setModel(new DefaultComboBoxModel(getdays()));
+		comboBox.setSelectedIndex(0);
 		String day = comboBox.getSelectedItem().toString().split(" ")[2];
 		comboBox_1.setModel(new DefaultComboBoxModel(controller.populateCombo("ticket", "LOTERIA", day)));
 		comboBox_1.requestFocusInWindow();

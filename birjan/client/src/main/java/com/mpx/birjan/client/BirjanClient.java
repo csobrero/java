@@ -102,6 +102,7 @@ public class BirjanClient {
 		if(development){
 			ticketView.setDevelopment(development);
 			controlView.setDevelopment(development);
+			drawView.setDevelopment(development);
 		}
 		
 		
@@ -118,7 +119,14 @@ public class BirjanClient {
 	}
 
 	public String[] populateCombo(String view, String comboName, String day) {
-		return webService.populateCombo(view, comboName, day);
+		String[] result = null;
+		try {
+			result = webService.populateCombo(view, comboName, day);
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return result;
 	}
 
 	public void printHash() {

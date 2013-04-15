@@ -9,10 +9,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 

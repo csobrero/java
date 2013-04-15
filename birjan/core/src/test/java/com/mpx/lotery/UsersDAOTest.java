@@ -36,6 +36,13 @@ public class UsersDAOTest {
 
 		Users users = new Users("xris", "xris", true);
 		usersDao.create(users);
+		
+		Authorities authorities = new Authorities("xris", "ROLE_ADMIN");
+		authoritiesDao.create(authorities);
+		authorities = new Authorities("xris", "ROLE_MANAGER");
+		authoritiesDao.create(authorities);
+		authorities = new Authorities("xris", "ROLE_USER");
+		authoritiesDao.create(authorities);
 
 	}
 	
@@ -44,6 +51,9 @@ public class UsersDAOTest {
 
 		List<Users> all = usersDao.getAll();
 		assertNotNull(all);
+		
+		List<Authorities> allAuth = authoritiesDao.getAll();
+		assertNotNull(allAuth);
 
 	}
 

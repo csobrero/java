@@ -21,11 +21,6 @@
 			<artifactId>birjan</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>com.jgoodies</groupId>
-			<artifactId>forms</artifactId>
-			<version>1.3.0</version>
-		</dependency>
 
 		<!-- TEST's DEPENDENCIES -->
 		<dependency>

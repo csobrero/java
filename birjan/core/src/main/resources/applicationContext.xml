@@ -15,22 +15,17 @@
             http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
             http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 
-	<!--import resource="classpath:security.xml" /-->
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	<!--import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" /-->
 
 	<context:component-scan base-package="com.mpx.birjan" />
 
 	<tx:annotation-driven />
-
-	<!--bean class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean" 
-		id="entityManagerFactory"> <property name="persistenceUnitName" value="MyPersistenceUnit"/> 
-		</bean -->
+	
+	<security:global-method-security secured-annotations="enabled" />
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="persistenceXmlLocation" value="classpath:persistence2.xml" />
+		<property name="persistenceXmlLocation" value="classpath:persistence.xml" />
 		<property name="persistenceUnitName" value="PUnit" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
@@ -106,42 +101,5 @@
 			<ref bean="logOutbound" />
 		</cxf:inFaultInterceptors>
 	</cxf:bus>
-
-	<bean id="authenticationEntryPoint"
-		class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
-		<property name="realmName" value="birjan" />
-	</bean>
-
-	<!-- AUTH -->
-	<!--bean class="org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter"> 
-		<property name="baseAddress" value="http://localhost:8081/" /> </bean>
-
-	<bean
-		class="org.springframework.remoting.jaxws.SimpleHttpServerJaxWsServiceExporter">
-		<property name="server" ref="myServer" />
-	</bean>
-
-	<bean id="myServer" class="com.sun.net.httpserver.HttpsServer"
-		factory-method="create" init-method="start" autowire="byName">
-		<constructor-arg ref="socket" />
-		<constructor-arg value="0" />
-	</bean>
-
-	<bean id="socket" class="java.net.InetSocketAddress">
-		<constructor-arg value="localhost" />
-		<constructor-arg value="8081" />
-	</bean>
-
-	<bean id="httpsConfigurator" class="com.sun.net.httpserver.HttpsConfigurator">
-		<constructor-arg ref="sslContext" />
-	</bean>
-
-	<bean id="sslContext" class="com.mpx.birjan.core.ConfiguredSSLContext"
-		factory-method="getSSLContext">
-		<constructor-arg
-			value="C:\development\tools\jdk1.6.0_29\keyTools\keys\birjan.keystore" />
-		<constructor-arg value="1Qaz2wsx" />
-		<constructor-arg value="1Qaz2wsx" />
-	</bean-->
 
 </beans>

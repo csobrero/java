@@ -26,7 +26,7 @@
 
 	<jaxws:client id="birjanWebService"
                   serviceClass="com.mpx.birjan.service.impl.BirjanWebService"
-                  address="http://localhost:8081/birjanws">
+                  address="https://localhost:8443/birjan/birjanws">
     
 		<jaxws:outInterceptors>
 			<ref bean="authenticationOutInterceptor" />
@@ -53,7 +53,7 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+	<!--bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 	<cxf:bus>
 		<cxf:inInterceptors>
@@ -65,16 +65,6 @@
 		<cxf:inFaultInterceptors>
 			<ref bean="logOutbound" />
 		</cxf:inFaultInterceptors>
-	</cxf:bus>
-
-	<!--bean id="personWebService"
-		class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
-		<property name="serviceInterface" value="com.mpx.birjan.service.impl.BirjanWebService" />
-		<property name="wsdlDocumentUrl" value="http://localhost:8081/birjanws?wsdl" />
-		<property name="namespaceUri" value="http://impl.service.birjan.mpx.com/" />
-		<property name="serviceName" value="birjanws" />
-		<property name="portName" value="BirjanServiceEndpointPort" />
-		
-	</bean-->
+	</cxf:bus-->
 
 </beans>
