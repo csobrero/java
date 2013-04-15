@@ -15,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.pojomatic.annotations.AutoProperty;
@@ -50,6 +51,9 @@ public class Game extends AbstractEntity implements Serializable {
 	@Lob
 	@NotNull
 	private byte[] data;
+	
+	@Transient
+	private List<Hits> hits;
 
 	public Game() {
 	}
@@ -65,7 +69,7 @@ public class Game extends AbstractEntity implements Serializable {
 		this.date = date;
 		this.wager = wager;
 		this.data = data;
-		this.hash = BirjanUtils.hashFor("XX", (wager!=null)?wager.getCreated():new Date());
+		this.hash = BirjanUtils.hashFor(wager);
 	}
 
 	public String getHash() {
@@ -98,6 +102,14 @@ public class Game extends AbstractEntity implements Serializable {
 
 	public Date getDate() {
 		return date;
+	}
+
+	public List<Hits> getHits() {
+		return hits;
+	}
+
+	public void setHits(List<Hits> hits) {
+		this.hits = hits;
 	}
 
 }

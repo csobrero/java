@@ -40,7 +40,7 @@ public class WagerDAOTest {
 	@Rollback(value = false)
 	public void wagerCreate() {
 		Person person = new Person(null, "Carlos", "Paredes", "1554337788");
-		Wager wager = new Wager(1f, person);
+		Wager wager = new Wager(1f, null, person);
 		Game game = null; //new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
 		wager.setGame(game);
 

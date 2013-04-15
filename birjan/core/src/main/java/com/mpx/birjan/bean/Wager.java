@@ -32,25 +32,26 @@ public class Wager extends AbstractEntity implements Serializable {
 	// @PrimaryKeyJoinColumn
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Person person;
+	
+	@NotNull
+	@ManyToOne
+	private User user;
 
 	public Wager() {
 	}
 
-	public Wager(float betAmount) {
-		this(betAmount, null);
+	public Wager(float betAmount, User user) {
+		this(betAmount, user, null);
 	}
 
-	public Wager(float betAmount, Person person) {
+	public Wager(float betAmount, User user, Person person) {
 		this.betAmount = betAmount;
+		this.user = user;
 		this.person = person;
 	}
 
 	public float getBetAmount() {
 		return betAmount;
-	}
-
-	public void setBetAmount(float betAmount) {
-		this.betAmount = betAmount;
 	}
 
 	public Float getWinAmount() {
@@ -75,6 +76,10 @@ public class Wager extends AbstractEntity implements Serializable {
 
 	public void setPerson(Person person) {
 		this.person = person;
+	}
+
+	public final User getUser() {
+		return user;
 	}
 
 }

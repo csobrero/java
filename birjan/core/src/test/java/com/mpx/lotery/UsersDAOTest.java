@@ -1,21 +1,20 @@
 package com.mpx.lotery;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import static org.junit.Assert.*;
 
 import com.mpx.birjan.bean.Authorities;
-import com.mpx.birjan.bean.Users;
-import com.mpx.birjan.service.dao.FilterDao;
+import com.mpx.birjan.bean.User;
 import com.mpx.birjan.service.dao.IGenericDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -23,20 +22,17 @@ import com.mpx.birjan.service.dao.IGenericDAO;
 @Transactional
 public class UsersDAOTest {
 
-	private IGenericDAO<Users> usersDao;
+	private IGenericDAO<User> usersDao;
 
 	private IGenericDAO<Authorities> authoritiesDao;
-
-	@Autowired
-	private FilterDao filterDao;
 
 	@Test
 	@Rollback(value = false)
 	public void usersCreate() {
 
-		Users users = new Users("xris", "xris", true);
+		User users = new User("xris", "xris", true);
 		usersDao.create(users);
-		
+
 		Authorities authorities = new Authorities("xris", "ROLE_ADMIN");
 		authoritiesDao.create(authorities);
 		authorities = new Authorities("xris", "ROLE_MANAGER");
@@ -45,24 +41,24 @@ public class UsersDAOTest {
 		authoritiesDao.create(authorities);
 
 	}
-	
+
 	@Test
 	public void retrieveCreate() {
 
-		List<Users> all = usersDao.getAll();
+		List<User> all = usersDao.getAll();
 		assertNotNull(all);
-		
+
 		List<Authorities> allAuth = authoritiesDao.getAll();
 		assertNotNull(allAuth);
 
 	}
 
 	@Resource(name = "genericJpaDAO")
-	public final void setUserDao(final IGenericDAO<Users> daoToSet) {
+	public final void setUserDao(final IGenericDAO<User> daoToSet) {
 		usersDao = daoToSet;
-		usersDao.setClazz(Users.class);
+		usersDao.setClazz(User.class);
 	}
-	
+
 	@Resource(name = "genericJpaDAO")
 	public final void setAuthoritiesDao(final IGenericDAO<Authorities> daoToSet) {
 		authoritiesDao = daoToSet;

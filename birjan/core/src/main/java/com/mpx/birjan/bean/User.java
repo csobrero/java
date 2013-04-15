@@ -1,63 +1,58 @@
 package com.mpx.birjan.bean;
 
 import java.io.Serializable;
-import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.pojomatic.annotations.AutoProperty;
-import org.pojomatic.annotations.PojomaticPolicy;
-import org.pojomatic.annotations.Property;
 
-//@Entity
+@Entity
 @AutoProperty
-@Table(name = "User")
+@Table(name = "users")
 public class User extends AbstractEntity implements Serializable {
 
-	private static final long serialVersionUID = 7474097657451254479L;
+	private static final long serialVersionUID = 6877584950579668093L;
 
-	private String name;
-
-	private String surname;
-
-	@Property(policy = PojomaticPolicy.NONE)
-	@OneToMany(mappedBy = "user")
-	private List<Wager> wagers;
+	@Column(unique = true)
+	private String username;
+	
+	private String password;
+	
+	private boolean enabled;
 
 	public User() {
 	}
 
-	public User(Long id, String name, String surname) {
-		if (id != null)
-			this.id = id;
-		this.name = name;
-		this.surname = surname;
+	public User(String username, String password, boolean enabled) {
+		this.username = username;
+		this.password = password;
+		this.enabled = enabled;
 	}
 
-	public String getName() {
-		return name;
+	public final String getUsername() {
+		return username;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public final void setUsername(String username) {
+		this.username = username;
 	}
 
-	public String getSurname() {
-		return surname;
+	public final String getPassword() {
+		return password;
 	}
 
-	public void setSurname(String surname) {
-		this.surname = surname;
+	public final void setPassword(String password) {
+		this.password = password;
 	}
 
-	public List<Wager> getWagers() {
-		return wagers;
+	public final boolean getEnabled() {
+		return enabled;
 	}
 
-	public void setWagers(List<Wager> wagers) {
-		this.wagers = wagers;
+	public final void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 }

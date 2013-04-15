@@ -9,6 +9,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.joda.time.DateTime;
 
 import com.mpx.birjan.bean.Lottery;
+import com.mpx.birjan.bean.Wager;
 import com.mpx.birjan.core.Rule;
 
 public class BirjanUtils {
@@ -17,8 +18,8 @@ public class BirjanUtils {
 		return null;
 	}
 
-	public static String hashFor(String userId, Date date) {
-		DateTime dt = new DateTime(date);
+	public static String hashFor(Wager wager) {
+		DateTime dt = new DateTime(wager.getCreated());
 
 		int[] n = new int[3];
 		n[0] = dt.getMonthOfYear();
@@ -27,7 +28,7 @@ public class BirjanUtils {
 		String hex = Integer.toHexString(
 				dt.getSecondOfMinute() * dt.getMinuteOfHour()).toUpperCase();
 
-		String hash = userId.substring(0, 2);
+		String hash = wager.getUser().getUsername().substring(0, 2).toUpperCase();
 		for (int i : n) {
 			hash += (char) ((i < 10) ? i + 48 : i + 55);
 		}

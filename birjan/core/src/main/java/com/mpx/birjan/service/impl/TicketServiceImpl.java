@@ -36,7 +36,7 @@ public class TicketServiceImpl implements ITicketService {
 		Preconditions.checkNotNull(numbers);
 		
 		Person person = personDao.getById(personId);
-		Wager wager = new Wager(betAmount, person);
+		Wager wager = new Wager(betAmount, null, person);
 
 		Game game = null; //new Game(lottery, wager, numbers);
 		gameDao.create(game);
