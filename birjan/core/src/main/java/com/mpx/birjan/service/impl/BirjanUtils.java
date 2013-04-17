@@ -94,4 +94,32 @@ public class BirjanUtils {
 		return new DateTime(new Date());
 	}
 
+	public static List<Object> retrieveVariantAvailability(Lottery[] lottery, String day) {
+		List<Object> results = new ArrayList<Object>();
+		DateTime date = BirjanUtils.getDate(day);
+		DateTime today = now().toDateMidnight().toDateTime();
+		DateTime tomorrow = today.plusDays(1);
+		for (Lottery lott : lottery) {
+			DateTime to = lott.getRule().getTo(today);
+			if (date.isAfter(today)
+					&& (date.isBefore(to) || date.isAfter(tomorrow)))
+				results.add(true);
+			else
+				results.add(false);
+		}
+		return results;
+
+	}
+
+	public static Object[][] toArray(List<List<Object>> list) {
+		if (list != null && !list.isEmpty()) {
+			Object[][] results = new Object[list.size()][];
+			for (int i = 0; i < list.size(); i++) {
+				results[i] = list.get(i).toArray(new Object[] {});
+			}
+			return results;
+		}
+		return null;
+	}
+
 }

@@ -23,5 +23,7 @@ public interface BirjanWebService {
 	Wrapper[] retriveGames(String lottery, String variant, String day);
 
 	boolean isDevelopment();
+	
+	Object[][] retrieveAvailability(String day);
 
 }

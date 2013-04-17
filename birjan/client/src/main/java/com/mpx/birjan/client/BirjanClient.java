@@ -30,6 +30,7 @@ import com.mpx.birjan.client.page.DrawView;
 import com.mpx.birjan.client.page.MainView;
 import com.mpx.birjan.client.page.PrintView;
 import com.mpx.birjan.client.page.TicketView;
+import com.mpx.birjan.client.page.TicketView3;
 import com.mpx.birjan.service.impl.BirjanWebService;
 
 @Controller
@@ -45,6 +46,9 @@ public class BirjanClient {
 
 	@Autowired
 	private TicketView ticketView;
+
+	@Autowired
+	private TicketView3 ticketView3;
 
 	@Autowired
 	private PrintView printView;
@@ -95,8 +99,8 @@ public class BirjanClient {
 //	        }
 //	    });
 		
-		setView(controlView);
-		controlView.reset();
+		setView(ticketView3);
+		ticketView3.reset();
 		
 		boolean development = webService.isDevelopment();
 		if(development){
@@ -268,5 +272,9 @@ public class BirjanClient {
 
 	public final String getUser() {
 		return user;
+	}
+
+	public Object[][] retrieveAvailability(String day) {
+		return webService.retrieveAvailability(day);
 	}
 }

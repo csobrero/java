@@ -21,7 +21,12 @@ public abstract class Rule {
 	public static final Rule NAM = new Nacional(VARIANT.MATUTINA);
 	public static final Rule NAV = new Nacional(VARIANT.VESPERTINA);
 	public static final Rule NAN = new Nacional(VARIANT.NOCTURNA);
+	public static final Rule PRP = new Provincia(VARIANT.PRIMERA);
+	public static final Rule PRM = new Provincia(VARIANT.MATUTINA);
+	public static final Rule PRV = new Provincia(VARIANT.VESPERTINA);
+	public static final Rule PRN = new Provincia(VARIANT.NOCTURNA);
 	public static final Rule[] National = new Rule[] { NAP, NAM, NAV, NAN };
+	public static final Rule[] Provincia = new Rule[] { PRP, PRM, PRV, PRN };
 	
 	public static final int[] defaultWinRatios = {7,70,650,3500};
 

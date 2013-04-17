@@ -1,5 +1,7 @@
 package com.mpx.birjan.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jws.WebService;
@@ -15,7 +17,9 @@ import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wrapper;
+import com.mpx.birjan.core.Rule;
 import com.mpx.birjan.core.TransactionalManager;
+import com.mpx.birjan.core.Rule.VARIANT;
 
 @Service
 @WebService(serviceName = "birjanws", endpointInterface = "com.mpx.birjan.service.impl.BirjanWebService")
@@ -137,5 +141,23 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	public boolean isDevelopment() {
 		return txManager.isDevelopment();
 	}
-
+	
+	@Override
+	public Object[][] retrieveAvailability(String day){
+		
+		List<List<Object>> list = new ArrayList<List<Object>>();
+		List<Object> availables;
+		
+		for (Lottery[] lotteries : Lottery.ALL) {
+			if(isDevelopment())
+				availables = Arrays.asList(new Object[]{true,true,true,true});
+			availables = BirjanUtils.retrieveVariantAvailability(lotteries, day);
+			availables.add(0, lotteries[0].getName());
+			list.add(availables);
+		}
+		
+		return BirjanUtils.toArray(list);
+		
+	}
+	
 }

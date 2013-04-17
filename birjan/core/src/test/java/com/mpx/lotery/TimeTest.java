@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.core.Rule;
+import com.mpx.birjan.service.impl.BirjanServiceEndpoint;
 import com.mpx.birjan.service.impl.BirjanUtils;
 
 public class TimeTest {
@@ -143,7 +144,14 @@ public class TimeTest {
 		return String.format("%04d", fraction + aStart);
 	}
 	
-
+	@Test
+	public void arraycompare25(){
+		
+		BirjanServiceEndpoint endpoint = new BirjanServiceEndpoint();
+		Object[][] retrieveAvailability = endpoint.retrieveAvailability("16");
+		System.out.println();
+		
+	}
 	
 	@Test
 	public void arraycompare22() {
