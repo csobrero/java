@@ -15,11 +15,10 @@ public class Ticket implements Printable {
 	List<List<Object>> dataVector;
 	String hash;
 
-	public Ticket(String lottery, String variant,
-			List<List<Object>> dataVector, String hash) {
-		this.lottery = lottery;
-		this.variant = variant;
-		this.dataVector = dataVector;
+	public Ticket(String[] lotteries,
+			Object[][] data, String hash) {
+		this.lottery = null;
+		this.dataVector = null;
 		this.hash = hash;
 	}
 

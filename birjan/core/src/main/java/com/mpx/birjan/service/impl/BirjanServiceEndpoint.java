@@ -14,12 +14,11 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
+import com.mpx.birjan.bean.Jugada;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wrapper;
-import com.mpx.birjan.core.Rule;
 import com.mpx.birjan.core.TransactionalManager;
-import com.mpx.birjan.core.Rule.VARIANT;
 
 @Service
 @WebService(serviceName = "birjanws", endpointInterface = "com.mpx.birjan.service.impl.BirjanWebService")
@@ -35,31 +34,10 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	public String createGame(String lotteryName, String variant, String day,
-			Object[][] data) {
-		Preconditions.checkNotNull(lotteryName);
-		Preconditions.checkNotNull(variant);
-		Preconditions.checkNotNull(day);
-		Preconditions.checkNotNull(data);
-
-		DateTime date = BirjanUtils.getDate(day);
-		Lottery lottery = Lottery.valueOf((lotteryName + "_" + variant)
-				.toUpperCase());
-
-		Preconditions.checkArgument(
-				isDevelopment() || BirjanUtils.isValid(lottery, date),
-				"Invalid entry");
-
-		String hash = txManager.createGame(lottery, date, data);
-
-		System.out.println(hash);
-		return hash;
-	}
-
-	@Override
-	public Object[][] retrieveByHash(String hash) {
-		Object[][] dataVector = txManager.retrieveByHash(hash);
-		return dataVector;
+	public Jugada retrieveByHash(String hash) {
+		Preconditions.checkNotNull(hash);
+		Jugada jugada = txManager.retrieveByHash(hash);
+		return jugada;
 	}
 
 	@Override
@@ -95,7 +73,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		
 		Draw draw = txManager.retrieveDraw(lottery, date);
 		
-		return draw.getNumbers();
+		return (draw!=null)?draw.getNumbers():null;
 	}
 
 	@Override
@@ -129,7 +107,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		if (games != null && !games.isEmpty()) {
 			values = new Wrapper[games.size()];
 			for (int i = 0; i < values.length; i++) {
-				values[i] = new Wrapper(games.get(i).getHash(), games.get(i)
+				values[i] = new Wrapper(games.get(i).getWager().getHash(), games.get(i)
 						.getData());
 			}
 		}
@@ -158,6 +136,31 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		
 		return BirjanUtils.toArray(list);
 		
+	}
+
+	@Override
+	public String createGames(String day, String[] lotteryNames, Object[][] data) {
+		Preconditions.checkNotNull(day);
+		Preconditions.checkNotNull(lotteryNames);
+		Preconditions.checkNotNull(data);
+		
+
+		DateTime date = BirjanUtils.getDate(day);
+		List<Lottery> lotteries = new ArrayList<Lottery>();
+		for (String str : lotteryNames) {
+			Lottery lottery = Lottery.valueOf(str);
+			Preconditions.checkArgument(
+					isDevelopment() || BirjanUtils.isValid(lottery, date),
+					"Invalid entry");
+			
+			lotteries.add(lottery);
+		}
+		
+		String hash = txManager.createGames(lotteries, date, data);
+		
+		System.out.println(hash);
+
+		return hash;
 	}
 	
 }

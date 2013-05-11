@@ -2,6 +2,7 @@ package com.mpx.birjan.service.impl;
 
 import javax.jws.WebService;
 
+import com.mpx.birjan.bean.Jugada;
 import com.mpx.birjan.bean.Wrapper;
 
 @WebService
@@ -9,10 +10,9 @@ public interface BirjanWebService {
 
 	String[] populateCombo(String view, String combo, String day);
 
-	String createGame(String lottery, String variant, String day,
-			Object[][] data);
+	String createGames(String day, String[] lotteries, Object[][] data);
 
-	Object[][] retrieveByHash(String code);
+	Jugada retrieveByHash(String code);
 
 	void createDraw(String lottery, String variant, String day, String[] data);
 
@@ -23,7 +23,7 @@ public interface BirjanWebService {
 	Wrapper[] retriveGames(String lottery, String variant, String day);
 
 	boolean isDevelopment();
-	
+
 	Object[][] retrieveAvailability(String day);
 
 }

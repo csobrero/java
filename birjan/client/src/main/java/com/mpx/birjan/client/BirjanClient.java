@@ -23,14 +23,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
+import com.mpx.birjan.bean.Jugada;
 import com.mpx.birjan.bean.Wrapper;
 import com.mpx.birjan.client.page.CheckCodeView;
 import com.mpx.birjan.client.page.ControlView;
 import com.mpx.birjan.client.page.DrawView;
 import com.mpx.birjan.client.page.MainView;
 import com.mpx.birjan.client.page.PrintView;
+import com.mpx.birjan.client.page.TicketViewBkp;
 import com.mpx.birjan.client.page.TicketView;
-import com.mpx.birjan.client.page.TicketView3;
 import com.mpx.birjan.service.impl.BirjanWebService;
 
 @Controller
@@ -46,9 +47,6 @@ public class BirjanClient {
 
 	@Autowired
 	private TicketView ticketView;
-
-	@Autowired
-	private TicketView3 ticketView3;
 
 	@Autowired
 	private PrintView printView;
@@ -99,8 +97,8 @@ public class BirjanClient {
 //	        }
 //	    });
 		
-		setView(ticketView3);
-		ticketView3.reset();
+		setView(ticketView);
+		ticketView.reset();
 		
 		boolean development = webService.isDevelopment();
 		if(development){
@@ -132,32 +130,23 @@ public class BirjanClient {
 		}
 		return result;
 	}
-
-	public void printHash() {
+	
+	public void play() {
 		
-		@SuppressWarnings("unchecked")
-		List<List<Object>> vector = ticketView.getTableModel()
-				.getDataVector();
 		
-		Object[][] data = new Object[vector.size()-2][];
-		for (int i = 0; i < vector.size()-2; i++) {
-			data[i] = vector.get(i).toArray(new Object[]{});
-		}
-
-		
-		String lottery = ticketView.getComboBox_1().getSelectedItem()
-				.toString();
-		String variant = ticketView.getComboBox_2().getSelectedItem()
-				.toString();
 		String day = ticketView.getComboBox().getSelectedItem().toString().split(" ")[2];
+		String[] lotteries = ticketView.selectedLotteries().toArray(new String[]{});
+		Object[][] data = ticketView.getData();
+
 		
-		String hash = webService.createGame(lottery, variant, day, data);
+		String hash = webService.createGames(day, lotteries, data);
 
 		if (hash != null) {
-			Ticket ticket = new Ticket(lottery, variant, vector, hash);
+			Ticket ticket = new Ticket(lotteries, data, hash);
 
 			printView.setTicket(ticket);
 			setView(printView);
+			System.out.println(hash);
 		} else {
 			throw new RuntimeException("WEBSERVICE ERROR");
 		}
@@ -182,9 +171,9 @@ public class BirjanClient {
 		}
 	}
 
-	public Object[][] retrieveByCode(String code) {
-		Object[][] dataVector = webService.retrieveByHash(code);
-		return dataVector;
+	public Jugada retrieveByCode(String code) {
+		Jugada jugada = webService.retrieveByHash(code);
+		return jugada;
 	}
 
 	public void updateDraw(boolean viewOnly) {

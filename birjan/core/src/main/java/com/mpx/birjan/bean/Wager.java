@@ -1,17 +1,21 @@
 package com.mpx.birjan.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.pojomatic.annotations.AutoProperty;
 import org.pojomatic.annotations.PojomaticPolicy;
 import org.pojomatic.annotations.Property;
+
+import com.mpx.birjan.service.impl.BirjanUtils;
 
 @Entity
 @AutoProperty
@@ -21,13 +25,17 @@ public class Wager extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 4452318623121262333L;
 
 	@NotNull
+	@Column(unique = true)
+	private String hash;
+
+	@NotNull
 	private float betAmount;
 
 	private Float winAmount;
 
 	@Property(policy = PojomaticPolicy.NONE)
-	@OneToOne(mappedBy = "wager", cascade = CascadeType.ALL)
-	private Game game;
+	@OneToMany(mappedBy = "wager", cascade = CascadeType.ALL)
+	private List<Game> games;
 
 	// @PrimaryKeyJoinColumn
 	@ManyToOne(cascade = CascadeType.ALL)
@@ -48,6 +56,7 @@ public class Wager extends AbstractEntity implements Serializable {
 		this.betAmount = betAmount;
 		this.user = user;
 		this.person = person;
+		this.hash = BirjanUtils.hashFor(this);
 	}
 
 	public float getBetAmount() {
@@ -62,12 +71,12 @@ public class Wager extends AbstractEntity implements Serializable {
 		this.winAmount = winAmount;
 	}
 
-	public Game getGame() {
-		return game;
+	public List<Game> getGame() {
+		return games;
 	}
 
-	public void setGame(Game game) {
-		this.game = game;
+	public void setGame(List<Game> games) {
+		this.games = games;
 	}
 
 	public Person getPerson() {
@@ -80,6 +89,10 @@ public class Wager extends AbstractEntity implements Serializable {
 
 	public final User getUser() {
 		return user;
+	}
+
+	public String getHash() {
+		return hash;
 	}
 
 }

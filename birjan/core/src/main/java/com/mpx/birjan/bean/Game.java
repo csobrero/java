@@ -5,13 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Lob;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,18 +18,12 @@ import javax.validation.constraints.NotNull;
 
 import org.pojomatic.annotations.AutoProperty;
 
-import com.mpx.birjan.service.impl.BirjanUtils;
-
 @Entity
 @AutoProperty
 @Table(name = "GAME")
 public class Game extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = -8656741444856723949L;
-
-	@NotNull
-	@Column(unique = true)
-	private String hash;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -45,7 +37,7 @@ public class Game extends AbstractEntity implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date date;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Wager wager;
 
 	@Lob
@@ -69,11 +61,6 @@ public class Game extends AbstractEntity implements Serializable {
 		this.date = date;
 		this.wager = wager;
 		this.data = data;
-		this.hash = BirjanUtils.hashFor(wager);
-	}
-
-	public String getHash() {
-		return hash;
 	}
 
 	public Lottery getLottery() {

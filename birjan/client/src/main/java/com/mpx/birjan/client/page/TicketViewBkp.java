@@ -13,16 +13,13 @@ import java.util.regex.Pattern;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneLayout;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -31,19 +28,14 @@ import javax.swing.table.TableModel;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mpx.birjan.client.BirjanClient;
-import com.mpx.birjan.client.editor.NumberCellEditor;
-
 @Repository
-public class DrawView extends AbstractView {
-
+public class TicketViewBkp extends AbstractView {
+	
 	private static final long serialVersionUID = 4334436586243521165L;
-
-	public DrawView() {
-
+	
+	public TicketViewBkp() {
 		this.setSize(800, 400);
 
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -74,19 +66,20 @@ public class DrawView extends AbstractView {
 
 		Box vb_2 = Box.createVerticalBox();
 		panel.add(vb_2);
+		;
 
 		JLabel lblLoteria = new JLabel("Lot");
 		lblLoteria.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblLoteria.setFont(new Font("Tahoma", Font.BOLD, 18));
 		vb_2.add(lblLoteria);
-
+		
 		Component vs_6 = Box.createVerticalStrut(20);
 		vb_2.add(vs_6);
-
+		
 		comboBox = new JComboBox();
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				init();
+				reset();
 			}
 		});
 		vb_2.add(comboBox);
@@ -99,7 +92,7 @@ public class DrawView extends AbstractView {
 			public void actionPerformed(ActionEvent e) {
 				String day = comboBox.getSelectedItem().toString().split(" ")[2];
 				String selected = comboBox_1.getSelectedItem().toString();
-				comboBox_2.setModel(new DefaultComboBoxModel(controller.populateCombo("draw",selected, day)));
+				comboBox_2.setModel(new DefaultComboBoxModel(controller.populateCombo("ticket", selected, day)));
 				comboBox_2.setEnabled(true);
 				comboBox_2.requestFocusInWindow();
 			}
@@ -112,13 +105,10 @@ public class DrawView extends AbstractView {
 		comboBox_2 = new JComboBox();
 		comboBox_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				buildJTable(createModel());
-				controller.updateDraw(true);
+				buildJTable(createModel(false));
 				table.changeSelection(0, 1, false, false);
 				table.requestFocusInWindow();
 				btnClear.setEnabled(true);
-				btnDone.setEnabled(true);
-				table.setEnabled(true);
 			}
 		});
 		vb_2.add(comboBox_2);
@@ -132,15 +122,17 @@ public class DrawView extends AbstractView {
 		Component vs_2 = Box.createVerticalStrut(20);
 		vb_1.add(vs_2);
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setLayout(new ScrollPaneLayout());
-		hb.add(scrollPane);
+		JScrollPane mainPanel = new JScrollPane();
+		mainPanel.setViewportBorder(null);
+		mainPanel.setLayout(new ScrollPaneLayout());
+		hb.add(mainPanel);
 
 		table = new JTable();
-		scrollPane.setViewportView(table);
+		table.setCellSelectionEnabled(true);
+		mainPanel.setViewportView(table);
 
-		Component horizontalStrut = Box.createHorizontalStrut(120);
-		hb.add(horizontalStrut);
+		Component hs_1 = Box.createHorizontalStrut(215);
+		hb.add(hs_1);
 
 		Component vs_1 = Box.createVerticalStrut(20);
 		vb.add(vs_1);
@@ -148,12 +140,12 @@ public class DrawView extends AbstractView {
 		Box hb_1 = Box.createHorizontalBox();
 		vb.add(hb_1);
 
-		btnDone = new JButton("Update");
+		btnDone = new JButton("Done");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (btnDone.isEnabled())
-					btnDone.setEnabled(false);// prevent double click.
-				controller.updateDraw(false);
+				if(btnDone.isEnabled())
+					btnDone.setEnabled(false);//prevent double click.
+//					controller.printHash();
 			}
 		});
 		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -161,133 +153,136 @@ public class DrawView extends AbstractView {
 
 		Component hs_2 = Box.createHorizontalStrut(20);
 		hb_1.add(hs_2);
-		
+
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				comboBox.setSelectedIndex(0);
 				reset();
 			}
 		});
 		btnClear.setFont(new Font("Tahoma", Font.BOLD, 10));
 		hb_1.add(btnClear);
-		
-		Component hs_1 = Box.createHorizontalStrut(20);
-		hb_1.add(hs_1);
-		
-		btnValidate = new JButton("Validar");
-		btnValidate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (btnValidate.isEnabled())
-					btnValidate.setEnabled(false);// prevent double click.
-				controller.validateDraw();
-			}
-		});
-		btnValidate.setVisible(false);
-		hb_1.add(btnValidate);
 	}
 
 	private String[] getdays() {
-		String[] days = new String[3];
+		String[] days = new String[6];
 		Locale locale = new Locale("es");
 		DateTime dt = new DateTime(new Date());
 		for (int i = 0; i < days.length; i++) {
-			if (dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
-				dt = dt.minusDays(1);
+			if (!development && dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
+				dt = dt.plusDays(1);
 			days[i] = dt.toString("EEEE", locale).toUpperCase() + "  "
 					+ dt.getDayOfMonth();
-			dt = dt.minusDays(1);
+			dt = dt.plusDays(1);
 		}
 		return days;
 	}
 
-	public void reset() {
-			comboBox.setModel(new DefaultComboBoxModel(getdays()));
-			comboBox.setSelectedIndex(0);
-			init();
-	}
-	
-	public void init() {
-		buildJTable(createModel());
+	public void reset(){
+		buildJTable(createModel(true));
+		comboBox.setModel(new DefaultComboBoxModel(getdays()));
+		comboBox.setSelectedIndex(0);
 		String day = comboBox.getSelectedItem().toString().split(" ")[2];
-		comboBox_1.setModel(new DefaultComboBoxModel(controller
-				.populateCombo("ticket", "LOTERIA", day)));
+		comboBox_1.setModel(new DefaultComboBoxModel(controller.populateCombo("ticket", "LOTERIA", day)));
 		comboBox_1.requestFocusInWindow();
 		comboBox_2.setModel(new DefaultComboBoxModel());
 		comboBox_2.setEnabled(false);
 		btnClear.setEnabled(false);
 		btnDone.setEnabled(false);
-		table.setEnabled(false);
-	
-}
-	
-	public void updateModel(String[] data) {
-		if(data != null){
-			boolean validate = true;
-			if (data.length>0) {
-				btnDone.setEnabled(true);
-				for (int i = 0; i < data.length; i++) {
-					if (i < 10) {
-						getTableModel().setValueAt(data[i], i, 1);
-					} else {
-						getTableModel().setValueAt(data[i], i - 10, 3);
-					}
-					validate &= !data[i].equals("");
-				}
-			}
-			if(validate){
-				controller.validateDraw();
-//				btnDone.setVisible(false);
-//				btnClear.setVisible(false);
-//				btnValidate.setVisible(true);
-			}
-		}
 	}
-
+	
 	private void buildJTable(TableModel model) {
 		table.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		table.setRowHeight(40);
 		table.setModel(model);
 
-		table.getColumnModel().getColumn(0).setPreferredWidth(50);
-		table.getColumnModel().getColumn(0).setMaxWidth(50);
+		table.getColumnModel().getColumn(0).setPreferredWidth(40);
+		table.getColumnModel().getColumn(0).setMaxWidth(40);
 		table.getColumnModel().getColumn(1).setPreferredWidth(100);
-		table.getColumnModel().getColumn(1).setMaxWidth(100);
+		table.getColumnModel().getColumn(1).setMaxWidth(200);
 		table.getColumnModel().getColumn(2).setPreferredWidth(50);
-		table.getColumnModel().getColumn(2).setMaxWidth(50);
-		table.getColumnModel().getColumn(3).setPreferredWidth(100);
+		table.getColumnModel().getColumn(2).setMaxWidth(100);
+		table.getColumnModel().getColumn(3).setPreferredWidth(50);
 		table.getColumnModel().getColumn(3).setMaxWidth(100);
+
+		table.getColumnModel().getColumn(2)
+				.setCellRenderer(new DefaultTableCellRenderer() {
+
+					@Override
+					protected void setValue(Object value) {
+						if (value != null) {
+							if (Pattern.matches("\\d{1,4}", value.toString())) {
+								String str = "xxx" + value.toString();
+								setText(str.substring(str.length() - 4,
+										str.length()));
+							} else
+								setText("");
+						}
+					}
+				});
 		
-		table.getColumnModel().getColumn(1).setCellEditor(new NumberCellEditor());
-		table.getColumnModel().getColumn(3).setCellEditor(new NumberCellEditor());
+		table.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_ENTER:
+					if (btnDone.isEnabled())
+						btnDone.doClick();
+					break;
+				case KeyEvent.VK_ESCAPE:
+						reset();
+					break;
+				}
+
+			}
+		});
+
+		table.getModel().addTableModelListener(new TableModelListener() {
+
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				if (e.getType() == TableModelEvent.UPDATE) {
+					int row = e.getFirstRow();
+					int column = e.getColumn();
+					DefaultTableModel model = (DefaultTableModel) e.getSource();
+
+					if (row == (model.getRowCount() - 2)
+							&& model.getValueAt(row, 3)!=null
+							&& !model.getValueAt(row, 2).toString().equals("")
+							&& model.getValueAt(row, 1)!=null) {
+						model.setValueAt(String.valueOf(row + 2), row + 1, 0);
+						model.addRow(new Object[] { "...", null, "", null });
+						table.changeSelection((row + 1), 1, false, false);
+						table.requestFocus();
+						btnDone.setEnabled(true);
+					}
+				}
+			}
+		});
 
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setRowSelectionAllowed(false);
 		table.setColumnSelectionAllowed(false);
-		table.setEnabled(false);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
-	private DefaultTableModel createModel() {
-		return new DefaultTableModel(new Object[][] { { "1", "", "11", "" },
-				{ "2", "", "12", "" }, { "3", "", "13", "" },
-				{ "4", "", "14", "" }, { "5", "", "15", "" },
-				{ "6", "", "16", "" }, { "7", "", "17", "" },
-				{ "8", "", "18", "" }, { "9", "", "19", "" },
-				{ "10", "", "20", "" } }, new String[] { "#", "Numero", "#",
-				"Numero" }) {
+	private DefaultTableModel createModel(boolean empty) {
+		return new DefaultTableModel((empty)?new Object[][] {}:new Object[][] {
+				{ "1", null, "", null }, { "...", null, "", null }},
+				new String[] { "#", "Apuesta", "Numero", "Posicion" }) {
+			Class[] columnTypes = new Class[] { String.class, Float.class,
+					String.class, Integer.class };
 
 			public Class getColumnClass(int columnIndex) {
-				return String.class;
+				return columnTypes[columnIndex];
 			}
 
-			boolean[] columnEditables = new boolean[] { false, true, false,
-					true };
+			boolean[] columnEditables = new boolean[] { false, true, true, true };
 
 			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
+				return columnEditables[column]
+						&& row != (this.getRowCount() - 1);
 			}
-			
 		};
 	}
 }

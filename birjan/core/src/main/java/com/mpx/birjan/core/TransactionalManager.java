@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
+import com.mpx.birjan.bean.Jugada;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.Status;
@@ -41,16 +43,27 @@ public class TransactionalManager {
 
 	private GenericJpaDAO<Game> gameDao;
 
+	private GenericJpaDAO<Wager> wagerDao;
+
 	private GenericJpaDAO<User> usersDao;
 
 	@Transactional(readOnly = true)
-	public Object[][] retrieveByHash(String hash) {
+	public Jugada retrieveByHash(String hash) {
 		Filter<String> filter = new Filter<String>("hash", hash);
-		Game game = gameDao.findUniqueByFilter(filter);
-		if (game != null) {
-			Object[][] data = (Object[][]) SerializationUtils.deserialize(game
+		Wager wager = wagerDao.findUniqueByFilter(filter);
+		if (wager != null) {
+			Object[][] data = (Object[][]) SerializationUtils.deserialize(wager.getGame().get(0)
 					.getData());
-			return data;
+			
+			List<String> lotteries = new ArrayList<String>();
+			for (Game game : wager.getGame()) {
+				lotteries.add(game.getLottery().name());
+			}
+			
+			DateTime dt = new DateTime(wager.getGame().get(0).getDate());
+			String day = dt.toString("EEEE", new Locale("es")).toUpperCase() + "  " + dt.getDayOfMonth();
+			
+			return new Jugada(day, lotteries.toArray(new String[lotteries.size()]), data);
 		}
 		return null;
 	}
@@ -98,33 +111,30 @@ public class TransactionalManager {
 				Preconditions.checkArgument(Pattern.matches("\\d{4}", winnerNumber), "Can not validate Draw.");
 			}
 			
+			List<Game> winners = retriveGames(Status.WINNER, lottery, date, null);
 			List<Game> games = retriveGames(Status.VALID, lottery, date, null);
+			games.addAll(winners);
 			for (Game game : games) {
 				Object[][] data = (Object[][])SerializationUtils.deserialize(game.getData());
-				Map<Integer, Integer> hits = new HashMap<Integer, Integer>();
+				boolean win= true;
 				for (Object[] row : data) {
-					float betAmount = (Float)row[1];
-					char[] number = ((String)row[2]).toCharArray();
-					char[] winnerNumber = winnerNumbers[(Integer)row[3]].toCharArray();
-					
-					int i = 3;
-					for (boolean win=true; win && i >= 0 ; i--) {
-						win &= (number[i]==winnerNumber[i]);
+					char[] winnerNumber = winnerNumbers[(Integer)row[0]-1].toCharArray();
+					char[] number = ((String)row[1]).toCharArray();
+					for (int i = 0; win && i < 4; i++) {
+						win &= number[i]=='x'||number[i]==winnerNumber[i];
 					}
-					if (i < 3 && number[i] == 'x') {
-						hits.put((Integer) row[3], 3 - i);
-//						game.addHits((Float)row[1])
-						
-//						lottery.getRule().calculateWinAmount(betAmount, winPositions);
-					}
+				}
+				if(win){
+					game.setStatus(Status.WINNER);
+					gameDao.update(game);					
 				}
 			}
 			
 	
-			if (draw != null) {
-				draw.setStatus(Status.VALID);
-				drawDao.update(draw);
-			}
+//			if (draw != null) {
+//				draw.setStatus(Status.VALID);
+//				drawDao.update(draw);
+//			}
 		}
 
 	}
@@ -156,22 +166,26 @@ public class TransactionalManager {
 		}
 		return list.toArray(new String[list.size()]);
 	}
-
+	
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public String createGame(Lottery lottery, DateTime date, Object[][] data) {
+	public String createGames(List<Lottery> lotteries, DateTime date,
+			Object[][] data) {
+		
 		float totalBet = 0;
 		for (Object[] row : data) {
-			totalBet += (Float) row[1];
+			totalBet += (Float) row[2];
 		}
 		User user = identify();
-		Wager wager = new Wager(totalBet, user);
+		Wager wager = new Wager(totalBet*lotteries.size(), user);
+		
+		for (Lottery lottery : lotteries) {
+			byte[] serialData = SerializationUtils.serialize(data);
 
-		byte[] serialData = SerializationUtils.serialize(data);
-
-		Game game = new Game(lottery, date.toDate(), wager, serialData);
-		gameDao.create(game);
-
-		return game.getHash();
+			Game game = new Game(lottery, date.toDate(), wager, serialData);
+			gameDao.create(game);
+		}
+		
+		return wager.getHash();
 	}
 
 	public List<Game> retriveGames(Status status, Lottery lottery, DateTime date, User user) {
@@ -194,6 +208,12 @@ public class TransactionalManager {
 	}
 
 	@Resource(name = "genericJpaDAO")
+	public final void setWagerDao(final GenericJpaDAO<Wager> daoToSet) {
+		wagerDao = daoToSet;
+		wagerDao.setClazz(Wager.class);
+	}
+
+	@Resource(name = "genericJpaDAO")
 	public final void setGameDao(final GenericJpaDAO<Game> daoToSet) {
 		gameDao = daoToSet;
 		gameDao.setClazz(Game.class);
@@ -209,13 +229,14 @@ public class TransactionalManager {
 		return true;
 	}
 
-	private User identify() {
+	public User identify() {
 		Filter<String> filter = new Filter<String>("username",
 				SecurityContextHolder.getContext().getAuthentication()
 						.getName());
 		User user = usersDao.findUniqueByFilter(filter);
 		return user;
 	}
+
 
 	// private Map<Integer, Integer> matchWinNumbers(String patterns,
 	// String candidate) {

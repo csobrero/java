@@ -41,4 +41,12 @@ public enum Lottery {
 	public final Rule getRule() {
 		return rule;
 	}
+
+	public static Lottery identify(String str) {
+		for (Lottery lottery : Lottery.values()) {
+			if(str.equals(lottery.getRule().getClass().getName()))
+				return lottery;
+		}
+		return null;
+	}
 }
