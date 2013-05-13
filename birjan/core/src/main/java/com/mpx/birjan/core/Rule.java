@@ -14,9 +14,6 @@ public abstract class Rule {
 	public abstract DateTime getFrom(DateTime date);
 
 	public abstract DateTime getTo(DateTime date);
-	
-	public abstract float calculateWinAmount(float betAmount, Map<Integer, Integer> winPositions);
-	
 	public static final Rule NAP = new Nacional(VARIANT.PRIMERA);
 	public static final Rule NAM = new Nacional(VARIANT.MATUTINA);
 	public static final Rule NAV = new Nacional(VARIANT.VESPERTINA);
@@ -106,16 +103,6 @@ public abstract class Rule {
 
 			return new DateTime(date.year().get(), date.monthOfYear().get(),
 					date.dayOfMonth().get(), hourTo, variant.minutesTo, 0 ,0);
-		}
-	
-		@Override
-		public float calculateWinAmount(float betAmount, Map<Integer, Integer> winPositions){
-			
-			for (Entry<Integer, Integer> entry : winPositions.entrySet()) {
-				betAmount=betAmount*defaultWinRatios[entry.getValue()];
-			}
-			
-			return betAmount;
 		}
 	}
 

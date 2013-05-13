@@ -21,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
-import com.mpx.birjan.bean.Jugada;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.bean.Wager;
+import com.mpx.birjan.common.Jugada;
 import com.mpx.birjan.core.Rule.VARIANT;
 import com.mpx.birjan.service.IPersonService;
 import com.mpx.birjan.service.dao.Filter;
@@ -52,18 +52,19 @@ public class TransactionalManager {
 		Filter<String> filter = new Filter<String>("hash", hash);
 		Wager wager = wagerDao.findUniqueByFilter(filter);
 		if (wager != null) {
-			Object[][] data = (Object[][]) SerializationUtils.deserialize(wager.getGame().get(0)
-					.getData());
-			
-			List<String> lotteries = new ArrayList<String>();
-			for (Game game : wager.getGame()) {
-				lotteries.add(game.getLottery().name());
-			}
-			
+
+			Map<String, Float> lotteriesPayAmountMap = new HashMap<String, Float>();
+			for (Game game : wager.getGame())
+				lotteriesPayAmountMap.put(game.getLottery().name(),
+						BirjanUtils.calculateWinAmount(game));
+
 			DateTime dt = new DateTime(wager.getGame().get(0).getDate());
-			String day = dt.toString("EEEE", new Locale("es")).toUpperCase() + "  " + dt.getDayOfMonth();
-			
-			return new Jugada(day, lotteries.toArray(new String[lotteries.size()]), data);
+			String day = dt.toString("EEEE", new Locale("es")).toUpperCase()
+					+ "  " + dt.getDayOfMonth();
+
+			Object[][] data = (Object[][]) SerializationUtils.deserialize(wager
+					.getGame().get(0).getData());
+			return new Jugada(day, lotteriesPayAmountMap, data);
 		}
 		return null;
 	}

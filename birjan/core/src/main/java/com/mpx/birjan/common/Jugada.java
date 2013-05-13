@@ -1,10 +1,12 @@
-package com.mpx.birjan.bean;
+package com.mpx.birjan.common;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -14,16 +16,17 @@ public class Jugada implements Serializable {
 	
 	private String day;
 	
-	private String[] lottery;
+	@XmlJavaTypeAdapter(MapAdapter.class)
+	private Map<String, Float> lotteries;
 	
 	private Object[][] data;
 	
 	public Jugada() {
 	}
 	
-	public Jugada(String day, String[] lottery, Object[][] data) {
+	public Jugada(String day, Map<String, Float> lotteries, Object[][] data) {
 		this.day = day;
-		this.lottery = lottery;
+		this.lotteries = lotteries;
 		this.data = data;
 	}
 
@@ -35,20 +38,20 @@ public class Jugada implements Serializable {
 		this.day = day;
 	}
 
-	public String[] getLottery() {
-		return lottery;
-	}
-
-	public void setLottery(String[] lottery) {
-		this.lottery = lottery;
-	}
-
 	public Object[][] getData() {
 		return data;
 	}
 
 	public void setData(Object[][] data) {
 		this.data = data;
+	}
+
+	public Map<String, Float> getLotteries() {
+		return lotteries;
+	}
+
+	public void setLotteries(Map<String, Float> lotteries) {
+		this.lotteries = lotteries;
 	}
 	
 }

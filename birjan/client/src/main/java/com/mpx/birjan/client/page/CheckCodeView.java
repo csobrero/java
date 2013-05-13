@@ -20,12 +20,15 @@ import javax.swing.table.TableModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mpx.birjan.bean.Jugada;
 import com.mpx.birjan.client.BirjanClient;
+import com.mpx.birjan.common.Jugada;
+
 import javax.swing.JLabel;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class CheckCodeView extends JPanel {
@@ -42,6 +45,8 @@ public class CheckCodeView extends JPanel {
 	private JTable lotteryTable;
 	
 	private JLabel label;
+	
+	private List<JLabel> winLotteries;
 
 	public CheckCodeView() {
 		this.setSize(800, 400);
@@ -125,7 +130,7 @@ public class CheckCodeView extends JPanel {
 						model.addRow(data);											
 					}
 					
-					List<String> lotteryNames = Arrays.asList(jugada.getLottery());
+					Set<String> lotteryNames = jugada.getLotteries().keySet();
 					String[][] loteriesMap = TicketView.loteriesMap;
 					for (int i = 0; i < loteriesMap.length; i++) {
 						for (int j = 0; j < loteriesMap[i].length; j++) {
@@ -153,9 +158,51 @@ public class CheckCodeView extends JPanel {
 
 		Component verticalStrut_2 = Box.createVerticalStrut(80);
 		verticalBox_2.add(verticalStrut_2);
-
-		Component horizontalStrut_4 = Box.createHorizontalStrut(200);
-		horizontalBox.add(horizontalStrut_4);
+		
+		Box verticalBox_3 = Box.createVerticalBox();
+		horizontalBox.add(verticalBox_3);
+		
+		Component horizontalStrut_3 = Box.createHorizontalStrut(180);
+		verticalBox_3.add(horizontalStrut_3);
+		
+		Component verticalStrut_3 = Box.createVerticalStrut(100);
+		verticalBox_3.add(verticalStrut_3);
+		
+		Box horizontalBox_3 = Box.createHorizontalBox();
+		verticalBox_3.add(horizontalBox_3);
+		
+		Component horizontalStrut_8 = Box.createHorizontalStrut(20);
+		horizontalBox_3.add(horizontalStrut_8);
+		
+		Font f = new Font("Tahoma", Font.BOLD, 20);
+		
+		JPanel panel_1 = new JPanel();
+		horizontalBox_3.add(panel_1);
+		panel_1.setVisible(true);
+		
+		Box verticalBox_4 = Box.createVerticalBox();
+		panel_1.add(verticalBox_4);
+		
+		JLabel lPagar = new JLabel("Pagar: ");
+		verticalBox_4.add(lPagar);
+		
+		List<JLabel> list = new ArrayList<JLabel>();
+		for (int i = 0; i < 10; i++) {
+			JLabel jLabel = new JLabel("--");
+			list.add(jLabel);
+			verticalBox_4.add(jLabel);
+			jLabel.setVisible(false);
+		}
+		
+		Component verticalStrut_7 = Box.createVerticalStrut(10);
+		verticalBox_4.add(verticalStrut_7);
+		
+		JLabel label_1 = new JLabel("TOTAL: $ 0.00");
+		verticalBox_4.add(label_1);
+		label_1.setFont(f);
+		
+		Component horizontalStrut_9 = Box.createHorizontalStrut(20);
+		horizontalBox_3.add(horizontalStrut_9);
 		buildJTable(createModel());
 		buildLoteryTable();
 	}

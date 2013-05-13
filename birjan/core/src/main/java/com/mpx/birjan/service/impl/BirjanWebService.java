@@ -2,8 +2,8 @@ package com.mpx.birjan.service.impl;
 
 import javax.jws.WebService;
 
-import com.mpx.birjan.bean.Jugada;
 import com.mpx.birjan.bean.Wrapper;
+import com.mpx.birjan.common.Jugada;
 
 @WebService
 public interface BirjanWebService {

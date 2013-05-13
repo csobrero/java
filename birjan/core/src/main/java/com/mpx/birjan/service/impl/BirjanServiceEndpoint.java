@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
-import com.mpx.birjan.bean.Jugada;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wrapper;
+import com.mpx.birjan.common.Jugada;
 import com.mpx.birjan.core.TransactionalManager;
 
 @Service

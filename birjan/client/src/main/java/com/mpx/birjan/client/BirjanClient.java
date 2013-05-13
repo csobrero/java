@@ -23,7 +23,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
-import com.mpx.birjan.bean.Jugada;
 import com.mpx.birjan.bean.Wrapper;
 import com.mpx.birjan.client.page.CheckCodeView;
 import com.mpx.birjan.client.page.ControlView;
@@ -32,6 +31,7 @@ import com.mpx.birjan.client.page.MainView;
 import com.mpx.birjan.client.page.PrintView;
 import com.mpx.birjan.client.page.TicketViewBkp;
 import com.mpx.birjan.client.page.TicketView;
+import com.mpx.birjan.common.Jugada;
 import com.mpx.birjan.service.impl.BirjanWebService;
 
 @Controller

@@ -6,9 +6,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.SerializationUtils;
 import org.joda.time.DateTime;
 
+import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
+import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wager;
 import com.mpx.birjan.core.Rule;
 
@@ -120,6 +123,19 @@ public class BirjanUtils {
 			return results;
 		}
 		return null;
+	}
+
+	
+	public static Float calculateWinAmount(Game game) {
+		Float winAmount = 0f;
+		Object[][] data = (Object[][])SerializationUtils.deserialize(game.getData());
+		if(game.getStatus().equals(Status.WINNER)){
+			for (Object[] row : data) {
+				int hits = 3 -((String)row[1]).lastIndexOf('x');
+				winAmount += ((Float)row[2])*Rule.defaultWinRatios[hits];
+			}
+		}
+		return winAmount;
 	}
 
 }
