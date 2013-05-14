@@ -38,6 +38,13 @@ public abstract class AbstractJpaDAO<T extends Serializable> implements
 	}
 
 	@Override
+	public void updateAll(final List<T> entities) {
+		for (T entity : entities) {
+			update(entity);		
+		}
+	}
+
+	@Override
 	public void delete(final T entity) {
 		this.em.remove(entity);
 	}

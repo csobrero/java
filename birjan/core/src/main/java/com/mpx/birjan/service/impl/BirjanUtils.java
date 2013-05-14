@@ -127,15 +127,18 @@ public class BirjanUtils {
 
 	
 	public static Float calculateWinAmount(Game game) {
-		Float winAmount = 0f;
 		Object[][] data = (Object[][])SerializationUtils.deserialize(game.getData());
-		if(game.getStatus().equals(Status.WINNER)){
-			for (Object[] row : data) {
-				int hits = 3 -((String)row[1]).lastIndexOf('x');
-				winAmount += ((Float)row[2])*Rule.defaultWinRatios[hits];
+		if(game.getStatus().equals(Status.WINNER)||game.getStatus().equals(Status.PAID)){
+			Float winAmount = 0f;
+			if(game.getStatus().equals(Status.WINNER)){
+				for (Object[] row : data) {
+					int hits = 3 -((String)row[1]).lastIndexOf('x');
+					winAmount += ((Float)row[2])*Rule.defaultWinRatios[hits];
+				}
 			}
+			return winAmount;
 		}
-		return winAmount;
+		return null;
 	}
 
 }

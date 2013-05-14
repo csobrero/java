@@ -1,15 +1,22 @@
 package com.mpx.birjan.client.page;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -23,13 +30,6 @@ import org.springframework.stereotype.Repository;
 import com.mpx.birjan.client.BirjanClient;
 import com.mpx.birjan.common.Jugada;
 
-import javax.swing.JLabel;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 @Repository
 public class CheckCodeView extends JPanel {
 
@@ -37,6 +37,8 @@ public class CheckCodeView extends JPanel {
 
 	@Autowired
 	private BirjanClient controller;
+	
+	private JButton btnPay, btnClear;
 
 	private JTextField textCode;
 
@@ -46,15 +48,34 @@ public class CheckCodeView extends JPanel {
 	
 	private JLabel label;
 	
+	private JLabel lblTotal;
+	
 	private List<JLabel> winLotteries;
+	
+	private static Map<String, String> map;
+	
+	static{	
+		map = new HashMap<String, String>();
+		map.put("NACIONAL_PRIMERA", "Nac. Primera");
+		map.put("NACIONAL_MATUTINA", "Nac. Matutina");
+		map.put("NACIONAL_VESPERTINA", "Nac. Vespertina");
+		map.put("NACIONAL_NOCTURNA", "Nac. Nocturna");
+		map.put("PROVINCIA_PRIMERA", "Prov. Primera");
+		map.put("PROVINCIA_MATUTINA", "Prov. Matutina");
+		map.put("PROVINCIA_VESPERTINA", "Prov. Vespertina");
+		map.put("PROVINCIA_NOCTURNA", "Prov. Nocturna");
+	}
 
 	public CheckCodeView() {
 		this.setSize(800, 400);
 		
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		
+		Box verticalBox_5 = Box.createVerticalBox();
+		add(verticalBox_5);
 
 		Box horizontalBox = Box.createHorizontalBox();
-		add(horizontalBox);
+		verticalBox_5.add(horizontalBox);
 		
 		Box verticalBox = Box.createVerticalBox();
 		horizontalBox.add(verticalBox);
@@ -83,7 +104,6 @@ public class CheckCodeView extends JPanel {
 		verticalBox_1.add(verticalStrut_4);
 		
 		lotteryTable = new JTable();
-		buildLoteryTable();
 		JScrollPane scrollPane_1 = new JScrollPane(lotteryTable);
 		scrollPane_1.setPreferredSize(new Dimension(150, 100));
 		verticalBox_1.add(scrollPane_1);
@@ -120,24 +140,53 @@ public class CheckCodeView extends JPanel {
 		JButton btnSearch = new JButton("Buscar");
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				init();
 				Jugada jugada = controller.retrieveByCode(textCode.getText());
-				if(jugada.getData()!=null){
-					
+				if (jugada.getData() != null) {
+
 					label.setText("Fecha: " + jugada.getDay());
-					
-					DefaultTableModel model = (DefaultTableModel)table.getModel();
+
+					DefaultTableModel model = (DefaultTableModel) table
+							.getModel();
 					for (Object[] data : jugada.getData()) {
-						model.addRow(data);											
+						model.addRow(data);
 					}
-					
+
 					Set<String> lotteryNames = jugada.getLotteries().keySet();
 					String[][] loteriesMap = TicketView.loteriesMap;
 					for (int i = 0; i < loteriesMap.length; i++) {
 						for (int j = 0; j < loteriesMap[i].length; j++) {
-							lotteryTable.getModel().setValueAt(lotteryNames.contains(loteriesMap[i][j]), i, j + 1);
+							lotteryTable.getModel().setValueAt(
+									lotteryNames.contains(loteriesMap[i][j]),
+									i, j + 1);
 						}
 					}
-					((DefaultTableModel)lotteryTable.getModel()).fireTableDataChanged();
+					((DefaultTableModel) lotteryTable.getModel())
+							.fireTableDataChanged();
+
+					float total = 0f;
+					int i = 0;
+					for (Entry<String, Float> entry : jugada.getLotteries()
+							.entrySet()) {
+						if (entry.getValue()!=null) {
+							total += entry.getValue();
+							JLabel jLabel = winLotteries.get(i++);
+							if(entry.getValue() > 0f){
+							jLabel.setText(map.get(entry.getKey())
+									+ String.format(": $ %.2f",
+											entry.getValue()));
+							}else{
+								jLabel.setText(map.get(entry.getKey())
+										+ ": PAGADO");
+							}
+							jLabel.setVisible(true);
+						}
+					}
+					if(total>0){
+						lblTotal.setText(String.format("TOTAL: $ %.2f", total));
+						lblTotal.setVisible(true);
+						btnPay.setVisible(true);
+					}
 				}
 			}
 		});
@@ -150,65 +199,124 @@ public class CheckCodeView extends JPanel {
 		verticalBox_2.add(verticalStrut_1);
 
 		JScrollPane scrollPane = new JScrollPane();
+//		scrollPane.setPreferredSize(new Dimension(400, 200));
 		verticalBox_2.add(scrollPane);
 		scrollPane.setViewportBorder(null);
 
 		table = new JTable();
 		scrollPane.setViewportView(table);
 
-		Component verticalStrut_2 = Box.createVerticalStrut(80);
-		verticalBox_2.add(verticalStrut_2);
-		
 		Box verticalBox_3 = Box.createVerticalBox();
 		horizontalBox.add(verticalBox_3);
-		
+
 		Component horizontalStrut_3 = Box.createHorizontalStrut(180);
 		verticalBox_3.add(horizontalStrut_3);
-		
+
 		Component verticalStrut_3 = Box.createVerticalStrut(100);
 		verticalBox_3.add(verticalStrut_3);
-		
+
 		Box horizontalBox_3 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_3);
-		
+
 		Component horizontalStrut_8 = Box.createHorizontalStrut(20);
 		horizontalBox_3.add(horizontalStrut_8);
-		
-		Font f = new Font("Tahoma", Font.BOLD, 20);
-		
+
 		JPanel panel_1 = new JPanel();
 		horizontalBox_3.add(panel_1);
 		panel_1.setVisible(true);
-		
+
 		Box verticalBox_4 = Box.createVerticalBox();
 		panel_1.add(verticalBox_4);
-		
-		JLabel lPagar = new JLabel("Pagar: ");
+
+		JLabel lPagar = new JLabel("Aciertos: ");
 		verticalBox_4.add(lPagar);
-		
-		List<JLabel> list = new ArrayList<JLabel>();
-		for (int i = 0; i < 10; i++) {
-			JLabel jLabel = new JLabel("--");
-			list.add(jLabel);
-			verticalBox_4.add(jLabel);
-			jLabel.setVisible(false);
-		}
-		
+
 		Component verticalStrut_7 = Box.createVerticalStrut(10);
 		verticalBox_4.add(verticalStrut_7);
+
+		winLotteries = new ArrayList<JLabel>();
+		for (int i = 0; i < 10; i++) {
+			JLabel jLabel = new JLabel();
+			winLotteries.add(jLabel);
+			verticalBox_4.add(jLabel);
+		}
 		
-		JLabel label_1 = new JLabel("TOTAL: $ 0.00");
-		verticalBox_4.add(label_1);
-		label_1.setFont(f);
+		lblTotal = new JLabel();
+		lblTotal.setFont(new Font("Tahoma", Font.BOLD, 20));
+		verticalBox_4.add(lblTotal);
 		
+
 		Component horizontalStrut_9 = Box.createHorizontalStrut(20);
 		horizontalBox_3.add(horizontalStrut_9);
+		
+		Component verticalStrut_8 = Box.createVerticalStrut(20);
+		verticalBox_5.add(verticalStrut_8);
+		
+		Box hb_1 = Box.createHorizontalBox();
+		verticalBox_5.add(hb_1);
+		
+		Component horizontalStrut_4 = Box.createHorizontalStrut(20);
+		hb_1.add(horizontalStrut_4);
+		
+		btnPay = new JButton("Pagar");
+		btnPay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (btnPay.isEnabled()) {
+					Jugada jugada = controller.pay(textCode.getText());
+					float total = 0f;
+					int i = 0;
+					for (Entry<String, Float> entry : jugada.getLotteries()
+							.entrySet()) {
+						if (entry.getValue() != null) {
+							total += entry.getValue();
+							JLabel jLabel = winLotteries.get(i++);
+							if (entry.getValue() > 0f) {
+								jLabel.setText(map.get(entry.getKey())
+										+ String.format(": $ %.2f",
+												entry.getValue()));
+							} else {
+								jLabel.setText("PAGADO");
+							}
+							jLabel.setVisible(true);
+						}
+					}
+					lblTotal.setText(String.format("PAGAR: $ %.2f", total));
+					btnPay.setVisible(false);
+				}
+			}
+		});
+		btnPay.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnPay.setVisible(false);
+		hb_1.add(btnPay);
+
+		Component hs_2 = Box.createHorizontalStrut(20);
+		hb_1.add(hs_2);
+
+		btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textCode.setText(null);
+				init();
+			}
+		});
+		btnClear.setFont(new Font("Tahoma", Font.BOLD, 10));
+		hb_1.add(btnClear);
+
+		init();
+	}
+
+	public void reset() {
+		init();
+	}
+
+	private void init() {
+		for (JLabel jLabel : winLotteries)
+			jLabel.setVisible(false);
+		lblTotal.setVisible(false);
 		buildJTable(createModel());
 		buildLoteryTable();
 	}
 	
-	
-
 	private void buildJTable(TableModel model) {
 		table.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		table.setRowHeight(40);

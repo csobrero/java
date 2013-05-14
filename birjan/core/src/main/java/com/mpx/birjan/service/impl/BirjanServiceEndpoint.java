@@ -41,6 +41,13 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
+	public Jugada pay(String hash) {
+		Preconditions.checkNotNull(hash);
+		Jugada jugada = txManager.pay(hash);
+		return jugada;
+	}
+
+	@Override
 	@Secured({ "ROLE_MANAGER" })
 	public void createDraw(String lotteryName, String variant, String day,
 			String[] data) {

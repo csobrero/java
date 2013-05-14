@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.EventQueue;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.xml.ws.BindingProvider;
@@ -153,6 +154,11 @@ public class BirjanClient {
 
 	}
 
+	public Jugada pay(String hash) {
+		Jugada jugada = webService.pay(hash);
+		return jugada;
+	}
+	
 	public void actionMenu(String menu) {
 		if(menu.equals("Jugar")){
 			setView(ticketView);
@@ -171,8 +177,8 @@ public class BirjanClient {
 		}
 	}
 
-	public Jugada retrieveByCode(String code) {
-		Jugada jugada = webService.retrieveByHash(code);
+	public Jugada retrieveByCode(String hash) {
+		Jugada jugada = webService.retrieveByHash(hash);
 		return jugada;
 	}
 

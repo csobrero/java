@@ -13,6 +13,8 @@ public interface IGenericDAO<T extends Serializable> {
 
 	void update(final T entity);
 
+	void updateAll(final List<T> entities);
+	
 	void delete(final T entity);
 
 	void deleteById(final long entityId);

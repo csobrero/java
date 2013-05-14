@@ -26,4 +26,6 @@ public interface BirjanWebService {
 
 	Object[][] retrieveAvailability(String day);
 
+	Jugada pay(String hash);
+
 }

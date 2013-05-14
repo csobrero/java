@@ -47,7 +47,7 @@ public class TransactionalManager {
 
 	private GenericJpaDAO<User> usersDao;
 
-	@Transactional(readOnly = true)
+	@Transactional(readOnly=true)
 	public Jugada retrieveByHash(String hash) {
 		Filter<String> filter = new Filter<String>("hash", hash);
 		Wager wager = wagerDao.findUniqueByFilter(filter);
@@ -68,6 +68,31 @@ public class TransactionalManager {
 		}
 		return null;
 	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public synchronized Jugada pay(String hash) {
+		Filter<String> filter = new Filter<String>("hash", hash);
+		Wager wager = wagerDao.findUniqueByFilter(filter);
+
+		Map<String, Float> lotteriesPayAmountMap = new HashMap<String, Float>();
+		List<Game> games = wager.getGame();
+		for (Game game : games) {
+			lotteriesPayAmountMap.put(game.getLottery().name(),
+					BirjanUtils.calculateWinAmount(game));
+			if(game.getStatus().equals(Status.WINNER)){
+				game.setStatus(Status.PAID);		
+			}
+		}
+
+		DateTime dt = new DateTime(wager.getGame().get(0).getDate());
+		String day = dt.toString("EEEE", new Locale("es")).toUpperCase() + "  "
+				+ dt.getDayOfMonth();
+
+		Object[][] data = (Object[][]) SerializationUtils.deserialize(wager
+				.getGame().get(0).getData());
+		return new Jugada(day, lotteriesPayAmountMap, data);
+	}
+	
 
 	public long saveOrUpdatePerson(Long id, String name, String surname,
 			String movile) {
@@ -113,8 +138,10 @@ public class TransactionalManager {
 			}
 			
 			List<Game> winners = retriveGames(Status.WINNER, lottery, date, null);
+			List<Game> losers = retriveGames(Status.LOSER, lottery, date, null);
 			List<Game> games = retriveGames(Status.VALID, lottery, date, null);
 			games.addAll(winners);
+			games.addAll(losers);
 			for (Game game : games) {
 				Object[][] data = (Object[][])SerializationUtils.deserialize(game.getData());
 				boolean win= true;
@@ -125,10 +152,9 @@ public class TransactionalManager {
 						win &= number[i]=='x'||number[i]==winnerNumber[i];
 					}
 				}
-				if(win){
-					game.setStatus(Status.WINNER);
-					gameDao.update(game);					
-				}
+				game.setStatus((win) ? Status.WINNER : Status.LOSER);
+				gameDao.update(game);
+
 			}
 			
 	
@@ -237,6 +263,7 @@ public class TransactionalManager {
 		User user = usersDao.findUniqueByFilter(filter);
 		return user;
 	}
+
 
 
 	// private Map<Integer, Integer> matchWinNumbers(String patterns,
