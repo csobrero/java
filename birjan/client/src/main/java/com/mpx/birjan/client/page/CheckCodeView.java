@@ -6,15 +6,13 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,11 +22,15 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mpx.birjan.client.BirjanClient;
-import com.mpx.birjan.common.Jugada;
+import com.mpx.birjan.common.Payment;
+import com.mpx.birjan.common.Status;
+import com.mpx.birjan.common.Ticket;
 
 @Repository
 public class CheckCodeView extends JPanel {
@@ -141,18 +143,23 @@ public class CheckCodeView extends JPanel {
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				init();
-				Jugada jugada = controller.retrieveByCode(textCode.getText());
-				if (jugada.getData() != null) {
+				Ticket ticket = controller.retrieveByCode(textCode.getText());
+				if (ticket.getData() != null) {
 
-					label.setText("Fecha: " + jugada.getDay());
+					label.setText("Fecha: " + ticket.getDay());
 
-					DefaultTableModel model = (DefaultTableModel) table
-							.getModel();
-					for (Object[] data : jugada.getData()) {
+					DefaultTableModel model = (DefaultTableModel) table.getModel();
+					for (Object[] data : ticket.getData()) {
 						model.addRow(data);
 					}
-
-					Set<String> lotteryNames = jugada.getLotteries().keySet();
+					
+					@SuppressWarnings("unchecked")
+					Collection<String> lotteryNames = CollectionUtils.collect(ticket.getPayments(), new Transformer() {
+						public Object transform(Object input) {
+							return ((Payment)input).getLottery().name();
+						}
+					});
+					
 					String[][] loteriesMap = TicketView.loteriesMap;
 					for (int i = 0; i < loteriesMap.length; i++) {
 						for (int j = 0; j < loteriesMap[i].length; j++) {
@@ -164,27 +171,9 @@ public class CheckCodeView extends JPanel {
 					((DefaultTableModel) lotteryTable.getModel())
 							.fireTableDataChanged();
 
-					float total = 0f;
-					int i = 0;
-					for (Entry<String, Float> entry : jugada.getLotteries()
-							.entrySet()) {
-						if (entry.getValue()!=null) {
-							total += entry.getValue();
-							JLabel jLabel = winLotteries.get(i++);
-							if(entry.getValue() > 0f){
-							jLabel.setText(map.get(entry.getKey())
-									+ String.format(": $ %.2f",
-											entry.getValue()));
-							}else{
-								jLabel.setText(map.get(entry.getKey())
-										+ ": PAGADO");
-							}
-							jLabel.setVisible(true);
-						}
-					}
-					if(total>0){
-						lblTotal.setText(String.format("TOTAL: $ %.2f", total));
-						lblTotal.setVisible(true);
+					if(paymentSummary(ticket)>0){
+//						lblTotal.setText(String.format("TOTAL: $ %.2f", total));
+//						lblTotal.setVisible(true);
 						btnPay.setVisible(true);
 					}
 				}
@@ -261,27 +250,11 @@ public class CheckCodeView extends JPanel {
 		btnPay = new JButton("Pagar");
 		btnPay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (btnPay.isEnabled()) {
-					Jugada jugada = controller.pay(textCode.getText());
-					float total = 0f;
-					int i = 0;
-					for (Entry<String, Float> entry : jugada.getLotteries()
-							.entrySet()) {
-						if (entry.getValue() != null) {
-							total += entry.getValue();
-							JLabel jLabel = winLotteries.get(i++);
-							if (entry.getValue() > 0f) {
-								jLabel.setText(map.get(entry.getKey())
-										+ String.format(": $ %.2f",
-												entry.getValue()));
-							} else {
-								jLabel.setText("PAGADO");
-							}
-							jLabel.setVisible(true);
-						}
-					}
-					lblTotal.setText(String.format("PAGAR: $ %.2f", total));
+				if (btnPay.isVisible()) {
 					btnPay.setVisible(false);
+					Ticket ticket = controller.pay(textCode.getText());
+					lblTotal.setText(String.format("PAGAR: $ %.2f", paymentSummary(ticket)));
+					lblTotal.setVisible(true);
 				}
 			}
 		});
@@ -373,6 +346,26 @@ public class CheckCodeView extends JPanel {
 				return false;
 			}
 		};
+	}
+	
+	private float paymentSummary(Ticket ticket) {
+		float total = 0f;
+		int i = 0;
+		for (Payment payment : ticket.getPayments()) {
+			if (payment.getAmount() != null) {
+				String s = ": PAGADO";
+				if (payment.getStatus().equals(Status.WINNER)) {
+					total += payment.getAmount();
+					s = String.format(": $ %.2f", payment.getAmount());
+				}
+				JLabel jLabel = winLotteries.get(i++);
+				jLabel.setText(map.get(payment.getLottery().name())
+						+ s);
+
+				jLabel.setVisible(true);
+			}
+		}
+		return total;
 	}
 
 }

@@ -11,8 +11,8 @@ import org.joda.time.DateTime;
 
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
-import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wager;
+import com.mpx.birjan.common.Status;
 import com.mpx.birjan.core.Rule;
 
 public class BirjanUtils {
@@ -36,7 +36,8 @@ public class BirjanUtils {
 			hash += (char) ((i < 10) ? i + 48 : i + 55);
 		}
 
-		return hash + hex;
+		String millis = String.valueOf(dt.getMillis());
+		return hash + hex + millis.substring(millis.length()-2,millis.length());
 	}
 
 	public static DateTime getDate(String day) {
@@ -126,19 +127,19 @@ public class BirjanUtils {
 	}
 
 	
-	public static Float calculateWinAmount(Game game) {
-		Object[][] data = (Object[][])SerializationUtils.deserialize(game.getData());
-		if(game.getStatus().equals(Status.WINNER)||game.getStatus().equals(Status.PAID)){
-			Float winAmount = 0f;
-			if(game.getStatus().equals(Status.WINNER)){
-				for (Object[] row : data) {
-					int hits = 3 -((String)row[1]).lastIndexOf('x');
-					winAmount += ((Float)row[2])*Rule.defaultWinRatios[hits];
-				}
-			}
-			return winAmount;
-		}
-		return null;
-	}
+//	public static Float calculateWinAmount(Game game) {
+//		Object[][] data = (Object[][])SerializationUtils.deserialize(game.getData());
+//		if(game.getStatus().equals(Status.WINNER)||game.getStatus().equals(Status.PAID)){
+//			Float winAmount = 0f;
+//			if(game.getStatus().equals(Status.WINNER)){
+//				for (Object[] row : data) {
+//					int hits = 3 -((String)row[1]).lastIndexOf('x');
+//					winAmount += ((Float)row[2])*Rule.defaultWinRatios[hits];
+//				}
+//			}
+//			return winAmount;
+//		}
+//		return null;
+//	}
 
 }

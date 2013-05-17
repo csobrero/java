@@ -20,7 +20,7 @@ public abstract class AbstractView extends JPanel {
 
 	protected JTable table;
 
-	protected JComboBox comboBox, comboBox_1, comboBox_2;
+	protected JComboBox comboBox, comboBox_1, comboBox_2, comboBox_3;
 
 	protected JButton btnDone, btnClear, btnExport, btnValidate;;
 	
@@ -38,6 +38,10 @@ public abstract class AbstractView extends JPanel {
 
 	public JComboBox getComboBox_2() {
 		return comboBox_2;
+	}
+
+	public JComboBox getComboBox_3() {
+		return comboBox_3;
 	}
 
 	public JComboBox getComboBox() {

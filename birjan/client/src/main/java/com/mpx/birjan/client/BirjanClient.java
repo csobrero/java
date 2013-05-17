@@ -4,12 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
+import java.text.DateFormat;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.swing.JPanel;
-import javax.xml.ws.BindingProvider;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -20,8 +18,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import com.mpx.birjan.bean.Wrapper;
@@ -30,10 +26,10 @@ import com.mpx.birjan.client.page.ControlView;
 import com.mpx.birjan.client.page.DrawView;
 import com.mpx.birjan.client.page.MainView;
 import com.mpx.birjan.client.page.PrintView;
-import com.mpx.birjan.client.page.TicketViewBkp;
 import com.mpx.birjan.client.page.TicketView;
-import com.mpx.birjan.common.Jugada;
+import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.service.impl.BirjanWebService;
+import com.mpx.birjan.util.WorkbookHandler;
 
 @Controller
 public class BirjanClient {
@@ -143,7 +139,7 @@ public class BirjanClient {
 		String hash = webService.createGames(day, lotteries, data);
 
 		if (hash != null) {
-			Ticket ticket = new Ticket(lotteries, data, hash);
+			TicketPrintable ticket = new TicketPrintable(lotteries, data, hash);
 
 			printView.setTicket(ticket);
 			setView(printView);
@@ -154,8 +150,8 @@ public class BirjanClient {
 
 	}
 
-	public Jugada pay(String hash) {
-		Jugada jugada = webService.pay(hash);
+	public Ticket pay(String hash) {
+		Ticket jugada = webService.pay(hash);
 		return jugada;
 	}
 	
@@ -177,8 +173,8 @@ public class BirjanClient {
 		}
 	}
 
-	public Jugada retrieveByCode(String hash) {
-		Jugada jugada = webService.retrieveByHash(hash);
+	public Ticket retrieveByCode(String hash) {
+		Ticket jugada = webService.retrieveByHash(hash);
 		return jugada;
 	}
 
@@ -219,46 +215,17 @@ public class BirjanClient {
 	}
 
 	public void retriveGames() {
+		String day = controlView.getComboBox().getSelectedItem().toString().split(" ")[2];
 		String lottery = controlView.getComboBox_1().getSelectedItem().toString();
 		String variant = controlView.getComboBox_2().getSelectedItem().toString();
-		String day = controlView.getComboBox().getSelectedItem().toString()
-				.split(" ")[2];
+		String state = controlView.states[controlView.getComboBox_3().getSelectedIndex()];
 		
-		Wrapper[] data = webService.retriveGames(lottery, variant, day);
+		Wrapper[] data = webService.retriveGames(lottery, variant, state, day);
 		
-		if(data!=null){
-			Workbook wb = new HSSFWorkbook();
-//			CreationHelper createHelper = wb.getCreationHelper();
-			Sheet sheet = wb.createSheet("new sheet");
-			
-			Row row ;
-			Cell cell;
-			
-			row = sheet.createRow((short) 0);
-			row.createCell(0).setCellValue("Verificador");
-			row.createCell(1).setCellValue("Numero");
-			row.createCell(2).setCellValue("Posicion");
-			row.createCell(3).setCellValue("Apuesta");
-			
-			Object[][] vector;
-			int rowIndex = 1;
-			for (int i = 0; i < data.length; i++) {
-				vector = (Object[][])SerializationUtils.deserialize(data[i].getDataVector());
-				for (int j = 0; j < vector.length; j++) {
-					row = sheet.createRow((short) rowIndex++);
-					cell = row.createCell(0);
-					if(j==0)
-						cell.setCellValue(data[i].getHash());
-					row.createCell(1).setCellValue((String)vector[j][2]);
-					row.createCell(2).setCellValue((Integer)vector[j][3]);
-					row.createCell(3).setCellValue((Float)vector[j][1]);
-				}
-				rowIndex++;
-			}
-			
-			
-			controlView.setWorkbook(wb);
-		}
+		Workbook wb = WorkbookHandler.build(data);
+		
+		controlView.setWorkbook(wb);
+		
 	}
 
 	public String getPassword() {

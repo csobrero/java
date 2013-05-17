@@ -18,6 +18,8 @@ import javax.validation.constraints.NotNull;
 
 import org.pojomatic.annotations.AutoProperty;
 
+import com.mpx.birjan.common.Status;
+
 @Entity
 @AutoProperty
 @Table(name = "GAME")
@@ -40,22 +42,20 @@ public class Game extends AbstractEntity implements Serializable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Wager wager;
 
-	@Lob
 	@NotNull
-	private byte[] data;
+	private Object[][] data;
 	
-	@Transient
-	private List<Hits> hits;
+	private Float prize;
 
 	public Game() {
 	}
 
-	public Game(Lottery lottery, Date date, Wager wager, byte[] data) {
+	public Game(Lottery lottery, Date date, Wager wager, Object[][] data) {
 		this(Status.VALID, lottery, date, wager, data);
 	}
 
 	public Game(Status status, Lottery lottery, Date date, Wager wager,
-			byte[] data) {
+			Object[][] data) {
 		this.status = status;
 		this.lottery = lottery;
 		this.date = date;
@@ -83,7 +83,7 @@ public class Game extends AbstractEntity implements Serializable {
 		this.wager = wager;
 	}
 
-	public byte[] getData() {
+	public Object[][] getData() {
 		return data;
 	}
 
@@ -91,12 +91,12 @@ public class Game extends AbstractEntity implements Serializable {
 		return date;
 	}
 
-	public List<Hits> getHits() {
-		return hits;
+	public Float getPrize() {
+		return prize;
 	}
 
-	public void setHits(List<Hits> hits) {
-		this.hits = hits;
+	public void setPrize(Float paid) {
+		this.prize = paid;
 	}
 
 }

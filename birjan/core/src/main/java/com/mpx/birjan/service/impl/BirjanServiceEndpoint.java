@@ -15,9 +15,9 @@ import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
-import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.Wrapper;
-import com.mpx.birjan.common.Jugada;
+import com.mpx.birjan.common.Ticket;
+import com.mpx.birjan.common.Status;
 import com.mpx.birjan.core.TransactionalManager;
 
 @Service
@@ -34,16 +34,16 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	public Jugada retrieveByHash(String hash) {
+	public Ticket retrieveByHash(String hash) {
 		Preconditions.checkNotNull(hash);
-		Jugada jugada = txManager.retrieveByHash(hash);
+		Ticket jugada = txManager.processWinners(hash, false);
 		return jugada;
 	}
 
 	@Override
-	public Jugada pay(String hash) {
+	public Ticket pay(String hash) {
 		Preconditions.checkNotNull(hash);
-		Jugada jugada = txManager.pay(hash);
+		Ticket jugada = txManager.processWinners(hash, true);
 		return jugada;
 	}
 
@@ -99,7 +99,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	public Wrapper[] retriveGames(String lotteryName, String variant, String day) {
+	public Wrapper[] retriveGames(String lotteryName, String variant, String statusName, String day) {
 		Preconditions.checkNotNull(lotteryName);
 		Preconditions.checkNotNull(variant);
 		Preconditions.checkNotNull(day);
@@ -108,14 +108,19 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		Lottery lottery = Lottery.valueOf((lotteryName + "_" + variant)
 				.toUpperCase());
 		
-		List<Game> games = txManager.retriveGames(Status.VALID, lottery, date, null);
+		Status status = (statusName!=null)?Status.valueOf(statusName):null;
+		
+		List<Game> games = txManager.retriveGames(status, lottery, date, null);
 		
 		Wrapper[] values = null;
 		if (games != null && !games.isEmpty()) {
 			values = new Wrapper[games.size()];
 			for (int i = 0; i < values.length; i++) {
-				values[i] = new Wrapper(games.get(i).getWager().getHash(), games.get(i)
-						.getData());
+				Game game = games.get(i);
+				values[i] = new Wrapper(game.getWager().getHash(),
+						game.getData(), game.getStatus(), game.getPrize(), game.getWager()
+								.getUser().getUsername(), game
+								.getCreated());
 			}
 		}
 		

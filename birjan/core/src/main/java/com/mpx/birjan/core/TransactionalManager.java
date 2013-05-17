@@ -2,15 +2,12 @@ package com.mpx.birjan.core;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,10 +20,11 @@ import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
-import com.mpx.birjan.bean.Status;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.bean.Wager;
-import com.mpx.birjan.common.Jugada;
+import com.mpx.birjan.common.Payment;
+import com.mpx.birjan.common.Status;
+import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.core.Rule.VARIANT;
 import com.mpx.birjan.service.IPersonService;
 import com.mpx.birjan.service.dao.Filter;
@@ -47,52 +45,29 @@ public class TransactionalManager {
 
 	private GenericJpaDAO<User> usersDao;
 
-	@Transactional(readOnly=true)
-	public Jugada retrieveByHash(String hash) {
+	@Transactional(rollbackFor = Exception.class)
+	public Ticket processWinners(String hash, boolean pay) {
 		Filter<String> filter = new Filter<String>("hash", hash);
 		Wager wager = wagerDao.findUniqueByFilter(filter);
 		if (wager != null) {
-
-			Map<String, Float> lotteriesPayAmountMap = new HashMap<String, Float>();
-			for (Game game : wager.getGame())
-				lotteriesPayAmountMap.put(game.getLottery().name(),
-						BirjanUtils.calculateWinAmount(game));
-
+			
 			DateTime dt = new DateTime(wager.getGame().get(0).getDate());
 			String day = dt.toString("EEEE", new Locale("es")).toUpperCase()
 					+ "  " + dt.getDayOfMonth();
 
-			Object[][] data = (Object[][]) SerializationUtils.deserialize(wager
-					.getGame().get(0).getData());
-			return new Jugada(day, lotteriesPayAmountMap, data);
+			Object[][] data = wager
+					.getGame().get(0).getData();
+
+			Ticket ticket = new Ticket(day, data);
+			for (Game game : wager.getGame()) {
+				ticket.addPayment(new Payment(game.getLottery(), game.getStatus(), game.getPrize()));
+				if(pay && game.getStatus().equals(Status.WINNER))
+					game.setStatus(Status.PAID);
+			}
+			return ticket;
 		}
 		return null;
 	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public synchronized Jugada pay(String hash) {
-		Filter<String> filter = new Filter<String>("hash", hash);
-		Wager wager = wagerDao.findUniqueByFilter(filter);
-
-		Map<String, Float> lotteriesPayAmountMap = new HashMap<String, Float>();
-		List<Game> games = wager.getGame();
-		for (Game game : games) {
-			lotteriesPayAmountMap.put(game.getLottery().name(),
-					BirjanUtils.calculateWinAmount(game));
-			if(game.getStatus().equals(Status.WINNER)){
-				game.setStatus(Status.PAID);		
-			}
-		}
-
-		DateTime dt = new DateTime(wager.getGame().get(0).getDate());
-		String day = dt.toString("EEEE", new Locale("es")).toUpperCase() + "  "
-				+ dt.getDayOfMonth();
-
-		Object[][] data = (Object[][]) SerializationUtils.deserialize(wager
-				.getGame().get(0).getData());
-		return new Jugada(day, lotteriesPayAmountMap, data);
-	}
-	
 
 	public long saveOrUpdatePerson(Long id, String name, String surname,
 			String movile) {
@@ -137,13 +112,13 @@ public class TransactionalManager {
 				Preconditions.checkArgument(Pattern.matches("\\d{4}", winnerNumber), "Can not validate Draw.");
 			}
 			
-			List<Game> winners = retriveGames(Status.WINNER, lottery, date, null);
-			List<Game> losers = retriveGames(Status.LOSER, lottery, date, null);
+//			List<Game> winners = retriveGames(Status.WINNER, lottery, date, null);
+//			List<Game> losers = retriveGames(Status.LOSER, lottery, date, null);
 			List<Game> games = retriveGames(Status.VALID, lottery, date, null);
-			games.addAll(winners);
-			games.addAll(losers);
+//			games.addAll(winners);
+//			games.addAll(losers);
 			for (Game game : games) {
-				Object[][] data = (Object[][])SerializationUtils.deserialize(game.getData());
+				Object[][] data = game.getData();
 				boolean win= true;
 				for (Object[] row : data) {
 					char[] winnerNumber = winnerNumbers[(Integer)row[0]-1].toCharArray();
@@ -152,16 +127,20 @@ public class TransactionalManager {
 						win &= number[i]=='x'||number[i]==winnerNumber[i];
 					}
 				}
-				game.setStatus((win) ? Status.WINNER : Status.LOSER);
+				
+				game.setStatus(Status.LOSER);
+				if (win) {
+					Float winAmount = 0f;
+					for (Object[] row : data) {
+						int hits = 3 - ((String) row[1]).lastIndexOf('x');
+						winAmount += ((Float) row[2])* Rule.defaultWinRatios[hits-1];
+					}
+					game.setStatus(Status.WINNER);
+					game.setPrize(winAmount);
+				}
 				gameDao.update(game);
 
 			}
-			
-	
-//			if (draw != null) {
-//				draw.setStatus(Status.VALID);
-//				drawDao.update(draw);
-//			}
 		}
 
 	}
@@ -206,9 +185,9 @@ public class TransactionalManager {
 		Wager wager = new Wager(totalBet*lotteries.size(), user);
 		
 		for (Lottery lottery : lotteries) {
-			byte[] serialData = SerializationUtils.serialize(data);
+//			byte[] serialData = SerializationUtils.serialize(data);
 
-			Game game = new Game(lottery, date.toDate(), wager, serialData);
+			Game game = new Game(lottery, date.toDate(), wager, data);
 			gameDao.create(game);
 		}
 		
@@ -263,35 +242,4 @@ public class TransactionalManager {
 		User user = usersDao.findUniqueByFilter(filter);
 		return user;
 	}
-
-
-
-	// private Map<Integer, Integer> matchWinNumbers(String patterns,
-	// String candidate) {
-	// Map<Integer, Integer> hits = null;
-	// int k = 0;
-	// for (int i = 3; i < 80; i += 4) {
-	// if (candidate.charAt(i) == patterns.charAt(i)) {
-	// k = 1;
-	// for (int j = (i - 1); j > (i - 4); j--) {
-	// if (candidate.charAt(j) == patterns.charAt(j))
-	// k++;
-	// else if (candidate.charAt(j) == 'x')
-	// break;
-	// else {
-	// k = 0;
-	// break;
-	// }
-	// }
-	// if (k > 0) {
-	// if (hits == null)
-	// hits = new HashMap<Integer, Integer>();
-	// hits.put((i + 1) / 4, k);
-	// k = 0;
-	// }
-	// }
-	// }
-	// return hits;
-	// }
-
 }

@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mpx.birjan.client.BirjanClient;
-import com.mpx.birjan.client.Ticket;
+import com.mpx.birjan.client.TicketPrintable;
 
 @Repository
 public class PrintView extends JPanel {
@@ -135,7 +135,7 @@ public class PrintView extends JPanel {
 		verticalBox_1.add(verticalStrut_3);
 	}
 
-	public void setTicket(Ticket ticket) {
+	public void setTicket(TicketPrintable ticket) {
 		this.ticket = ticket;
 		lblcCode.setText("VERIFICACION: " + ticket.getHash());
 		textUser.requestFocusInWindow();

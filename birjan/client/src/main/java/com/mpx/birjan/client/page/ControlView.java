@@ -24,10 +24,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mpx.birjan.client.BirjanClient;
 import com.mpx.birjan.service.impl.BirjanUtils;
 
 @Repository
@@ -36,6 +34,8 @@ public class ControlView extends AbstractView {
 	private static final long serialVersionUID = 4334436586243521165L;
 
 	private Workbook workbook;
+
+	public final String[] states = { null, "WINNER", "LOSER", "PAID" };
 
 	public ControlView() {
 
@@ -81,7 +81,7 @@ public class ControlView extends AbstractView {
 		comboBox = new JComboBox();
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				reset();
+				init();
 			}
 		});
 		vb_2.add(comboBox);
@@ -98,6 +98,10 @@ public class ControlView extends AbstractView {
 						.populateCombo("draw", selected, day)));
 				comboBox_2.setEnabled(true);
 				comboBox_2.requestFocusInWindow();
+				comboBox_3.setModel(new DefaultComboBoxModel());
+				comboBox_3.setEnabled(false);
+				btnExport.setEnabled(false);
+				btnClear.setEnabled(true);
 			}
 		});
 		vb_2.add(comboBox_1);
@@ -108,14 +112,25 @@ public class ControlView extends AbstractView {
 		comboBox_2 = new JComboBox();
 		comboBox_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.retriveGames();
-				if(workbook!=null){
-					btnClear.setEnabled(true);
-					btnExport.setEnabled(true);					
-				}
+				comboBox_3.setModel(new DefaultComboBoxModel(new String[]{"TODOS","GANADORES"
+						,"PERDEDORES","PAGOS"}));
+				comboBox_3.setEnabled(true);
+				comboBox_3.requestFocusInWindow();
 			}
 		});
 		vb_2.add(comboBox_2);
+
+		Component vs_7 = Box.createVerticalStrut(10);
+		vb_2.add(vs_7);
+
+		comboBox_3 = new JComboBox();
+		comboBox_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.retriveGames();
+				btnExport.setEnabled(workbook!=null);
+			}
+		});
+		vb_2.add(comboBox_3);
 
 		Component hs = Box.createHorizontalStrut(120);
 		vb_2.add(hs);
@@ -137,9 +152,6 @@ public class ControlView extends AbstractView {
 		
 		Component verticalStrut = Box.createVerticalStrut(20);
 		verticalBox_1.add(verticalStrut);
-		
-		JButton btnNewButton = new JButton("New button");
-		verticalBox_1.add(btnNewButton);
 
 		Component horizontalStrut = Box.createHorizontalStrut(500);
 		verticalBox.add(horizontalStrut);
@@ -153,8 +165,6 @@ public class ControlView extends AbstractView {
 		btnExport = new JButton("Exportar");
 		btnExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (btnExport.isEnabled())
-					btnExport.setEnabled(false);// prevent double click.
 				JFileChooser jfc = new JFileChooser(System
 						.getProperty("user.home"));
 				jfc.setSelectedFile(new File(buildFileName()));
@@ -165,7 +175,6 @@ public class ControlView extends AbstractView {
 						fileOut = new FileOutputStream(jfc.getSelectedFile());
 						workbook.write(fileOut);
 						fileOut.flush();
-						btnExport.setEnabled(true);
 					} catch (IOException ex) {
 						ex.printStackTrace();
 					} finally{
@@ -207,7 +216,7 @@ public class ControlView extends AbstractView {
 	}
 
 	private String[] getdays() {
-		String[] days = new String[3];
+		String[] days = new String[20];
 		Locale locale = new Locale("es");
 		DateTime dt = new DateTime(new Date());
 		for (int i = 0; i < days.length; i++) {
@@ -223,15 +232,20 @@ public class ControlView extends AbstractView {
 	public void reset() {
 		comboBox.setModel(new DefaultComboBoxModel(getdays()));
 		comboBox.setSelectedIndex(0);
+		init();
+	}
+
+	private void init() {
 		String day = comboBox.getSelectedItem().toString().split(" ")[2];
 		comboBox_1.setModel(new DefaultComboBoxModel(controller.populateCombo(
 				"ticket", "LOTERIA", day)));
 		comboBox_1.requestFocusInWindow();
 		comboBox_2.setModel(new DefaultComboBoxModel());
 		comboBox_2.setEnabled(false);
+		comboBox_3.setModel(new DefaultComboBoxModel());
+		comboBox_3.setEnabled(false);
 		btnClear.setEnabled(false);
 		btnExport.setEnabled(false);
-
 	}
 
 	public void setWorkbook(Workbook workbook) {

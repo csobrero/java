@@ -3,7 +3,7 @@ package com.mpx.birjan.service.impl;
 import javax.jws.WebService;
 
 import com.mpx.birjan.bean.Wrapper;
-import com.mpx.birjan.common.Jugada;
+import com.mpx.birjan.common.Ticket;
 
 @WebService
 public interface BirjanWebService {
@@ -12,7 +12,7 @@ public interface BirjanWebService {
 
 	String createGames(String day, String[] lotteries, Object[][] data);
 
-	Jugada retrieveByHash(String code);
+	Ticket retrieveByHash(String code);
 
 	void createDraw(String lottery, String variant, String day, String[] data);
 
@@ -20,12 +20,12 @@ public interface BirjanWebService {
 
 	void validateDraw(String lottery, String variant, String day);
 
-	Wrapper[] retriveGames(String lottery, String variant, String day);
+	Wrapper[] retriveGames(String lottery, String variant, String state, String day);
 
 	boolean isDevelopment();
 
 	Object[][] retrieveAvailability(String day);
 
-	Jugada pay(String hash);
+	Ticket pay(String hash);
 
 }
