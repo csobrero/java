@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>birjan-parent</artifactId>
+		<groupId>com.mpx</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>birjan-client</artifactId>
+	<packaging>jar</packaging>
+
+	<name>Birjan-Client</name>
+	<description>Birjan Client Desktop Application</description>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.mpx</groupId>
+			<artifactId>birjan</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<!-- TEST's DEPENDENCIES -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>3.0.6.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.0</version>
+				<configuration>
+					<transformers>
+						<transformer
+							implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+							<mainClass>com.mpx.birjan.client.BirjanClient</mainClass>
+						</transformer>
+						<transformer
+							implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+							<resource>META-INF/spring.handlers</resource>
+						</transformer>
+						<transformer
+							implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+							<resource>META-INF/spring.schemas</resource>
+						</transformer>
+                        <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            <resource>META-INF/cxf/cxf.extension</resource>
+                        </transformer>
+                        <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
+                            <resource>META-INF/cxf/cxf.xml</resource>
+                        </transformer>
+					</transformers>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
