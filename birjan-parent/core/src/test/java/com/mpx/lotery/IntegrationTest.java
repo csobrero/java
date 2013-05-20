@@ -1,7 +1,5 @@
 package com.mpx.lotery;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mpx.birjan.bean.Authorities;
 import com.mpx.birjan.bean.Game;
-import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.User;
+import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Status;
-import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.core.TransactionalManager;
 import com.mpx.birjan.service.dao.IGenericDAO;
-import com.mpx.birjan.service.impl.BirjanWebService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-appCtx.xml")
@@ -37,7 +33,7 @@ public class IntegrationTest {
 
 	private IGenericDAO<Authorities> authoritiesDao;
 	
-	private BirjanWebService webService;
+//	private BirjanWebService webService;
 	
 	@Autowired
 	private TransactionalManager manager;
@@ -98,6 +94,7 @@ public class IntegrationTest {
 		
 		data = new Object[][]{{1,"xxx2",2.45f},{20,"x002",2.55f}};
 		hash = manager.createGames(lotteries , date , data );
+		System.out.println(hash);
 
 	}
 	

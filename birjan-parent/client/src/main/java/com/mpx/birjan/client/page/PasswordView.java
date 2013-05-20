@@ -1,6 +1,8 @@
 package com.mpx.birjan.client.page;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -8,9 +10,6 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class PasswordView {
 
@@ -72,6 +71,7 @@ public class PasswordView {
 		JButton btnLogIn = new JButton("LogIn");
 		btnLogIn.setBounds(133, 158, 182, 23);
 		btnLogIn.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
 				if(fieldUser.getText().equalsIgnoreCase("1")&&fieldPassword.getText().equalsIgnoreCase("1")){
 //					TicketPage ticketPage = new TicketPage();

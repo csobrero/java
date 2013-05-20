@@ -14,14 +14,17 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
-import com.mpx.birjan.bean.Lottery;
-import com.mpx.birjan.bean.Wrapper;
-import com.mpx.birjan.common.Ticket;
+import com.mpx.birjan.bean.User;
+import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Status;
+import com.mpx.birjan.common.Ticket;
+import com.mpx.birjan.common.Wrapper;
 import com.mpx.birjan.core.TransactionalManager;
+import com.mpx.birjan.service.BirjanWebService;
+import com.mpx.birjan.util.BirjanUtils;
 
 @Service
-@WebService(serviceName = "birjanws", endpointInterface = "com.mpx.birjan.service.impl.BirjanWebService")
+@WebService(serviceName = "birjanws", endpointInterface = "com.mpx.birjan.service.BirjanWebService")
 @Secured("ROLE_USER")
 public class BirjanServiceEndpoint implements BirjanWebService {
 
@@ -127,6 +130,20 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		return values;
 	}
 
+	@Override
+	public Wrapper[] retriveBalance(String day, String userName) {
+		Preconditions.checkNotNull(userName);
+		Preconditions.checkNotNull(day);
+
+		DateTime date = BirjanUtils.getDate(day);
+		
+		User identify = txManager.identify(userName);
+		
+		List<Game> games = txManager.retriveGames(null, null, date, identify);
+		
+		return null;
+	}
+	
 	@Override
 	public boolean isDevelopment() {
 		return txManager.isDevelopment();

@@ -15,7 +15,7 @@ import org.pojomatic.annotations.AutoProperty;
 import org.pojomatic.annotations.PojomaticPolicy;
 import org.pojomatic.annotations.Property;
 
-import com.mpx.birjan.service.impl.BirjanUtils;
+import com.mpx.birjan.util.BirjanUtils;
 
 @Entity
 @AutoProperty
@@ -56,7 +56,7 @@ public class Wager extends AbstractEntity implements Serializable {
 		this.betAmount = betAmount;
 		this.user = user;
 		this.person = person;
-		this.hash = BirjanUtils.hashFor(this);
+		this.hash = BirjanUtils.hashFor(this.getUser().getUsername(), this.getCreated());
 	}
 
 	public float getBetAmount() {

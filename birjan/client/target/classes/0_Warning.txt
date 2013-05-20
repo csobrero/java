@@ -1,0 +1,8 @@
+
+BLOCKED FILE ALERT
+
+A file has been blocked due to the 'Blocked Attachment File Types' rule.
+Context: 'birjan.cer'
+Disallowed due to 
+Ticket Number: '27c0-518e-9ff5-0001'
+See your system administrator for further information. Copyright 1999-2010 McAfee, Inc.All Rights Reserved.http://www.mcafee.com

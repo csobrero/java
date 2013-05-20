@@ -208,6 +208,8 @@ public class TicketViewBkp extends AbstractView {
 		table.getColumnModel().getColumn(2)
 				.setCellRenderer(new DefaultTableCellRenderer() {
 
+					private static final long serialVersionUID = 1L;
+
 					@Override
 					protected void setValue(Object value) {
 						if (value != null) {
@@ -243,7 +245,7 @@ public class TicketViewBkp extends AbstractView {
 			public void tableChanged(TableModelEvent e) {
 				if (e.getType() == TableModelEvent.UPDATE) {
 					int row = e.getFirstRow();
-					int column = e.getColumn();
+//					int column = e.getColumn();
 					DefaultTableModel model = (DefaultTableModel) e.getSource();
 
 					if (row == (model.getRowCount() - 2)

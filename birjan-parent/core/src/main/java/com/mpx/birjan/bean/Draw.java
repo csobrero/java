@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 
 import org.pojomatic.annotations.AutoProperty;
 
+import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Status;
 
 @Entity

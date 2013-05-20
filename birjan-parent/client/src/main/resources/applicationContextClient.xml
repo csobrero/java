@@ -19,16 +19,14 @@
 
     <context:component-scan base-package="com.mpx.birjan.client"/>
 
-    <tx:annotation-driven/>
-
     <!--bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:/test.properties" />
 	</bean-->
 
 	<jaxws:client id="birjanWebService"
-                  serviceClass="com.mpx.birjan.service.impl.BirjanWebService"
-                  address="http://env-7602110.jelastic.servint.net/birjan/birjanws">
+                  serviceClass="com.mpx.birjan.service.BirjanWebService"
+                  address="http://localhost:8081/birjan/birjanws?wsdl">
     
 		<jaxws:outInterceptors>
 			<ref bean="authenticationOutInterceptor" />

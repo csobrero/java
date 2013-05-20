@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.swing.Box;
@@ -29,15 +28,12 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.stereotype.Repository;
-
-import com.mpx.birjan.core.Rule;
 
 @Repository
 public class TicketView extends AbstractView {
@@ -48,8 +44,6 @@ public class TicketView extends AbstractView {
 	
 	private JLabel lblTotal;
 	
-	private Float totalAmount = 0f;
-	
 	DecimalFormat formatter = new DecimalFormat("#.##");
 	
 	public static String[][] loteriesMap = {
@@ -58,9 +52,6 @@ public class TicketView extends AbstractView {
 			{ "PROVINCIA_PRIMERA", "PROVINCIA_MATUTINA",
 					"PROVINCIA_VESPERTINA", "PROVINCIA_NOCTURNA" } };
 	
-	
-
-	private Map<String, Object[][]> selected;
 
 	public TicketView() {
 		this.setSize(800, 400);
@@ -257,7 +248,7 @@ public class TicketView extends AbstractView {
 				return columnTypes[columnIndex];
 			}
 
-			boolean[] columnEditables = new boolean[] { true, true, true };
+//			boolean[] columnEditables = new boolean[] { true, true, true };
 
 			public boolean isCellEditable(int row, int column) {
 				return true;
@@ -277,6 +268,8 @@ public class TicketView extends AbstractView {
 				if (col == 0) {
 					DefaultTableModel model = (DefaultTableModel) lotteryTable
 							.getModel();
+					
+					@SuppressWarnings("unchecked")
 					List<List<Object>> data = model.getDataVector();
 					List<Object> list = data.get(row);
 					boolean set = true;
@@ -298,6 +291,8 @@ public class TicketView extends AbstractView {
 			public void mouseClicked(MouseEvent e) {
 				int idx = tableHeader.columnAtPoint(e.getPoint());
 				DefaultTableModel model = (DefaultTableModel) lotteryTable.getModel();
+				
+				@SuppressWarnings("unchecked")
 				List<List<Object>> data = model.getDataVector();
 				for (int j = (idx != 0) ? idx : 1; j < data.get(0).size(); j++) {
 					boolean set = true;
@@ -408,6 +403,8 @@ public class TicketView extends AbstractView {
 	}
 	
 	public Object[][] getData(){
+		
+		@SuppressWarnings("unchecked")
 		List<List<Object>> vector = getTableModel().getDataVector();
 		Object[][] data = new Object[vector.size()-1][];
 		int size = (vector.get(vector.size()-1).get(2)==null) ? vector

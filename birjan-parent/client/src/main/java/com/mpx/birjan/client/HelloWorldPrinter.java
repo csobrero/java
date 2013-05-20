@@ -1,9 +1,20 @@
 package com.mpx.birjan.client;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.awt.print.*;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
  
 public class HelloWorldPrinter implements Printable, ActionListener {
  

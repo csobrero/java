@@ -1,6 +1,6 @@
 package com.mpx.birjan.service;
 
-import com.mpx.birjan.bean.Lottery;
+import com.mpx.birjan.common.Lottery;
 
 public interface ITicketService {
 

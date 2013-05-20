@@ -10,8 +10,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.mpx.birjan.bean.Wrapper;
 import com.mpx.birjan.common.Status;
+import com.mpx.birjan.common.Wrapper;
 
 public class WorkbookHandler {
 

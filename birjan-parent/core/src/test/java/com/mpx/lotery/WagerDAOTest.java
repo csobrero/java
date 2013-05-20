@@ -1,6 +1,5 @@
 package com.mpx.lotery;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -16,8 +15,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mpx.birjan.bean.Game;
-import com.mpx.birjan.bean.Lottery;
 import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.Wager;
 import com.mpx.birjan.service.dao.IGenericDAO;
@@ -41,7 +38,7 @@ public class WagerDAOTest {
 	public void wagerCreate() {
 		Person person = new Person(null, "Carlos", "Paredes", "1554337788");
 		Wager wager = new Wager(1f, null, person);
-		Game game = null; //new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
+//		Game game = null; //new Game(Lottery.NACIONAL_PRIMERA, wager, "26");
 		wager.setGame(null);
 
 		wagerDao.create(wager);

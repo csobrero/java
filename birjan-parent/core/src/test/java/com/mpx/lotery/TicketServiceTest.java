@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.mpx.birjan.bean.Lottery;
-import com.mpx.birjan.bean.Person;
-import com.mpx.birjan.bean.Wager;
+import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.service.IPersonService;
 import com.mpx.birjan.service.ITicketService;
 

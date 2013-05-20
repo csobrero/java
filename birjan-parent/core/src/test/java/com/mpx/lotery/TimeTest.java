@@ -6,10 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.TimeOfDay;
@@ -17,10 +14,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 
-import com.google.common.base.Preconditions;
-import com.mpx.birjan.core.Rule;
-import com.mpx.birjan.service.impl.BirjanServiceEndpoint;
-import com.mpx.birjan.service.impl.BirjanUtils;
+import com.mpx.birjan.common.Rule;
+import com.mpx.birjan.util.BirjanUtils;
 
 public class TimeTest {
 
@@ -108,7 +103,7 @@ public class TimeTest {
 		
 		start = System.currentTimeMillis();
 		int winners = 0;
-		List<Map<Integer, Integer>> l = new ArrayList<Map<Integer,Integer>>();
+//		List<Map<Integer, Integer>> l = new ArrayList<Map<Integer,Integer>>();
 		for (String c : list) {
 			Map<Integer, Integer> m = matchWinNumbers(x, c);
 			if(m!=null){
@@ -142,15 +137,6 @@ public class TimeTest {
 		// compute a fraction of the range, 0 <= frac < range
 		long fraction = (long) (range * aRandom.nextDouble());
 		return String.format("%04d", fraction + aStart);
-	}
-	
-	@Test
-	public void arraycompare25(){
-		
-		BirjanServiceEndpoint endpoint = new BirjanServiceEndpoint();
-		Object[][] retrieveAvailability = endpoint.retrieveAvailability("16");
-		System.out.println();
-		
 	}
 	
 	@Test

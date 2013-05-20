@@ -75,7 +75,7 @@ public class TestPrinting01 {
             g2d.translate((int) pf.getImageableX(), (int) pf.getImageableY());
 
             double width = pf.getImageableWidth();
-            double height = pf.getImageableHeight();
+//            double height = pf.getImageableHeight();
             
             int fontSize = 8;
 

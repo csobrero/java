@@ -49,7 +49,7 @@ public class SelectFile {
                         int returnVal = jfc.showSaveDialog(null);  
                         if (returnVal == JFileChooser.APPROVE_OPTION)
                         {
-                            File file = jfc.getSelectedFile();
+//                            File file = jfc.getSelectedFile();
                             // save the file.
                             BufferedWriter bw;
                             try {

@@ -26,7 +26,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Repository;
 
-import com.mpx.birjan.service.impl.BirjanUtils;
+import com.mpx.birjan.util.BirjanUtils;
 
 @Repository
 public class ControlView extends AbstractView {

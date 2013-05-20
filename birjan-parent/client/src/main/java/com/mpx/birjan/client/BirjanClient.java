@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 
-import com.mpx.birjan.bean.Wrapper;
+import com.mpx.birjan.client.page.BalanceView;
 import com.mpx.birjan.client.page.CheckCodeView;
 import com.mpx.birjan.client.page.ControlView;
 import com.mpx.birjan.client.page.DrawView;
@@ -24,7 +24,8 @@ import com.mpx.birjan.client.page.MainView;
 import com.mpx.birjan.client.page.PrintView;
 import com.mpx.birjan.client.page.TicketView;
 import com.mpx.birjan.common.Ticket;
-import com.mpx.birjan.service.impl.BirjanWebService;
+import com.mpx.birjan.common.Wrapper;
+import com.mpx.birjan.service.BirjanWebService;
 import com.mpx.birjan.util.WorkbookHandler;
 
 @Controller
@@ -51,6 +52,9 @@ public class BirjanClient extends JApplet {
 	
 	@Autowired
 	private ControlView controlView;
+	
+	@Autowired
+	private BalanceView balanceView;
 
 	@Autowired
 	private DrawView drawView;
@@ -184,6 +188,10 @@ public class BirjanClient extends JApplet {
 			setView(controlView);
 			controlView.reset();
 		}
+		if(menu.equals("Balance")){
+			setView(balanceView);
+			balanceView.reset();
+		}
 	}
 
 	public Ticket retrieveByCode(String hash) {
@@ -225,6 +233,13 @@ public class BirjanClient extends JApplet {
 				.split(" ")[2];
 		
 		webService.validateDraw(lottery, variant, day);
+	}
+	
+	public void retriveBalance() {
+		String day = balanceView.getComboBox().getSelectedItem().toString().split(" ")[2];
+		
+		Wrapper[] data = webService.retriveBalance(day, balanceView.getTextCode().getText());
+		
 	}
 
 	public void retriveGames() {

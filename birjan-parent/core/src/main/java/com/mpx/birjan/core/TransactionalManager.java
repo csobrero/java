@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,24 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
-import com.mpx.birjan.bean.Lottery;
-import com.mpx.birjan.bean.Person;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.bean.Wager;
+import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Payment;
+import com.mpx.birjan.common.Rule;
+import com.mpx.birjan.common.Rule.VARIANT;
 import com.mpx.birjan.common.Status;
 import com.mpx.birjan.common.Ticket;
-import com.mpx.birjan.core.Rule.VARIANT;
-import com.mpx.birjan.service.IPersonService;
 import com.mpx.birjan.service.dao.Filter;
 import com.mpx.birjan.service.dao.GenericJpaDAO;
-import com.mpx.birjan.service.impl.BirjanUtils;
+import com.mpx.birjan.util.BirjanUtils;
 
 @Controller
 public class TransactionalManager {
-
-	@Autowired
-	private IPersonService personService;
 
 	private GenericJpaDAO<Draw> drawDao;
 
@@ -69,20 +64,11 @@ public class TransactionalManager {
 		return null;
 	}
 
-	public long saveOrUpdatePerson(Long id, String name, String surname,
-			String movile) {
-		return personService.saveOrUpdatePerson(id, name, surname, movile);
-	}
-
-	public List<Person> findByFilter(String name, String surname, String movile) {
-		return personService.findByFilter(name, surname, movile);
-	}
-
 	@Transactional(rollbackFor = Exception.class)
 	public synchronized void createDraw(Lottery lottery, DateTime date,
 			String[] numbers) {
 
-		User user = identify();
+		User user = identify(null);
 
 		Filter<Lottery> lotteryFilter = new Filter<Lottery>("lottery", lottery);
 		Filter<Date> dateFilter = new Filter<Date>("date", date.toDate());
@@ -181,7 +167,7 @@ public class TransactionalManager {
 		for (Object[] row : data) {
 			totalBet += (Float) row[2];
 		}
-		User user = identify();
+		User user = identify(null);
 		Wager wager = new Wager(totalBet*lotteries.size(), user);
 		
 		for (Lottery lottery : lotteries) {
@@ -235,9 +221,9 @@ public class TransactionalManager {
 		return true;
 	}
 
-	public User identify() {
+	public User identify(String userName) {
 		Filter<String> filter = new Filter<String>("username",
-				SecurityContextHolder.getContext().getAuthentication()
+				(userName!=null)?userName:SecurityContextHolder.getContext().getAuthentication()
 						.getName());
 		User user = usersDao.findUniqueByFilter(filter);
 		return user;

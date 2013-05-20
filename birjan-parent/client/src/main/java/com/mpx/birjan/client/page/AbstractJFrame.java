@@ -2,7 +2,6 @@ package com.mpx.birjan.client.page;
 
 import javax.swing.JFrame;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 

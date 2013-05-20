@@ -2,22 +2,20 @@ package com.mpx.birjan.bean;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.pojomatic.annotations.AutoProperty;
 
+import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Status;
 
 @Entity

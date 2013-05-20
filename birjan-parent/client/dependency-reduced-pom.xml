@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>birjan-client</artifactId>
-  <name>Birjan-Client</name>
+  <name>birjan-client</name>
   <description>Birjan Client Desktop Application</description>
   <build>
     <plugins>
@@ -38,6 +38,9 @@
             </transformer>
             <transformer>
               <resource>META-INF/cxf/cxf.xml</resource>
+            </transformer>
+            <transformer>
+              <resource>META-INF/cxf/bus-extensions.txt</resource>
             </transformer>
           </transformers>
         </configuration>
