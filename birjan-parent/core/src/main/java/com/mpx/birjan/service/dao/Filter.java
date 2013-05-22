@@ -1,7 +1,6 @@
 package com.mpx.birjan.service.dao;
 
 import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Root;
 
 public class Filter<T> {
 
@@ -21,8 +20,12 @@ public class Filter<T> {
 		this.isEqualSearch = isEqualSearch;
 	}
 	
-	public Path<?> getPath(Root<?> entity) {
-		return entity.<T> get(fieldName);
+	public Path<?> getPath(Path<?> entity) {
+		String[] split = fieldName.split("\\.");
+		for (String string : split) {
+			entity = entity.get(string);
+		}
+		return entity;
 	}
 
 	public final String getFieldName() {

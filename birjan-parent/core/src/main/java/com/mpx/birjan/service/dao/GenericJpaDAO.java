@@ -39,7 +39,7 @@ public class GenericJpaDAO<T extends Serializable> extends AbstractJpaDAO<T>
 	private TypedQuery<T> buildTypedQuery(Filter<?>[] filters) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<T> cq = cb.createQuery(getClazz());
-		Root<T> entity = cq.from(getClazz());
+		final Root<T> entity = cq.from(getClazz());
 
 		List<Predicate> list = new ArrayList<Predicate>();
 		for (Filter<?> filter : filters) {

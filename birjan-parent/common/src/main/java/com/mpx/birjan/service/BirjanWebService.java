@@ -2,6 +2,7 @@ package com.mpx.birjan.service;
 
 import javax.jws.WebService;
 
+import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.common.Wrapper;
 
@@ -18,7 +19,7 @@ public interface BirjanWebService {
 
 	String[] retrieveDraw(String lottery, String variant, String day);
 
-	Wrapper[] retriveBalance(String day, String user);
+	BalanceDTO retriveBalance(String day, String user);
 
 	void validateDraw(String lottery, String variant, String day);
 

@@ -2,7 +2,9 @@ package com.mpx.birjan.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jws.WebService;
 
@@ -11,10 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.mpx.birjan.bean.Balance;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.User;
+import com.mpx.birjan.common.BalanceDTO;
+import com.mpx.birjan.common.Item;
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Status;
 import com.mpx.birjan.common.Ticket;
@@ -30,7 +36,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 
 	@Autowired
 	private TransactionalManager txManager;
-
+	
 	@Override
 	public String[] populateCombo(String view, String combo, String day) {
 		return txManager.getComboOptions(view, combo, day);
@@ -113,7 +119,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		
 		Status status = (statusName!=null)?Status.valueOf(statusName):null;
 		
-		List<Game> games = txManager.retriveGames(status, lottery, date, null);
+		List<Game> games = txManager.retriveGames(status, lottery, date, null, null);
 		
 		Wrapper[] values = null;
 		if (games != null && !games.isEmpty()) {
@@ -131,17 +137,56 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	public Wrapper[] retriveBalance(String day, String userName) {
-		Preconditions.checkNotNull(userName);
+	public BalanceDTO retriveBalance(String day, String userName) {
 		Preconditions.checkNotNull(day);
+		Preconditions.checkNotNull(userName);
 
 		DateTime date = BirjanUtils.getDate(day);
+		User user = txManager.identify(userName);
 		
-		User identify = txManager.identify(userName);
+		BalanceDTO balanceDTO = new BalanceDTO();
+		Balance balance = Objects.firstNonNull(
+				user.getLastBalance(),
+				new Balance(date.toDate(), 0f));
+		if(!balance.isActive())
+			throw new RuntimeException("we are fucked");	
+
+		balanceDTO.addCash(balance.getCash());
 		
-		List<Game> games = txManager.retriveGames(null, null, date, identify);
 		
-		return null;
+		List<Game> games = txManager.retriveGames(null, null, date, null, user);
+		
+		Map<Status, Item> map = new HashMap<Status, Item>();
+		for (Game game : games) {
+			Item item = map.get(game.getStatus());
+			if(item==null){
+				item = new Item(game.getStatus().name());
+				map.put(game.getStatus(), item);
+			}
+			item.add(game.getBetAmount(), game.getPrize());
+		}
+		
+		Item[] items = new Item[]{map.get(Status.WINNER),map.get(Status.LOSER),map.get(Status.VALID)};	
+		for (Item item : items) {
+			if(item!=null){
+				balanceDTO.addIncome(item.getAmounts()[0]);
+			}
+		}
+		
+		balanceDTO.addCommission(balanceDTO.getIncome()*user.getCommisionRate());
+		
+		
+		List<Game> winners = txManager.retriveGames(Status.WINNER, null, null, null, user);
+		for (Game game : winners) {
+			balanceDTO.addPrizes(game.getPrize());
+		}
+		
+		List<Game> paidToday = txManager.retriveGames(Status.PAID, null, null, date, user);
+		for (Game game : paidToday) {		
+			balanceDTO.addPayments(game.getPrize());
+		}
+		
+		return balanceDTO;
 	}
 	
 	@Override

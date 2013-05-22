@@ -100,7 +100,7 @@ public class TransactionalManager {
 			
 //			List<Game> winners = retriveGames(Status.WINNER, lottery, date, null);
 //			List<Game> losers = retriveGames(Status.LOSER, lottery, date, null);
-			List<Game> games = retriveGames(Status.VALID, lottery, date, null);
+			List<Game> games = retriveGames(Status.VALID, lottery, date, null, null);
 //			games.addAll(winners);
 //			games.addAll(losers);
 			for (Game game : games) {
@@ -171,7 +171,6 @@ public class TransactionalManager {
 		Wager wager = new Wager(totalBet*lotteries.size(), user);
 		
 		for (Lottery lottery : lotteries) {
-//			byte[] serialData = SerializationUtils.serialize(data);
 
 			Game game = new Game(lottery, date.toDate(), wager, data);
 			gameDao.create(game);
@@ -180,17 +179,26 @@ public class TransactionalManager {
 		return wager.getHash();
 	}
 
-	public List<Game> retriveGames(Status status, Lottery lottery, DateTime date, User user) {
+	public List<Game> retriveGames(Status status, Lottery lottery, DateTime date, DateTime created, User user) {
 
 		Filter<Status> statusFilter = new Filter<Status>("status", status);
 		Filter<Lottery> lotteryFilter = new Filter<Lottery>("lottery", lottery);
-		Filter<Date> dateFilter = new Filter<Date>("date", date.toDate());
-		Filter<User> userFilter = new Filter<User>("user", user);
+		Filter<Date> dateFilter = new Filter<Date>("date", (date!=null)?date.toDate():null);
+		Filter<Date> createdFilter = new Filter<Date>("created", (created!=null)?created.toDate():null);
+		Filter<User> userFilter = new Filter<User>("wager.user", user);
 
 		List<Game> games = gameDao.findByFilter(statusFilter, lotteryFilter,
-				dateFilter, userFilter);
+				dateFilter, createdFilter, userFilter);
 
 		return games;
+	}
+
+	public User identify(String userName) {
+		Filter<String> filter = new Filter<String>("username",
+				(userName!=null)?userName:SecurityContextHolder.getContext().getAuthentication()
+						.getName());
+		User user = usersDao.findUniqueByFilter(filter);
+		return user;
 	}
 
 	@Resource(name = "genericJpaDAO")
@@ -219,13 +227,5 @@ public class TransactionalManager {
 
 	public boolean isDevelopment() {
 		return true;
-	}
-
-	public User identify(String userName) {
-		Filter<String> filter = new Filter<String>("username",
-				(userName!=null)?userName:SecurityContextHolder.getContext().getAuthentication()
-						.getName());
-		User user = usersDao.findUniqueByFilter(filter);
-		return user;
 	}
 }

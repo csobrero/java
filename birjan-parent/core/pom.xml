@@ -9,7 +9,6 @@
 	</parent>
 
 	<artifactId>birjan</artifactId>
-	<packaging>war</packaging>
 
 	<name>birjan-server</name>
 	<description>Birjan</description>
@@ -180,4 +179,5 @@
 		</dependency>
 	</dependencies>
 	
+	<packaging>war</packaging>
 </project>

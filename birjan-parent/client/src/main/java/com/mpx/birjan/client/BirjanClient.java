@@ -23,6 +23,7 @@ import com.mpx.birjan.client.page.DrawView;
 import com.mpx.birjan.client.page.MainView;
 import com.mpx.birjan.client.page.PrintView;
 import com.mpx.birjan.client.page.TicketView;
+import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.common.Wrapper;
 import com.mpx.birjan.service.BirjanWebService;
@@ -235,10 +236,12 @@ public class BirjanClient extends JApplet {
 		webService.validateDraw(lottery, variant, day);
 	}
 	
-	public void retriveBalance() {
+	public BalanceDTO retriveBalance() {
 		String day = balanceView.getComboBox().getSelectedItem().toString().split(" ")[2];
 		
-		Wrapper[] data = webService.retriveBalance(day, balanceView.getTextCode().getText());
+		BalanceDTO balance = webService.retriveBalance(day, balanceView.getTextCode().getText());
+		
+		return balance;
 		
 	}
 

@@ -1,5 +1,6 @@
 package com.mpx.lotery;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,16 +43,13 @@ public class TimeTest {
 		System.out.println(fmt.print(dateTime));
 	}
 	
-//	@Test
+	@Test
 	public void arraycompare3() {
 		
-		String x = "12342222000147834748123422220001478347481234222200014783474812342222000147834748";
-		
-		String c = "xxx5xx22xx01xx27xx58xxx5xx22xx01xx27xx58xxx5xx22xx01xx27xx58xxx5xx22xx01xx27xx58";
-		
-		Map<Integer, Integer> hits = matchWinNumbers(x, c);
-		
-		System.out.println(hits);
+		DecimalFormat df = new DecimalFormat("0.##");
+		float f = 0.799f;
+//		Float g = null;
+		System.out.println(df.format(f));
 
 	}
 

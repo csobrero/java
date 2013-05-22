@@ -10,7 +10,7 @@ import org.pojomatic.annotations.AutoProperty;
 
 @Entity
 @AutoProperty
-@Table(name = "users")
+@Table(name = "USERS")
 public class User extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = 6877584950579668093L;
@@ -21,6 +21,14 @@ public class User extends AbstractEntity implements Serializable {
 	private String password;
 	
 	private boolean enabled;
+	
+	private String name;
+	
+	private String surname;
+	
+	private Float commisionRate = 0.2f;
+	
+	private Balance lastBalance;
 
 	public User() {
 	}
@@ -53,6 +61,38 @@ public class User extends AbstractEntity implements Serializable {
 
 	public final void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public Float getCommisionRate() {
+		return commisionRate;
+	}
+
+	public void setCommisionRate(Float commisionRate) {
+		this.commisionRate = commisionRate;
+	}
+
+	public Balance getLastBalance() {
+		return lastBalance;
+	}
+
+	public void setLastBalance(Balance lastBalance) {
+		this.lastBalance = lastBalance;
 	}
 
 }

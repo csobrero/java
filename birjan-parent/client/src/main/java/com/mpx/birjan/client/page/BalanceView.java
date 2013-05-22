@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -20,6 +21,12 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.stereotype.Repository;
 
+import com.mpx.birjan.common.BalanceDTO;
+import com.mpx.birjan.common.Item;
+import com.mpx.birjan.common.Status;
+
+import javax.swing.SwingConstants;
+
 @Repository
 public class BalanceView extends AbstractView {
 
@@ -28,6 +35,18 @@ public class BalanceView extends AbstractView {
 	public final String[] states = { null, "WINNER", "LOSER", "PAID" };
 
 	private JTextField textCode;
+
+	private BalanceDTO balance;
+	private JTextField cashField;
+	private JTextField paymentsField;
+	private JTextField cashBalanceField;
+	private JTextField incomeField;
+	private JTextField commissionField;
+	private JTextField winnersField;
+	private JTextField prizesField;
+	private JTextField balanceField;
+	
+	DecimalFormat df = new DecimalFormat("0.##");
 
 	public BalanceView() {
 
@@ -79,7 +98,7 @@ public class BalanceView extends AbstractView {
 		comboBox = new JComboBox();
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.retriveBalance();
+				
 			}
 		});
 		vb_2.add(comboBox);
@@ -92,21 +111,196 @@ public class BalanceView extends AbstractView {
 
 		Component vs_2 = Box.createVerticalStrut(20);
 		vb_1.add(vs_2);
+		
+				JPanel panel_1 = new JPanel();
+				hb.add(panel_1);
 
 		Box verticalBox = Box.createVerticalBox();
-		hb.add(verticalBox);
-
-		JPanel panel_1 = new JPanel();
-		verticalBox.add(panel_1);
+		panel_1.add(verticalBox);
 		
 		Box verticalBox_1 = Box.createVerticalBox();
-		panel_1.add(verticalBox_1);
+		verticalBox.add(verticalBox_1);
 		
-		Component verticalStrut = Box.createVerticalStrut(20);
+		Box horizontalBox_1 = Box.createHorizontalBox();
+		verticalBox_1.add(horizontalBox_1);
+		
+		JLabel lbl = new JLabel("Fecha: 22/08");
+		lbl.setFont(new Font("Tahoma", Font.BOLD, 14));
+		horizontalBox_1.add(lbl);
+		
+		Component horizontalStrut_3 = Box.createHorizontalStrut(300);
+		horizontalBox_1.add(horizontalStrut_3);
+		
+		Component verticalStrut = Box.createVerticalStrut(5);
 		verticalBox_1.add(verticalStrut);
-
-		Component horizontalStrut = Box.createHorizontalStrut(500);
-		verticalBox.add(horizontalStrut);
+		
+		Box horizontalBox = Box.createHorizontalBox();
+		verticalBox_1.add(horizontalBox);
+		
+		Component horizontalStrut_4 = Box.createHorizontalStrut(20);
+		horizontalBox.add(horizontalStrut_4);
+		
+		JLabel lbl1 = new JLabel("Caja Inicial: ");
+		horizontalBox.add(lbl1);
+		
+		cashField = new JTextField();
+		cashField.setEditable(true);
+		cashField.setText("$0");
+		horizontalBox.add(cashField);
+		cashField.setColumns(8);
+		
+		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+		horizontalBox.add(horizontalStrut_1);
+		
+		JLabel lbl2 = new JLabel("Pagos Realizados: ");
+		horizontalBox.add(lbl2);
+		
+		paymentsField = new JTextField();
+		paymentsField.setText("$0");
+		paymentsField.setEditable(false);
+		horizontalBox.add(paymentsField);
+		paymentsField.setColumns(8);
+		
+		Component horizontalStrut_2 = Box.createHorizontalStrut(20);
+		horizontalBox.add(horizontalStrut_2);
+		
+		Component verticalStrut_2 = Box.createVerticalStrut(15);
+		verticalBox_1.add(verticalStrut_2);
+		
+		Box verticalBox_3 = Box.createVerticalBox();
+		verticalBox_1.add(verticalBox_3);
+		
+		Box horizontalBox_2 = Box.createHorizontalBox();
+		verticalBox_3.add(horizontalBox_2);
+		
+		Component horizontalStrut = Box.createHorizontalStrut(20);
+		horizontalBox_2.add(horizontalStrut);
+		
+		JLabel lbl3 = new JLabel("Recaudacion: ");
+		horizontalBox_2.add(lbl3);
+		
+		incomeField = new JTextField();
+		incomeField.setText("$0");
+		incomeField.setEditable(false);
+		incomeField.setColumns(8);
+		horizontalBox_2.add(incomeField);
+		
+		Component horizontalStrut_5 = Box.createHorizontalStrut(20);
+		horizontalBox_2.add(horizontalStrut_5);
+		
+		JLabel lbl4 = new JLabel("Comision: ");
+		horizontalBox_2.add(lbl4);
+		
+		commissionField = new JTextField();
+		commissionField.setText("$0");
+		commissionField.setEditable(false);
+		commissionField.setColumns(8);
+		horizontalBox_2.add(commissionField);
+		
+		Component horizontalStrut_9 = Box.createHorizontalStrut(20);
+		horizontalBox_2.add(horizontalStrut_9);
+		
+		Component verticalStrut_1 = Box.createVerticalStrut(15);
+		verticalBox_1.add(verticalStrut_1);
+		
+		Box verticalBox_2 = Box.createVerticalBox();
+		verticalBox_1.add(verticalBox_2);
+		
+		Box horizontalBox_3 = Box.createHorizontalBox();
+		verticalBox_2.add(horizontalBox_3);
+		
+		Component horizontalStrut_6 = Box.createHorizontalStrut(20);
+		horizontalBox_3.add(horizontalStrut_6);
+		
+		JLabel lbl5 = new JLabel("Caja Saldo: ");
+		horizontalBox_3.add(lbl5);
+		
+		cashBalanceField = new JTextField();
+		cashBalanceField.setText("$0");
+		cashBalanceField.setEditable(false);
+		cashBalanceField.setColumns(8);
+		horizontalBox_3.add(cashBalanceField);
+		
+		Component horizontalStrut_7 = Box.createHorizontalStrut(20);
+		horizontalBox_3.add(horizontalStrut_7);
+		
+		Component verticalStrut_6 = Box.createVerticalStrut(20);
+		verticalBox.add(verticalStrut_6);
+		
+		Box verticalBox_4 = Box.createVerticalBox();
+		verticalBox.add(verticalBox_4);
+		
+		Box horizontalBox_4 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_4);
+		
+		JLabel label = new JLabel("Proximo Cierre");
+		label.setFont(new Font("Tahoma", Font.BOLD, 14));
+		horizontalBox_4.add(label);
+		
+		Component horizontalStrut_8 = Box.createHorizontalStrut(300);
+		horizontalBox_4.add(horizontalStrut_8);
+		
+		Component verticalStrut_3 = Box.createVerticalStrut(5);
+		verticalBox_4.add(verticalStrut_3);
+		
+		Box horizontalBox_5 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_5);
+		
+		Component horizontalStrut_10 = Box.createHorizontalStrut(20);
+		horizontalBox_5.add(horizontalStrut_10);
+		
+		JLabel lbl6 = new JLabel("Ganadores: ");
+		horizontalBox_5.add(lbl6);
+		
+		winnersField = new JTextField();
+		winnersField.setText("0");
+		winnersField.setEditable(false);
+		winnersField.setColumns(8);
+		horizontalBox_5.add(winnersField);
+		
+		Component horizontalStrut_11 = Box.createHorizontalStrut(20);
+		horizontalBox_5.add(horizontalStrut_11);
+		
+		JLabel lbl7 = new JLabel("Premios a Pagar: ");
+		horizontalBox_5.add(lbl7);
+		
+		prizesField = new JTextField();
+		prizesField.setText("$0");
+		prizesField.setEditable(false);
+		prizesField.setColumns(8);
+		horizontalBox_5.add(prizesField);
+		
+		Component horizontalStrut_12 = Box.createHorizontalStrut(20);
+		horizontalBox_5.add(horizontalStrut_12);
+		
+		Component verticalStrut_4 = Box.createVerticalStrut(15);
+		verticalBox_4.add(verticalStrut_4);
+		
+		Box verticalBox_5 = Box.createVerticalBox();
+		verticalBox_4.add(verticalBox_5);
+		
+		Box horizontalBox_6 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_6);
+		
+		Component horizontalStrut_13 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_13);
+		
+		JLabel lbl8 = new JLabel("Balance:  ");
+		lbl8.setFont(new Font("Tahoma", Font.BOLD, 11));
+		horizontalBox_6.add(lbl8);
+		
+		balanceField = new JTextField();
+		balanceField.setFont(new Font("Tahoma", Font.BOLD, 11));
+		balanceField.setText("$0");
+		balanceField.setEditable(false);
+		balanceField.setColumns(8);
+		horizontalBox_6.add(balanceField);
+		
+		Component horizontalStrut_14 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_14);
+		
+		Component verticalStrut_5 = Box.createVerticalStrut(15);
+		verticalBox_4.add(verticalStrut_5);
 
 		Component vs_1 = Box.createVerticalStrut(20);
 		vb.add(vs_1);
@@ -117,6 +311,17 @@ public class BalanceView extends AbstractView {
 		btnDone = new JButton("Balance");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				BalanceDTO balanceDTO = controller.retriveBalance();
+				cashField.setText("$"+df.format(balanceDTO.getCash()));
+				paymentsField.setText("$"+df.format(balanceDTO.getPayments()));
+				incomeField.setText("$"+df.format(balanceDTO.getIncome()));
+				commissionField.setText("$"+df.format(balanceDTO.getCommission()));
+				float cashBalance = balanceDTO.getCash()-balanceDTO.getPayments()+balanceDTO.getIncome()
+						-balanceDTO.getCommission();
+				cashBalanceField.setText("$"+df.format(cashBalance));
+				winnersField.setText(df.format(balanceDTO.getWinners()));
+				prizesField.setText("$"+df.format(balanceDTO.getPrizes()));
+				balanceField.setText("$"+df.format(cashBalance-balanceDTO.getPrizes()));
 			}
 		});
 		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -128,7 +333,6 @@ public class BalanceView extends AbstractView {
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				comboBox.setSelectedIndex(0);
 				reset();
 			}
 		});
@@ -157,14 +361,16 @@ public class BalanceView extends AbstractView {
 	}
 
 	private void init() {
-//		String day = comboBox.getSelectedItem().toString().split(" ")[2];
 		textCode.setText(controller.getUser());
 		btnClear.setEnabled(true);
 		btnDone.setEnabled(true);
-//		btnDone.setRequestFocusEnabled(true);
 	}
 
 	public JTextField getTextCode() {
 		return textCode;
+	}
+
+	public void setBalance(BalanceDTO balance) {
+		this.balance = balance;		
 	}
 }

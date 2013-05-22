@@ -13,6 +13,7 @@
 		<class>com.mpx.birjan.bean.Draw</class>
 		<class>com.mpx.birjan.bean.User</class>
 		<class>com.mpx.birjan.bean.Authorities</class>
+		<class>com.mpx.birjan.bean.Balance</class>
 		
 		
 		<properties>

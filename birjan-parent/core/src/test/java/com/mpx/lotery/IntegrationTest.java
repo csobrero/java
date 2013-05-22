@@ -35,13 +35,16 @@ public class IntegrationTest {
 	
 //	private BirjanWebService webService;
 	
+
+	DateTime date = new DateTime(2013, 5, 22, 0, 0, 0, 0);
+	
 	@Autowired
 	private TransactionalManager manager;
 
 	@Test
 	@Rollback(value = false)
 	public void usersCreate() {
-
+		
 		User users = new User("xris", "xris", true);
 		usersDao.create(users);
 
@@ -85,16 +88,17 @@ public class IntegrationTest {
 		for (Lottery lottery : Lottery.values()) {
 			lotteries.add(lottery);			
 		}
-		DateTime date = new DateTime(2013, 5, 15, 0, 0, 0, 0);
-		Object[][] data = new Object[][]{{1,"xxx2",2.45f},{20,"xx02",2.55f}};
-		String hash = manager.createGames(lotteries , date , data );
 		
-		data = new Object[][]{{1,"xxx2",2.45f}};
-		hash = manager.createGames(lotteries , date , data );
+		List<Object[][]> games = new ArrayList<Object[][]>();
 		
-		data = new Object[][]{{1,"xxx2",2.45f},{20,"x002",2.55f}};
-		hash = manager.createGames(lotteries , date , data );
-		System.out.println(hash);
+		games.add(new Object[][]{{1,"xxx2",2.45f},{20,"xx02",2.55f}});
+		games.add(new Object[][]{{1,"xxx2",2.45f}});
+		games.add(new Object[][]{{1,"xxx2",2.45f},{20,"x002",2.55f}});
+		for (Object[][] data : games) {
+			manager.createGames(lotteries , date , data );
+		}
+		
+//		DateTime yesterday = date.minusDays(1);
 
 	}
 	
@@ -104,7 +108,6 @@ public class IntegrationTest {
 		SecurityContextHolder.getContext().setAuthentication(
 				new UsernamePasswordAuthenticationToken("xris", "xris"));
 		
-		DateTime date = new DateTime(2013, 5, 15, 0, 0, 0, 0);
 		
 		String[] numbers = new String[]{"3332","1111","1111","1111","1111",
 				"1111","1111","1111","1111","1111","1111","1111","1111","1111","1111",
@@ -115,15 +118,14 @@ public class IntegrationTest {
 		
 	}
 	
-	@Test
+//	@Test
 	@Rollback(value = false)
 	public void payGames() {
 		SecurityContextHolder.getContext().setAuthentication(
 				new UsernamePasswordAuthenticationToken("xris", "xris"));
 		
-		DateTime date = new DateTime(2013, 5, 15, 0, 0, 0, 0);
 		
-		List<Game> winners = manager.retriveGames(Status.WINNER, Lottery.NACIONAL_VESPERTINA, date,null);
+		List<Game> winners = manager.retriveGames(Status.WINNER, Lottery.NACIONAL_VESPERTINA, date, null, null);
 		
 		for (Game game : winners) {
 			manager.processWinners(game.getWager().getHash(),true);

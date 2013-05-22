@@ -96,5 +96,13 @@ public class Game extends AbstractEntity implements Serializable {
 	public void setPrize(Float paid) {
 		this.prize = paid;
 	}
+	
+	public float getBetAmount(){
+		float f = 0f;
+		for (int i = 0; i < data.length; i++) {
+			f += (Float)data[i][2];
+		}
+		return f;
+	}
 
 }
