@@ -19,7 +19,7 @@ public interface BirjanWebService {
 
 	String[] retrieveDraw(String lottery, String variant, String day);
 
-	BalanceDTO retriveBalance(String day, String user);
+	BalanceDTO performBalance(String day, String user, Boolean close);
 
 	void validateDraw(String lottery, String variant, String day);
 

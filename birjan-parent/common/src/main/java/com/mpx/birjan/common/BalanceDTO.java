@@ -6,7 +6,7 @@ public class BalanceDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private boolean active = true;
+	private boolean closed = false;
 	private float cash = 0f;
 	private float payments = 0f;
 	private float income = 0f;
@@ -14,13 +14,12 @@ public class BalanceDTO implements Serializable {
 	private float prizes = 0f;
 	private int winners = 0;
 
-
-	public boolean isActive() {
-		return active;
+	public boolean isClosed() {
+		return closed;
 	}
 
-	public void setActive(boolean active) {
-		this.active = active;
+	public void setClosed(boolean active) {
+		this.closed = active;
 	}
 
 	public float getIncome() {
@@ -66,6 +65,30 @@ public class BalanceDTO implements Serializable {
 
 	public int getWinners() {
 		return winners;
+	}
+
+	public void setCash(float cash) {
+		this.cash = cash;
+	}
+
+	public void setPayments(float payments) {
+		this.payments = payments;
+	}
+
+	public void setIncome(float income) {
+		this.income = income;
+	}
+
+	public void setCommission(float commission) {
+		this.commission = commission;
+	}
+
+	public void setPrizes(float prizes) {
+		this.prizes = prizes;
+	}
+
+	public void setWinners(int winners) {
+		this.winners = winners;
 	}
 
 }

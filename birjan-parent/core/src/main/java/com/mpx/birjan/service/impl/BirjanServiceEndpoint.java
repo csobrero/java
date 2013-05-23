@@ -137,56 +137,15 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	public BalanceDTO retriveBalance(String day, String userName) {
+	public BalanceDTO performBalance(String day, String userName, Boolean close) {
 		Preconditions.checkNotNull(day);
 		Preconditions.checkNotNull(userName);
-
+		
 		DateTime date = BirjanUtils.getDate(day);
 		User user = txManager.identify(userName);
-		
-		BalanceDTO balanceDTO = new BalanceDTO();
-		Balance balance = Objects.firstNonNull(
-				user.getLastBalance(),
-				new Balance(date.toDate(), 0f));
-		if(!balance.isActive())
-			throw new RuntimeException("we are fucked");	
 
-		balanceDTO.addCash(balance.getCash());
+		return txManager.performBalance(date, user, close);
 		
-		
-		List<Game> games = txManager.retriveGames(null, null, date, null, user);
-		
-		Map<Status, Item> map = new HashMap<Status, Item>();
-		for (Game game : games) {
-			Item item = map.get(game.getStatus());
-			if(item==null){
-				item = new Item(game.getStatus().name());
-				map.put(game.getStatus(), item);
-			}
-			item.add(game.getBetAmount(), game.getPrize());
-		}
-		
-		Item[] items = new Item[]{map.get(Status.WINNER),map.get(Status.LOSER),map.get(Status.VALID)};	
-		for (Item item : items) {
-			if(item!=null){
-				balanceDTO.addIncome(item.getAmounts()[0]);
-			}
-		}
-		
-		balanceDTO.addCommission(balanceDTO.getIncome()*user.getCommisionRate());
-		
-		
-		List<Game> winners = txManager.retriveGames(Status.WINNER, null, null, null, user);
-		for (Game game : winners) {
-			balanceDTO.addPrizes(game.getPrize());
-		}
-		
-		List<Game> paidToday = txManager.retriveGames(Status.PAID, null, null, date, user);
-		for (Game game : paidToday) {		
-			balanceDTO.addPayments(game.getPrize());
-		}
-		
-		return balanceDTO;
 	}
 	
 	@Override

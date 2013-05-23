@@ -22,10 +22,6 @@ import org.joda.time.DateTimeConstants;
 import org.springframework.stereotype.Repository;
 
 import com.mpx.birjan.common.BalanceDTO;
-import com.mpx.birjan.common.Item;
-import com.mpx.birjan.common.Status;
-
-import javax.swing.SwingConstants;
 
 @Repository
 public class BalanceView extends AbstractView {
@@ -144,8 +140,7 @@ public class BalanceView extends AbstractView {
 		horizontalBox.add(lbl1);
 		
 		cashField = new JTextField();
-		cashField.setEditable(true);
-		cashField.setText("$0");
+		cashField.setEditable(false);
 		horizontalBox.add(cashField);
 		cashField.setColumns(8);
 		
@@ -156,7 +151,6 @@ public class BalanceView extends AbstractView {
 		horizontalBox.add(lbl2);
 		
 		paymentsField = new JTextField();
-		paymentsField.setText("$0");
 		paymentsField.setEditable(false);
 		horizontalBox.add(paymentsField);
 		paymentsField.setColumns(8);
@@ -180,7 +174,6 @@ public class BalanceView extends AbstractView {
 		horizontalBox_2.add(lbl3);
 		
 		incomeField = new JTextField();
-		incomeField.setText("$0");
 		incomeField.setEditable(false);
 		incomeField.setColumns(8);
 		horizontalBox_2.add(incomeField);
@@ -192,7 +185,6 @@ public class BalanceView extends AbstractView {
 		horizontalBox_2.add(lbl4);
 		
 		commissionField = new JTextField();
-		commissionField.setText("$0");
 		commissionField.setEditable(false);
 		commissionField.setColumns(8);
 		horizontalBox_2.add(commissionField);
@@ -216,7 +208,6 @@ public class BalanceView extends AbstractView {
 		horizontalBox_3.add(lbl5);
 		
 		cashBalanceField = new JTextField();
-		cashBalanceField.setText("$0");
 		cashBalanceField.setEditable(false);
 		cashBalanceField.setColumns(8);
 		horizontalBox_3.add(cashBalanceField);
@@ -253,7 +244,6 @@ public class BalanceView extends AbstractView {
 		horizontalBox_5.add(lbl6);
 		
 		winnersField = new JTextField();
-		winnersField.setText("0");
 		winnersField.setEditable(false);
 		winnersField.setColumns(8);
 		horizontalBox_5.add(winnersField);
@@ -265,7 +255,6 @@ public class BalanceView extends AbstractView {
 		horizontalBox_5.add(lbl7);
 		
 		prizesField = new JTextField();
-		prizesField.setText("$0");
 		prizesField.setEditable(false);
 		prizesField.setColumns(8);
 		horizontalBox_5.add(prizesField);
@@ -291,7 +280,6 @@ public class BalanceView extends AbstractView {
 		
 		balanceField = new JTextField();
 		balanceField.setFont(new Font("Tahoma", Font.BOLD, 11));
-		balanceField.setText("$0");
 		balanceField.setEditable(false);
 		balanceField.setColumns(8);
 		horizontalBox_6.add(balanceField);
@@ -311,7 +299,8 @@ public class BalanceView extends AbstractView {
 		btnDone = new JButton("Balance");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				BalanceDTO balanceDTO = controller.retriveBalance();
+				boolean close = btnDone.getText().equals("Cierre");
+				BalanceDTO balanceDTO = controller.performBalance(close);
 				cashField.setText("$"+df.format(balanceDTO.getCash()));
 				paymentsField.setText("$"+df.format(balanceDTO.getPayments()));
 				incomeField.setText("$"+df.format(balanceDTO.getIncome()));
@@ -322,11 +311,12 @@ public class BalanceView extends AbstractView {
 				winnersField.setText(df.format(balanceDTO.getWinners()));
 				prizesField.setText("$"+df.format(balanceDTO.getPrizes()));
 				balanceField.setText("$"+df.format(cashBalance-balanceDTO.getPrizes()));
+				btnDone.setText(close?"Balance":"Cierre");
 			}
 		});
 		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
 		hb_1.add(btnDone);
-
+		
 		Component hs_2 = Box.createHorizontalStrut(20);
 		hb_1.add(hs_2);
 
@@ -362,6 +352,14 @@ public class BalanceView extends AbstractView {
 
 	private void init() {
 		textCode.setText(controller.getUser());
+		balanceField.setText("");
+		prizesField.setText("");
+		winnersField.setText("");
+		cashBalanceField.setText("");
+		commissionField.setText("");
+		incomeField.setText("");
+		paymentsField.setText("");
+		cashField.setText("");
 		btnClear.setEnabled(true);
 		btnDone.setEnabled(true);
 	}

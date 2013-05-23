@@ -236,10 +236,10 @@ public class BirjanClient extends JApplet {
 		webService.validateDraw(lottery, variant, day);
 	}
 	
-	public BalanceDTO retriveBalance() {
+	public BalanceDTO performBalance(boolean close) {
 		String day = balanceView.getComboBox().getSelectedItem().toString().split(" ")[2];
 		
-		BalanceDTO balance = webService.retriveBalance(day, balanceView.getTextCode().getText());
+		BalanceDTO balance = webService.performBalance(day, balanceView.getTextCode().getText(), close);
 		
 		return balance;
 		

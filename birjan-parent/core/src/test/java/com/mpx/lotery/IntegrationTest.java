@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mpx.birjan.bean.Authorities;
+import com.mpx.birjan.bean.Balance;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.common.Lottery;
@@ -32,11 +33,12 @@ public class IntegrationTest {
 	private IGenericDAO<User> usersDao;
 
 	private IGenericDAO<Authorities> authoritiesDao;
-	
-//	private BirjanWebService webService;
+
+	private IGenericDAO<Balance> balanceDao;
 	
 
-	DateTime date = new DateTime(2013, 5, 22, 0, 0, 0, 0);
+	DateTime date = new DateTime(2013, 5, 23, 0, 0, 0, 0);
+	DateTime yesterday = date.minusDays(1);
 	
 	@Autowired
 	private TransactionalManager manager;
@@ -45,8 +47,10 @@ public class IntegrationTest {
 	@Rollback(value = false)
 	public void usersCreate() {
 		
-		User users = new User("xris", "xris", true);
-		usersDao.create(users);
+		User user = new User("xris", "xris", true);
+		usersDao.create(user);
+		
+		manager.activateBalance(date, user, 100f);
 
 		Authorities authorities = new Authorities("xris", "ROLE_ADMIN");
 		authoritiesDao.create(authorities);
@@ -54,28 +58,9 @@ public class IntegrationTest {
 		authoritiesDao.create(authorities);
 		authorities = new Authorities("xris", "ROLE_USER");
 		authoritiesDao.create(authorities);
+		
 
 	}
-	
-//	@Test
-//	public void createGame() {
-//		
-//		SecurityContextHolder.getContext().setAuthentication(
-//				new UsernamePasswordAuthenticationToken("xris", "xris"));
-//
-//		List<Lottery> lotteries = new ArrayList<Lottery>();
-//		for (Lottery lottery : Lottery.values()) {
-//			lotteries.add(lottery);			
-//		}
-//		DateTime date = new DateTime(2013, 5, 15, 0, 0, 0, 0);
-//		Object[][] data = new Object[][]{{10,"xxx2",9999.99f},{20,"xx02",9999.99f}};
-//		String hash = manager.createGames(lotteries , date , data );
-//
-//		Ticket t = manager.processWinners(hash, false);
-//		
-//		Object[][] data2 = t.getData();
-////		System.out.println();
-//	}
 
 	@Test
 	@Rollback(value = false)
@@ -83,6 +68,8 @@ public class IntegrationTest {
 		
 		SecurityContextHolder.getContext().setAuthentication(
 				new UsernamePasswordAuthenticationToken("xris", "xris"));
+		
+		List<Balance> all = balanceDao.getAll();
 
 		List<Lottery> lotteries = new ArrayList<Lottery>();
 		for (Lottery lottery : Lottery.values()) {
@@ -90,19 +77,22 @@ public class IntegrationTest {
 		}
 		
 		List<Object[][]> games = new ArrayList<Object[][]>();
-		
 		games.add(new Object[][]{{1,"xxx2",2.45f},{20,"xx02",2.55f}});
 		games.add(new Object[][]{{1,"xxx2",2.45f}});
 		games.add(new Object[][]{{1,"xxx2",2.45f},{20,"x002",2.55f}});
-		for (Object[][] data : games) {
+		games.add(new Object[][]{{1,"xxx2",2.45f},{19,"xx02",2.55f}});
+		
+		for (Object[][] data : games) {//today
 			manager.createGames(lotteries , date , data );
 		}
 		
-//		DateTime yesterday = date.minusDays(1);
+		for (Object[][] data : games) {//yesterday
+			manager.createGames(lotteries , yesterday , data );
+		}
 
 	}
 	
-	@Test
+//	@Test
 	@Rollback(value = false)
 	public void createDraw() {
 		SecurityContextHolder.getContext().setAuthentication(
@@ -113,8 +103,15 @@ public class IntegrationTest {
 				"1111","1111","1111","1111","1111","1111","1111","1111","1111","1111",
 				"1111","1111","1111","1111","4402"};
 		
-		manager.createDraw(Lottery.NACIONAL_VESPERTINA, date, numbers);
-		manager.validateDraw(Lottery.NACIONAL_VESPERTINA, date);
+		for (Lottery lottery : Lottery.values()) {
+			manager.createDraw(lottery, date, numbers);
+			manager.validateDraw(lottery, date);
+		}
+		
+		for (Lottery lottery : Lottery.values()) {
+			manager.createDraw(lottery, yesterday, numbers);
+			manager.validateDraw(lottery, yesterday);
+		}
 		
 	}
 	
@@ -125,7 +122,8 @@ public class IntegrationTest {
 				new UsernamePasswordAuthenticationToken("xris", "xris"));
 		
 		
-		List<Game> winners = manager.retriveGames(Status.WINNER, Lottery.NACIONAL_VESPERTINA, date, null, null);
+		List<Game> winners = manager.retriveGames(Status.WINNER, Lottery.NACIONAL_MATUTINA, null, 
+				yesterday, null);
 		
 		for (Game game : winners) {
 			manager.processWinners(game.getWager().getHash(),true);
@@ -133,8 +131,8 @@ public class IntegrationTest {
 		
 	}
 	
-	@Test
-	@Rollback(value = false)
+//	@Test
+//	@Rollback(value = false)
 	public void createDraw2() {
 		SecurityContextHolder.getContext().setAuthentication(
 				new UsernamePasswordAuthenticationToken("xris", "xris"));
@@ -161,6 +159,12 @@ public class IntegrationTest {
 	public final void setAuthoritiesDao(final IGenericDAO<Authorities> daoToSet) {
 		authoritiesDao = daoToSet;
 		authoritiesDao.setClazz(Authorities.class);
+	}
+
+	@Resource(name = "genericJpaDAO")
+	public final void setBalanceDao(final IGenericDAO<Balance> daoToSet) {
+		balanceDao = daoToSet;
+		balanceDao.setClazz(Balance.class);
 	}
 
 }
