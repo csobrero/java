@@ -301,17 +301,23 @@ public class BalanceView extends AbstractView {
 			public void actionPerformed(ActionEvent e) {
 				boolean close = btnDone.getText().equals("Cierre");
 				BalanceDTO balanceDTO = controller.performBalance(close);
-				cashField.setText("$"+df.format(balanceDTO.getCash()));
-				paymentsField.setText("$"+df.format(balanceDTO.getPayments()));
-				incomeField.setText("$"+df.format(balanceDTO.getIncome()));
-				commissionField.setText("$"+df.format(balanceDTO.getCommission()));
-				float cashBalance = balanceDTO.getCash()-balanceDTO.getPayments()+balanceDTO.getIncome()
-						-balanceDTO.getCommission();
-				cashBalanceField.setText("$"+df.format(cashBalance));
-				winnersField.setText(df.format(balanceDTO.getWinners()));
-				prizesField.setText("$"+df.format(balanceDTO.getPrizes()));
-				balanceField.setText("$"+df.format(cashBalance-balanceDTO.getPrizes()));
-				btnDone.setText(close?"Balance":"Cierre");
+				if(balanceDTO!=null){
+					cashField.setText("$"+df.format(balanceDTO.getCash()));
+					paymentsField.setText("$"+df.format(balanceDTO.getPayments()));
+					incomeField.setText("$"+df.format(balanceDTO.getIncome()));
+					commissionField.setText("$"+df.format(balanceDTO.getCommission()));
+					float cashBalance = balanceDTO.getCash()-balanceDTO.getPayments()+balanceDTO.getIncome()
+							-balanceDTO.getCommission();
+					cashBalanceField.setText("$"+df.format(cashBalance));
+					winnersField.setText(df.format(balanceDTO.getWinners()));
+					prizesField.setText("$"+df.format(balanceDTO.getPrizes()));
+					balanceField.setText("$"+df.format(cashBalance-balanceDTO.getPrizes()));
+					if(balanceDTO.isClosed()){
+						btnDone.setVisible(false);
+					} else {
+						btnDone.setText("Cierre");
+					}
+				}
 			}
 		});
 		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -360,8 +366,8 @@ public class BalanceView extends AbstractView {
 		incomeField.setText("");
 		paymentsField.setText("");
 		cashField.setText("");
-		btnClear.setEnabled(true);
-		btnDone.setEnabled(true);
+		btnDone.setText("Balance");
+		btnDone.setVisible(true);
 	}
 
 	public JTextField getTextCode() {

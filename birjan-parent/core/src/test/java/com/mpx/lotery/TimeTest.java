@@ -50,6 +50,13 @@ public class TimeTest {
 		float f = 0.799f;
 //		Float g = null;
 		System.out.println(df.format(f));
+		
+		DateTime dt = new DateTime(new Date());
+		
+		
+		System.out.println(dt);
+		System.out.println(dt.getZone());
+		//-Duser.timezone="America/Argentina/Buenos_Aires"
 
 	}
 

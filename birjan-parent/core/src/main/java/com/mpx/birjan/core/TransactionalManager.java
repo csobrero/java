@@ -10,13 +10,13 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.joda.time.DateTime;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.Balance;
 import com.mpx.birjan.bean.Draw;
@@ -168,7 +168,7 @@ public class TransactionalManager {
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public String createGames(List<Lottery> lotteries, DateTime date,
+	public String createGames(Lottery[] lotteries, DateTime date,
 			Object[][] data) {
 		
 		float totalBet = 0;
@@ -176,7 +176,7 @@ public class TransactionalManager {
 			totalBet += (Float) row[2];
 		}
 		User user = identify(null);
-		Wager wager = new Wager(totalBet*lotteries.size(), user);
+		Wager wager = new Wager(totalBet*lotteries.length, user);
 		
 		for (Lottery lottery : lotteries) {
 
@@ -202,7 +202,7 @@ public class TransactionalManager {
 	}
 
 	@Transactional(readOnly=true)
-	public User identify(String userName) {
+	public User identify2(String userName) {
 		Filter<String> userFilter = new Filter<String>("user.username",
 				(userName != null) ? userName : SecurityContextHolder
 						.getContext().getAuthentication().getName());
@@ -211,6 +211,17 @@ public class TransactionalManager {
 		Balance balance = balanceDao.findUniqueByFilter(statusFilter, userFilter);
 		
 		return balance.getUser();
+	}
+
+	@Transactional(readOnly=true)
+	public User identify(String userName) {
+		Filter<String> userFilter = new Filter<String>("username",
+				(userName != null) ? userName : SecurityContextHolder
+						.getContext().getAuthentication().getName());
+
+		User user = usersDao.findUniqueByFilter(userFilter);
+		
+		return user;
 	}
 
 	@Resource(name = "genericJpaDAO")
@@ -269,50 +280,62 @@ public class TransactionalManager {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public BalanceDTO performBalance(DateTime date, User user, boolean close) {
 				
+		BalanceDTO balanceDTO = new BalanceDTO();
+		PropertyUtilsBean utilsBean = new PropertyUtilsBean();
+
 		Filter<Status> activeFilter = new Filter<Status>("state", Status.OPEN);
-		Filter<User> userFilter = new Filter<User>("user", user);
-		
+		Filter<User> userFilter = new Filter<User>("user", user);		
 		Balance balance=balanceDao.findUniqueByFilter(activeFilter, userFilter);
 		
-		BalanceDTO balanceDTO = new BalanceDTO();
-		balanceDTO.setCash(balance.getBalance()-balance.getClearance());
-		
-		List<Game> games = retriveGames(null, null, date, null, user);
-		
-		Map<Status, Item> map = new HashMap<Status, Item>();
-		for (Game game : games) {
-			Item item = map.get(game.getStatus());
-			if(item==null){
-				item = new Item(game.getStatus().name());
-				map.put(game.getStatus(), item);
+		if(balance==null){
+			activeFilter = new Filter<Status>("state", Status.CLOSE);
+			balance=balanceDao.findUniqueByFilter(activeFilter, userFilter);
+			try {
+				utilsBean.copyProperties(balanceDTO, balance);
+			} catch (Exception e) {}
+			
+		} else {
+			balanceDTO.setCash(balance.getBalance()-balance.getClearance());
+			
+			List<Game> games = retriveGames(null, null, date, null, user);
+			
+			Map<Status, Item> map = new HashMap<Status, Item>();
+			for (Game game : games) {
+				Item item = map.get(game.getStatus());
+				if(item==null){
+					item = new Item(game.getStatus().name());
+					map.put(game.getStatus(), item);
+				}
+				item.add(game.getBetAmount(), game.getPrize());
 			}
-			item.add(game.getBetAmount(), game.getPrize());
-		}
-		
-		Item[] items = new Item[]{map.get(Status.WINNER),map.get(Status.LOSER),map.get(Status.VALID)};	
-		for (Item item : items) {
-			if(item!=null){
-				balanceDTO.addIncome(item.getAmounts()[0]);
+			
+			Item[] items = new Item[]{map.get(Status.WINNER),map.get(Status.LOSER),map.get(Status.VALID)};	
+			for (Item item : items) {
+				if(item!=null){
+					balanceDTO.addIncome(item.getAmounts()[0]);
+				}
 			}
-		}
-		
-		balanceDTO.addCommission(balanceDTO.getIncome()*user.getCommisionRate());
-		
-		
-		List<Game> winners = retriveGames(Status.WINNER, null, null, null, user);
-		for (Game game : winners) {
-			balanceDTO.addPrizes(game.getPrize());
-		}
-		
-		List<Game> paidToday = retriveGames(Status.PAID, null, null, date, user);
-		for (Game game : paidToday) {	
-			balanceDTO.addPayments(game.getPrize());
-		}
-		
-		if(close){
-			balance.close(balanceDTO.getIncome(),balance.getCommission(),balanceDTO.getPayments(),
-					balance.getPrizes());
-			balanceDTO.setClosed(close);
+			
+			balanceDTO.addCommission(balanceDTO.getIncome()*user.getCommisionRate());
+			
+			
+			List<Game> winners = retriveGames(Status.WINNER, null, null, null, user);
+			for (Game game : winners) {
+				balanceDTO.addPrizes(game.getPrize());
+			}
+			
+			List<Game> paidToday = retriveGames(Status.PAID, null, null, date, user);
+			for (Game game : paidToday) {	
+				balanceDTO.addPayments(game.getPrize());
+			}
+			
+			if(close){
+				try {
+					utilsBean.copyProperties(balance, balanceDTO);
+				} catch (Exception e) {}
+				balance.setState(Status.CLOSE);
+				balanceDTO.setClosed(close);
+			}
 		}
 		
 		return balanceDTO;

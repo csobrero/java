@@ -2,9 +2,7 @@ package com.mpx.birjan.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jws.WebService;
 
@@ -13,14 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.mpx.birjan.bean.Balance;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.common.BalanceDTO;
-import com.mpx.birjan.common.Item;
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Status;
 import com.mpx.birjan.common.Ticket;
@@ -189,7 +184,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 			lotteries.add(lottery);
 		}
 		
-		String hash = txManager.createGames(lotteries, date, data);
+		String hash = txManager.createGames(lotteries.toArray(new Lottery[lotteries.size()]), date, data);
 		
 		System.out.println(hash);
 

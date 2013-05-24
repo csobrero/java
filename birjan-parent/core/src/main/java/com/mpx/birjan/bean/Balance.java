@@ -129,12 +129,4 @@ public class Balance extends AbstractEntity implements Serializable {
 		this.state = state;
 	}
 
-	public void close(float income, float commission, float payments,float prizes) {
-		this.income = income;
-		this.commission = commission;
-		this.payments = payments;
-		this.prizes = prizes;
-		this.state = Status.CLOSE;
-	}
-
 }

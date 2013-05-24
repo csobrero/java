@@ -29,7 +29,7 @@ import com.mpx.birjan.service.dao.IGenericDAO;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-appCtx.xml")
 @Transactional
-public class IntegrationTest {
+public class BasicIntegrationTest {
 
 	private IGenericDAO<User> usersDao;
 
@@ -71,28 +71,26 @@ public class IntegrationTest {
 				new UsernamePasswordAuthenticationToken("xris", "xris"));
 		
 		List<Balance> all = balanceDao.getAll();
-
-		List<Lottery> lotteries = new ArrayList<Lottery>();
-		for (Lottery lottery : Lottery.values()) {
-			lotteries.add(lottery);			
-		}
+		
+		Lottery[] lotteries = new Lottery[]{Lottery.NACIONAL_MATUTINA};
 		
 		List<Object[][]> games = new ArrayList<Object[][]>();
-		games.add(new Object[][]{{1,"xxx2",2.45f},{20,"xx02",2.55f}});//$5
 		games.add(new Object[][]{{1,"xxx2",2.45f}});//$5
-		games.add(new Object[][]{{1,"xxx2",2.55f}});//$5
-		games.add(new Object[][]{{1,"xxx2",2.45f},{20,"x002",2.55f}});//$5
-		games.add(new Object[][]{{1,"xxx2",2.45f},{19,"xx02",2.55f}});//$5
+		games.add(new Object[][]{{1,"xxx9",20f},{20,"xx02",25f}});//$5
+		games.add(new Object[][]{{1,"xxx9",2.55f}});//$5
+		games.add(new Object[][]{{1,"xxx9",10f},{20,"x002",10f}});//$5
+		games.add(new Object[][]{{1,"xxx9",10f},{19,"xx02",20f}});//$5
 		
-		for (Object[][] data : games) {//today $25x8=200
-			manager.createGames(lotteries.toArray(new Lottery[lotteries.size()]) , date , data );
+		for (Object[][] data : games) {//today $100
+			manager.createGames(lotteries , date , data );
 			Thread.currentThread().sleep(10);
 		}
 		
-		for (Object[][] data : games) {//yesterday //today $25x8=200
-			manager.createGames(lotteries.toArray(new Lottery[lotteries.size()]) , yesterday , data );
+		for (Object[][] data : games) {//yesterday $100
+			manager.createGames(lotteries , yesterday , data );
 			Thread.currentThread().sleep(10);
 		}
+		
 
 	}
 	
@@ -126,10 +124,10 @@ public class IntegrationTest {
 				new UsernamePasswordAuthenticationToken("xris", "xris"));
 		
 		
-		List<Game> winners = manager.retriveGames(Status.WINNER, Lottery.NACIONAL_MATUTINA, null, 
-				yesterday, null);
+		List<Game> winners = manager.retriveGames(Status.WINNER, Lottery.NACIONAL_MATUTINA, yesterday, 
+				null, null);
 		
-		for (Game game : winners) { //pago $70
+		for (Game game : winners) { //pago 2.45x7=17.15
 			manager.processWinners(game.getWager().getHash(),true);
 		}
 		
