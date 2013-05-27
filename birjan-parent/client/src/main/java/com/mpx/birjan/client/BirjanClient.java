@@ -21,6 +21,7 @@ import com.mpx.birjan.client.page.CheckCodeView;
 import com.mpx.birjan.client.page.ControlView;
 import com.mpx.birjan.client.page.DrawView;
 import com.mpx.birjan.client.page.MainView;
+import com.mpx.birjan.client.page.PasswordView;
 import com.mpx.birjan.client.page.PrintView;
 import com.mpx.birjan.client.page.TicketView;
 import com.mpx.birjan.common.BalanceDTO;
@@ -60,8 +61,12 @@ public class BirjanClient extends JApplet {
 	@Autowired
 	private DrawView drawView;
 
+	@Autowired
+	private PasswordView passwordView;
+
 	private String user;
 	private String password;
+	private String[] authorities;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -102,8 +107,8 @@ public class BirjanClient extends JApplet {
 //		reqCtx.put(BindingProvider.PASSWORD_PROPERTY, "xris");
 		
 //		CredentialsHolder.set(new CredentialsHolder.Crendentials("xris", "xris"));
-		this.user = "xris";
-		this.password = "xris";
+//		this.user = "xris";
+//		this.password = "xris";
 		
 //		Authenticator.setDefault(new Authenticator() {
 //	        @Override
@@ -112,15 +117,8 @@ public class BirjanClient extends JApplet {
 //	        }
 //	    });
 		
-		setView(ticketView);
-		ticketView.reset();
-		
-		boolean development = webService.isDevelopment();
-		if(development){
-			ticketView.setDevelopment(development);
-			controlView.setDevelopment(development);
-			drawView.setDevelopment(development);
-		}
+		setView(passwordView);
+		passwordView.reset();
 		
 		
 	}
@@ -129,7 +127,7 @@ public class BirjanClient extends JApplet {
 		Container container = mainView.getContentPane();
 		container.add(panel, BorderLayout.CENTER);
 		Component[] components = container.getComponents();
-		for (int i = 2; i < components.length; i++) {
+		for (int i = 1; i < components.length; i++) {
 			components[i].setVisible(false);
 		}
 		panel.setVisible(true);
@@ -192,6 +190,10 @@ public class BirjanClient extends JApplet {
 		if(menu.equals("Balance")){
 			setView(balanceView);
 			balanceView.reset();
+		}
+		if(menu.equals("Logout")){
+			setView(passwordView);
+			passwordView.reset();
 		}
 	}
 
@@ -259,12 +261,34 @@ public class BirjanClient extends JApplet {
 		
 	}
 
-	public String getPassword() {
-		return password;
+	public void login(String userName, String password) {
+		this.user = userName;
+		this.password = password;
+		this.authorities = webService.getAuthorities();
+		
+		mainView.reset(authorities);
+		
+		boolean development = webService.isDevelopment();
+		if(development){
+			ticketView.setDevelopment(development);
+			controlView.setDevelopment(development);
+			drawView.setDevelopment(development);
+		}
+
+		setView(ticketView);
+		ticketView.reset();
 	}
 
 	public final String getUser() {
 		return user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String[] getAuthorities() {
+		return authorities;
 	}
 
 	public Object[][] retrieveAvailability(String day) {

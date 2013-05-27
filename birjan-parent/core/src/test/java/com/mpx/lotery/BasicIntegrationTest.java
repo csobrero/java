@@ -51,15 +51,28 @@ public class BasicIntegrationTest {
 		User user = new User("xris", "xris", true);
 		usersDao.create(user);
 		
-		manager.activateBalance(date, user, -100f);
+		manager.activateBalance(date, user, 0f);
 
-		Authorities authorities = new Authorities("xris", "ROLE_ADMIN");
+		Authorities authorities = new Authorities(user.getUsername(), "ROLE_ADMIN");
 		authoritiesDao.create(authorities);
-		authorities = new Authorities("xris", "ROLE_MANAGER");
+		authorities = new Authorities(user.getUsername(), "ROLE_MANAGER");
 		authoritiesDao.create(authorities);
-		authorities = new Authorities("xris", "ROLE_USER");
+		authorities = new Authorities(user.getUsername(), "ROLE_USER");
 		authoritiesDao.create(authorities);
 		
+		user = new User("uli", "uli", true);
+		usersDao.create(user);
+		authorities = new Authorities(user.getUsername(), "ROLE_MANAGER");
+		authoritiesDao.create(authorities);
+		authorities = new Authorities(user.getUsername(), "ROLE_USER");
+		authoritiesDao.create(authorities);
+		manager.activateBalance(date, user, 0f);
+		
+		user = new User("lucy", "lucy", true);
+		usersDao.create(user);
+		authorities = new Authorities(user.getUsername(), "ROLE_USER");
+		authoritiesDao.create(authorities);
+		manager.activateBalance(date, user, 0f);
 
 	}
 
@@ -83,12 +96,12 @@ public class BasicIntegrationTest {
 		
 		for (Object[][] data : games) {//today $100
 			manager.createGames(lotteries , date , data );
-			Thread.currentThread().sleep(10);
+			Thread.currentThread().sleep(20);
 		}
 		
 		for (Object[][] data : games) {//yesterday $100
 			manager.createGames(lotteries , yesterday , data );
-			Thread.currentThread().sleep(10);
+			Thread.currentThread().sleep(20);
 		}
 		
 

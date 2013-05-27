@@ -31,4 +31,6 @@ public interface BirjanWebService {
 
 	Ticket pay(String hash);
 
+	String[] getAuthorities();
+
 }

@@ -1,5 +1,12 @@
 INSERT INTO `birjan`.`users` (`id`, `created`, `enabled`, `password`, `username`, `commisionRate`) VALUES (NULL, '2013-05-19 00:00:00', '1', 'xris', 'xris', '0.2');
+INSERT INTO `birjan`.`users` (`id`, `created`, `enabled`, `password`, `username`, `commisionRate`) VALUES (NULL, '2013-05-19 00:00:00', '1', 'uli', 'uli', '0.2');
+INSERT INTO `birjan`.`users` (`id`, `created`, `enabled`, `password`, `username`, `commisionRate`) VALUES (NULL, '2013-05-19 00:00:00', '1', 'lucy', 'lucy', '0.2');
 INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VALUES (NULL, '2013-05-19 00:00:00', 'ROLE_ADMIN', 'xris');
 INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VALUES (NULL, '2013-05-19 00:00:00', 'ROLE_MANAGER', 'xris');
 INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VALUES (NULL, '2013-05-19 00:00:00', 'ROLE_USER', 'xris');
-INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '', '0', '100', '0', '2013-05-25', '0', '0', '0', 'OPEN', '1');
+INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VALUES (NULL, '2013-05-19 00:00:00', 'ROLE_MANAGER', 'uli');
+INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VALUES (NULL, '2013-05-19 00:00:00', 'ROLE_USER', 'uli');
+INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VALUES (NULL, '2013-05-19 00:00:00', 'ROLE_USER', 'lucy');
+INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '', '0', '0', '0', '2013-05-25', '0', '0', '0', 'OPEN', '1');
+INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '', '0', '0', '0', '2013-05-25', '0', '0', '0', 'OPEN', '1');
+INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '', '0', '0', '0', '2013-05-25', '0', '0', '0', 'OPEN', '1');

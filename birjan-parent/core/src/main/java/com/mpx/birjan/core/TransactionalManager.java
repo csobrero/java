@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
+import com.mpx.birjan.bean.Authorities;
 import com.mpx.birjan.bean.Balance;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
@@ -45,6 +46,8 @@ public class TransactionalManager {
 	private GenericJpaDAO<Wager> wagerDao;
 
 	private GenericJpaDAO<User> usersDao;
+
+	private GenericJpaDAO<Authorities> authoritiesDao;
 
 	private GenericJpaDAO<Balance> balanceDao;
 
@@ -254,6 +257,12 @@ public class TransactionalManager {
 		balanceDao.setClazz(Balance.class);
 	}
 
+	@Resource(name = "genericJpaDAO")
+	public final void setAuthoritiesDao(final GenericJpaDAO<Authorities> daoToSet) {
+		authoritiesDao = daoToSet;
+		authoritiesDao.setClazz(Authorities.class);
+	}
+
 	public boolean isDevelopment() {
 		return true;
 	}
@@ -339,6 +348,15 @@ public class TransactionalManager {
 		}
 		
 		return balanceDTO;
+		
+	}
+
+	@Transactional(readOnly=true)
+	public List<Authorities> getAuthorities() {
+		Filter<String> userFilter = new Filter<String>("username",SecurityContextHolder
+						.getContext().getAuthentication().getName());
+
+		return authoritiesDao.findByFilter(userFilter);
 		
 	}
 }

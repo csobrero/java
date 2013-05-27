@@ -2,16 +2,22 @@ package com.mpx.birjan.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.jws.WebService;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.mpx.birjan.bean.Authorities;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.User;
@@ -52,7 +58,6 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	@Secured({ "ROLE_MANAGER" })
 	public void createDraw(String lotteryName, String variant, String day,
 			String[] data) {
 		Preconditions.checkNotNull(lotteryName);
@@ -72,7 +77,6 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	@Secured({ "ROLE_MANAGER" })
 	public String[] retrieveDraw(String lotteryName, String variant, String day) {
 		Preconditions.checkNotNull(lotteryName);
 		Preconditions.checkNotNull(variant);
@@ -189,6 +193,21 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		System.out.println(hash);
 
 		return hash;
+	}
+
+	@Override
+	public String[] getAuthorities() {
+		
+		List<Authorities> authorities = txManager.getAuthorities();
+		
+		@SuppressWarnings("unchecked")
+		Collection<String> collect = CollectionUtils.collect(authorities, new Transformer() {
+			public Object transform(Object input) {
+				return ((Authorities)input).getAuthority();
+			}
+		});
+		
+		return collect.toArray(new String[collect.size()]);	
 	}
 	
 }
