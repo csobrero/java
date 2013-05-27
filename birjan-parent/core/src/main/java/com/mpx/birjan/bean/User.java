@@ -10,7 +10,7 @@ import org.pojomatic.annotations.AutoProperty;
 
 @Entity
 @AutoProperty
-@Table(name = "USERS")
+@Table(name = "users")
 public class User extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = 6877584950579668093L;

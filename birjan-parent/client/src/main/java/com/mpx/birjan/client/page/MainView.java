@@ -73,6 +73,52 @@ public class MainView extends JFrame {
 		helpmenu.add(helpItem1);
 		menuBar.add(filemenu);
 		menuBar.add(helpmenu);
+		
+		JMenu userMenu = new JMenu("Usuario");
+		JMenuItem item1 = new JMenuItem("Jugada");
+		checkItem1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.actionMenu("Jugar");
+			}
+		});
+		userMenu.add(item1);
+		JMenuItem item2 = new JMenuItem("Pago");
+		checkItem1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.actionMenu("Control");
+			}
+		});
+		userMenu.add(item2);
+		JMenuItem item3 = new JMenuItem("Cierre");
+		checkItem1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.actionMenu("Balance");
+			}
+		});
+		userMenu.add(item3);
+		JMenuItem item4 = new JMenuItem("Premios");
+		checkItem1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.actionMenu("Loterias");
+			}
+		});
+		userMenu.add(item4);
+		menuBar.add(userMenu);
+		
+
+		JMenuItem item5 = new JMenuItem("Control");
+		checkItem1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.actionMenu("Control");
+			}
+		});
+		
+
+		JMenu agenciaMenu = new JMenu("Agencia");
+		agenciaMenu.add(item5);
+		menuBar.add(agenciaMenu);
+		
+		
 		contentPane.add(menuBar, BorderLayout.NORTH);
 
 		JPanel bottomPanel = new JPanel();
