@@ -44,8 +44,8 @@ public class BasicIntegrationTest {
 	@Autowired
 	private TransactionalManager manager;
 
-	@Test
-	@Rollback(value = false)
+//	@Test
+//	@Rollback(value = false)
 	public void usersCreate() {
 		
 		User user = new User("xris", "xris", true);
@@ -80,8 +80,7 @@ public class BasicIntegrationTest {
 	@Rollback(value = false)
 	public void createGames() throws InterruptedException {
 		
-		SecurityContextHolder.getContext().setAuthentication(
-				new UsernamePasswordAuthenticationToken("xris", "xris"));
+		getAdminUser();
 		
 		List<Balance> all = balanceDao.getAll();
 		
@@ -96,12 +95,12 @@ public class BasicIntegrationTest {
 		
 		for (Object[][] data : games) {//today $100
 			manager.createGames(lotteries , date , data );
-			Thread.currentThread().sleep(20);
+			Thread.currentThread().sleep(50);
 		}
 		
 		for (Object[][] data : games) {//yesterday $100
 			manager.createGames(lotteries , yesterday , data );
-			Thread.currentThread().sleep(20);
+			Thread.currentThread().sleep(50);
 		}
 		
 
@@ -110,8 +109,7 @@ public class BasicIntegrationTest {
 	@Test
 	@Rollback(value = false)
 	public void createDraw() {
-		SecurityContextHolder.getContext().setAuthentication(
-				new UsernamePasswordAuthenticationToken("xris", "xris"));
+		getAdminUser();
 		
 		
 		String[] numbers = new String[]{"3332","1111","1111","1111","1111",
@@ -120,11 +118,18 @@ public class BasicIntegrationTest {
 		
 		for (Lottery lottery : Lottery.values()) { //$70x4=280
 			manager.createDraw(lottery, date, numbers);
-			manager.validateDraw(lottery, date);
+			manager.createDraw(lottery, yesterday, numbers);
 		}
 		
+	}
+	
+	@Test
+	@Rollback(value = false)
+	public void validateDraw() {
+		getAdminUser();
+		
 		for (Lottery lottery : Lottery.values()) { //$70x4=280
-			manager.createDraw(lottery, yesterday, numbers);
+			manager.validateDraw(lottery, date);
 			manager.validateDraw(lottery, yesterday);
 		}
 		
@@ -133,9 +138,7 @@ public class BasicIntegrationTest {
 	@Test
 	@Rollback(value = false)
 	public void payGames() {
-		SecurityContextHolder.getContext().setAuthentication(
-				new UsernamePasswordAuthenticationToken("xris", "xris"));
-		
+		getAdminUser();
 		
 		List<Game> winners = manager.retriveGames(Status.WINNER, Lottery.NACIONAL_MATUTINA, yesterday, 
 				null, null);
@@ -145,12 +148,16 @@ public class BasicIntegrationTest {
 		}
 		
 	}
+
+	private void getAdminUser() {
+		SecurityContextHolder.getContext().setAuthentication(
+				new UsernamePasswordAuthenticationToken("xris", "xris"));
+	}
 	
 //	@Test
 //	@Rollback(value = false)
 	public void createDraw2() {
-		SecurityContextHolder.getContext().setAuthentication(
-				new UsernamePasswordAuthenticationToken("xris", "xris"));
+		getAdminUser();
 		
 		String[] numbers = new String[]{"3332","1111","1111","1111","1111",
 				"1111","1111","1111","1111","1111","1111","1111","1111","1111","1111",

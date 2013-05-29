@@ -25,7 +25,7 @@
 	
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:/build_dev.properties" />
+		<property name="location" value="classpath:/build_dev_mysql.properties" />
 	</bean>
 
 	<bean id="entityManagerFactory"

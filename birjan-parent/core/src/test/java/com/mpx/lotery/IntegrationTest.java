@@ -46,109 +46,41 @@ public class IntegrationTest {
 
 	@Test
 	@Rollback(value = false)
-	public void usersCreate() {
-		
-		User user = new User("xris", "xris", true);
-		usersDao.create(user);
-		
-		manager.activateBalance(date, user, -100f);
-
-		Authorities authorities = new Authorities("xris", "ROLE_ADMIN");
-		authoritiesDao.create(authorities);
-		authorities = new Authorities("xris", "ROLE_MANAGER");
-		authoritiesDao.create(authorities);
-		authorities = new Authorities("xris", "ROLE_USER");
-		authoritiesDao.create(authorities);
-		
-
-	}
-
-	@Test
-	@Rollback(value = false)
 	public void createGames() throws InterruptedException {
 		
 		SecurityContextHolder.getContext().setAuthentication(
 				new UsernamePasswordAuthenticationToken("xris", "xris"));
 		
-		List<Balance> all = balanceDao.getAll();
 
-		List<Lottery> lotteries = new ArrayList<Lottery>();
-		for (Lottery lottery : Lottery.values()) {
-			lotteries.add(lottery);			
-		}
+		Lottery[] lotteries = new Lottery[]{Lottery.NACIONAL_MATUTINA};
 		
 		List<Object[][]> games = new ArrayList<Object[][]>();
-		games.add(new Object[][]{{1,"xxx2",2.45f},{20,"xx02",2.55f}});//$5
 		games.add(new Object[][]{{1,"xxx2",2.45f}});//$5
-		games.add(new Object[][]{{1,"xxx2",2.55f}});//$5
-		games.add(new Object[][]{{1,"xxx2",2.45f},{20,"x002",2.55f}});//$5
-		games.add(new Object[][]{{1,"xxx2",2.45f},{19,"xx02",2.55f}});//$5
 		
-		for (Object[][] data : games) {//today $25x8=200
-			manager.createGames(lotteries.toArray(new Lottery[lotteries.size()]) , date , data );
-			Thread.currentThread().sleep(10);
+		for (Object[][] data : games) {//today $100
+			manager.createGames(lotteries , date , data );
+			Thread.currentThread().sleep(50);
+			manager.createGames(lotteries , yesterday , data );
+			Thread.currentThread().sleep(50);
 		}
 		
-		for (Object[][] data : games) {//yesterday //today $25x8=200
-			manager.createGames(lotteries.toArray(new Lottery[lotteries.size()]) , yesterday , data );
-			Thread.currentThread().sleep(10);
-		}
-
-	}
-	
-	@Test
-	@Rollback(value = false)
-	public void createDraw() {
-		SecurityContextHolder.getContext().setAuthentication(
-				new UsernamePasswordAuthenticationToken("xris", "xris"));
-		
+		List<Game> retriveGames = manager.retriveGames(null, Lottery.NACIONAL_MATUTINA, date, null, null);
 		
 		String[] numbers = new String[]{"3332","1111","1111","1111","1111",
 				"1111","1111","1111","1111","1111","1111","1111","1111","1111","1111",
 				"1111","1111","1111","1111","4472"};
 		
-		for (Lottery lottery : Lottery.values()) { //$70x4=280
+		for (Lottery lottery : lotteries) { //$70x4=280
 			manager.createDraw(lottery, date, numbers);
-			manager.validateDraw(lottery, date);
+			manager.createDraw(lottery, yesterday, numbers);
 		}
 		
-		for (Lottery lottery : Lottery.values()) { //$70x4=280
-			manager.createDraw(lottery, yesterday, numbers);
+		for (Lottery lottery : lotteries) { //$70x4=280
+			manager.validateDraw(lottery, date);
 			manager.validateDraw(lottery, yesterday);
 		}
 		
-	}
-	
-	@Test
-	@Rollback(value = false)
-	public void payGames() {
-		SecurityContextHolder.getContext().setAuthentication(
-				new UsernamePasswordAuthenticationToken("xris", "xris"));
-		
-		
-		List<Game> winners = manager.retriveGames(Status.WINNER, Lottery.NACIONAL_MATUTINA, null, 
-				yesterday, null);
-		
-		for (Game game : winners) { //pago $70
-			manager.processWinners(game.getWager().getHash(),true);
-		}
-		
-	}
-	
-//	@Test
-//	@Rollback(value = false)
-	public void createDraw2() {
-		SecurityContextHolder.getContext().setAuthentication(
-				new UsernamePasswordAuthenticationToken("xris", "xris"));
-		
-		String[] numbers = new String[]{"3332","1111","1111","1111","1111",
-				"1111","1111","1111","1111","1111","1111","1111","1111","1111","1111",
-				"1111","1111","1111","1111","4402"};
-		
 
-		manager.createDraw(Lottery.NACIONAL_NOCTURNA, date, numbers);
-		manager.validateDraw(Lottery.NACIONAL_NOCTURNA, date);
-		
 	}
 
 	@Resource(name = "genericJpaDAO")

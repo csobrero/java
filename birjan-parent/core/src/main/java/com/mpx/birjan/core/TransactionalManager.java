@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -99,7 +100,7 @@ public class TransactionalManager {
 
 		Filter<Status> statusFilter = new Filter<Status>("status", Status.OPEN);//Status.VALID
 		Filter<Lottery> lotteryFilter = new Filter<Lottery>("lottery", lottery);
-		Filter<Date> dateFilter = new Filter<Date>("date", date.toDate());
+		Filter<Date> dateFilter = new Filter<Date>("date", date.toDateMidnight().toDate());
 
 		Draw draw = drawDao.findUniqueByFilter(statusFilter, lotteryFilter, dateFilter);
 		
@@ -145,7 +146,7 @@ public class TransactionalManager {
 	public Draw retrieveDraw(Lottery lottery, DateTime date) {
 
 		Filter<Lottery> lotteryFilter = new Filter<Lottery>("lottery", lottery);
-		Filter<Date> dateFilter = new Filter<Date>("date", date.toDate());
+		Filter<Date> dateFilter = new Filter<Date>("date", date.toDateMidnight().toDate());
 
 		Draw draw = drawDao.findUniqueByFilter(lotteryFilter, dateFilter);
 
@@ -194,8 +195,8 @@ public class TransactionalManager {
 
 		Filter<Status> statusFilter = new Filter<Status>("status", status);
 		Filter<Lottery> lotteryFilter = new Filter<Lottery>("lottery", lottery);
-		Filter<Date> dateFilter = new Filter<Date>("date", (date!=null)?date.toDate():null);
-		Filter<Date> createdFilter = new Filter<Date>("created", (created!=null)?created.toDate():null);
+		Filter<Date> dateFilter = new Filter<Date>("date", (date!=null)?date.toDateMidnight().toDate():null);
+		Filter<Date> createdFilter = new Filter<Date>("created", (created!=null)?created.toDateMidnight().toDate():null);
 		Filter<User> userFilter = new Filter<User>("wager.user", user);
 
 		List<Game> games = gameDao.findByFilter(statusFilter, lotteryFilter,
@@ -304,6 +305,11 @@ public class TransactionalManager {
 			} catch (Exception e) {}
 			
 		} else {
+			DateTime balanceDate = new DateTime(balance.getDate());
+			if(!date.toDateMidnight().isEqual(balanceDate.toDateMidnight())){
+				date = balanceDate;
+			}
+			
 			balanceDTO.setCash(balance.getBalance()-balance.getClearance());
 			
 			List<Game> games = retriveGames(null, null, date, null, user);

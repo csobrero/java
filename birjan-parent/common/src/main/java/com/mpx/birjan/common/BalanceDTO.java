@@ -2,10 +2,13 @@ package com.mpx.birjan.common;
 
 import java.io.Serializable;
 
+import org.joda.time.DateTime;
+
 public class BalanceDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private DateTime date;
 	private boolean closed = false;
 	private float cash = 0f;
 	private float payments = 0f;
@@ -89,6 +92,14 @@ public class BalanceDTO implements Serializable {
 
 	public void setWinners(int winners) {
 		this.winners = winners;
+	}
+
+	public DateTime getDate() {
+		return date;
+	}
+
+	public void setDate(DateTime date) {
+		this.date = date;
 	}
 
 }

@@ -204,7 +204,7 @@ public class TicketView extends AbstractView {
 	private void init() {
 		String day = comboBox.getSelectedItem().toString().split(" ")[2];
 		lotteryTable.setModel((createLoteryModel(controller.retrieveAvailability(day))));
-		btnClear.setEnabled(false);
+		btnClear.setEnabled(true);
 		btnDone.setEnabled(false);
 		table.setModel((createModel(false)));
 		table.changeSelection(0, 1, false, false);

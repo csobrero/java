@@ -7,6 +7,6 @@ INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VA
 INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VALUES (NULL, '2013-05-19 00:00:00', 'ROLE_MANAGER', 'uli');
 INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VALUES (NULL, '2013-05-19 00:00:00', 'ROLE_USER', 'uli');
 INSERT INTO `birjan`.`authorities` (`id`, `created`, `authority`, `username`) VALUES (NULL, '2013-05-19 00:00:00', 'ROLE_USER', 'lucy');
-INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '', '0', '0', '0', '2013-05-25', '0', '0', '0', 'OPEN', '1');
-INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '', '0', '0', '0', '2013-05-25', '0', '0', '0', 'OPEN', '1');
-INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '', '0', '0', '0', '2013-05-25', '0', '0', '0', 'OPEN', '1');
+INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '2013-05-19 00:00:00', '0', '0', '0', NOW(), '0', '0', '0', 'OPEN', '1');
+INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '2013-05-19 00:00:00', '0', '0', '0', NOW(), '0', '0', '0', 'OPEN', '2');
+INSERT INTO `birjan`.`BALANCE` (`id`, `created`, `cash`, `clearance`, `commission`, `date`, `income`, `payments`, `prizes`, `state`, `user_id`) VALUES (NULL, '2013-05-19 00:00:00', '0', '0', '0', NOW(), '0', '0', '0', 'OPEN', '3');

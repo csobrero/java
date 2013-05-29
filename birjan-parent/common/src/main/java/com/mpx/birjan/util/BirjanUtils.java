@@ -31,7 +31,7 @@ public class BirjanUtils {
 		}
 
 		String millis = String.valueOf(dt.getMillis());
-		return hash + hex + millis.substring(millis.length()-2,millis.length());
+		return hash + hex + millis.substring(millis.length()-3,millis.length()-1);
 	}
 
 	public static DateTime getDate(String day) {
