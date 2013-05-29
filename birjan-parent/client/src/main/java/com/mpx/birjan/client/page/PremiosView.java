@@ -27,11 +27,11 @@ import org.springframework.stereotype.Repository;
 import com.mpx.birjan.client.editor.NumberCellEditor;
 
 @Repository
-public class DrawView extends AbstractView {
+public class PremiosView extends AbstractView {
 
 	private static final long serialVersionUID = 4334436586243521165L;
 
-	public DrawView() {
+	public PremiosView() {
 
 		this.setSize(800, 400);
 

@@ -36,7 +36,7 @@ import org.joda.time.DateTimeConstants;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TicketView extends AbstractView {
+public class JugadaView extends AbstractView {
 
 	private static final long serialVersionUID = 4334436586243521165L;
 
@@ -53,7 +53,7 @@ public class TicketView extends AbstractView {
 					"PROVINCIA_VESPERTINA", "PROVINCIA_NOCTURNA" } };
 	
 
-	public TicketView() {
+	public JugadaView() {
 		this.setSize(800, 400);
 
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));

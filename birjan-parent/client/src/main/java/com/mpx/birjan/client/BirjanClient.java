@@ -17,13 +17,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import com.mpx.birjan.client.page.BalanceView;
-import com.mpx.birjan.client.page.CheckCodeView;
+import com.mpx.birjan.client.page.CierreView;
+import com.mpx.birjan.client.page.PagoView;
 import com.mpx.birjan.client.page.ControlView;
-import com.mpx.birjan.client.page.DrawView;
+import com.mpx.birjan.client.page.PremiosView;
 import com.mpx.birjan.client.page.MainView;
 import com.mpx.birjan.client.page.PasswordView;
 import com.mpx.birjan.client.page.PrintView;
-import com.mpx.birjan.client.page.TicketView;
+import com.mpx.birjan.client.page.JugadaView;
 import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.common.Wrapper;
@@ -44,22 +45,25 @@ public class BirjanClient extends JApplet {
 	private MainView mainView;
 
 	@Autowired
-	private TicketView ticketView;
+	private JugadaView jugadaView;
 
 	@Autowired
 	private PrintView printView;
 	
 	@Autowired
-	private CheckCodeView checkCodeView;
+	private PagoView pagoView;
 	
 	@Autowired
 	private ControlView controlView;
 	
 	@Autowired
-	private BalanceView balanceView;
+	private CierreView cierreView;
 
 	@Autowired
-	private DrawView drawView;
+	private PremiosView premiosView;
+
+	@Autowired
+	private BalanceView balanceView;
 
 	@Autowired
 	private PasswordView passwordView;
@@ -147,9 +151,9 @@ public class BirjanClient extends JApplet {
 	public void play() {
 		
 		
-		String day = ticketView.getComboBox().getSelectedItem().toString().split(" ")[2];
-		String[] lotteries = ticketView.selectedLotteries().toArray(new String[]{});
-		Object[][] data = ticketView.getData();
+		String day = jugadaView.getComboBox().getSelectedItem().toString().split(" ")[2];
+		String[] lotteries = jugadaView.selectedLotteries().toArray(new String[]{});
+		Object[][] data = jugadaView.getData();
 
 		
 		String hash = webService.createGames(day, lotteries, data);
@@ -172,20 +176,24 @@ public class BirjanClient extends JApplet {
 	}
 	
 	public void actionMenu(String menu) {
-		if(menu.equals("Jugar")){
-			setView(ticketView);
-			ticketView.reset();
+		if(menu.equals("Jugada")){
+			setView(jugadaView);
+			jugadaView.reset();
 		}
-		if(menu.equals("Check")){
-			setView(checkCodeView);
+		if(menu.equals("Pago")){
+			setView(pagoView);
 		}
-		if(menu.equals("Loteria")){
-			setView(drawView);
-			drawView.reset();
+		if(menu.equals("Premios")){
+			setView(premiosView);
+			premiosView.reset();
 		}
 		if(menu.equals("Control")){
 			setView(controlView);
 			controlView.reset();
+		}
+		if(menu.equals("Cierre")){
+			setView(cierreView);
+			cierreView.reset();
 		}
 		if(menu.equals("Balance")){
 			setView(balanceView);
@@ -205,14 +213,14 @@ public class BirjanClient extends JApplet {
 	public void updateDraw(boolean viewOnly) {
 		String[] data = new String[20];
 
-		String lottery = drawView.getComboBox_1().getSelectedItem().toString();
-		String variant = drawView.getComboBox_2().getSelectedItem().toString();
-		String day = drawView.getComboBox().getSelectedItem().toString()
+		String lottery = premiosView.getComboBox_1().getSelectedItem().toString();
+		String variant = premiosView.getComboBox_2().getSelectedItem().toString();
+		String day = premiosView.getComboBox().getSelectedItem().toString()
 				.split(" ")[2];
 
 		if (!viewOnly) {
 			@SuppressWarnings("unchecked")
-			List<List<String>> vector = drawView.getTableModel()
+			List<List<String>> vector = premiosView.getTableModel()
 					.getDataVector();
 
 			for (int i = 0; i < 10; i++) {
@@ -225,23 +233,23 @@ public class BirjanClient extends JApplet {
 		
 		data = webService.retrieveDraw(lottery, variant, day);
 
-		drawView.updateModel(data);
+		premiosView.updateModel(data);
 
 	}
 
 	public void validateDraw() {
-		String lottery = drawView.getComboBox_1().getSelectedItem().toString();
-		String variant = drawView.getComboBox_2().getSelectedItem().toString();
-		String day = drawView.getComboBox().getSelectedItem().toString()
+		String lottery = premiosView.getComboBox_1().getSelectedItem().toString();
+		String variant = premiosView.getComboBox_2().getSelectedItem().toString();
+		String day = premiosView.getComboBox().getSelectedItem().toString()
 				.split(" ")[2];
 		
 		webService.validateDraw(lottery, variant, day);
 	}
 	
 	public BalanceDTO performBalance(boolean close) {
-		String day = balanceView.getComboBox().getSelectedItem().toString().split(" ")[2];
+		String day = cierreView.getComboBox().getSelectedItem().toString().split(" ")[2];
 		
-		BalanceDTO balance = webService.performBalance(day, balanceView.getTextCode().getText(), close);
+		BalanceDTO balance = webService.performBalance(day, cierreView.getTextCode().getText(), close);
 		
 		return balance;
 		
@@ -270,13 +278,13 @@ public class BirjanClient extends JApplet {
 		
 		boolean development = webService.isDevelopment();
 		if(development){
-			ticketView.setDevelopment(development);
+			jugadaView.setDevelopment(development);
 			controlView.setDevelopment(development);
-			drawView.setDevelopment(development);
+			premiosView.setDevelopment(development);
 		}
 
-		setView(ticketView);
-		ticketView.reset();
+		setView(jugadaView);
+		jugadaView.reset();
 	}
 
 	public final String getUser() {
@@ -293,5 +301,10 @@ public class BirjanClient extends JApplet {
 
 	public Object[][] retrieveAvailability(String day) {
 		return webService.retrieveAvailability(day);
+	}
+
+	public BalanceDTO[] balance() {
+		return webService.closeBalance(balanceView.getDay(),null);
+	
 	}
 }

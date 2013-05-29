@@ -193,7 +193,7 @@ public class ControlView extends AbstractView {
 			private String buildFileName() {
 				String lottery = getComboBox_1().getSelectedItem().toString();
 				String variant = getComboBox_2().getSelectedItem().toString();
-				DateTime date = BirjanUtils.getDate(getComboBox().getSelectedItem().toString());
+				DateTime date = BirjanUtils.getDate(getComboBox().getSelectedItem().toString().split("  ")[1]);
 				DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd");
 				return lottery+"_"+variant+"_"+fmt.print(date)+".xls";
 			}

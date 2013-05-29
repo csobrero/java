@@ -146,6 +146,16 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		return txManager.performBalance(date, user, close);
 		
 	}
+
+	@Override
+	@Secured({ "ROLE_MANAGER" })
+	public BalanceDTO[] closeBalance(String day, Boolean close) {
+		Preconditions.checkNotNull(day);
+		
+		DateTime date = BirjanUtils.getDate(day);
+		
+		return txManager.closeBalance(date, close);
+	}
 	
 	@Override
 	public boolean isDevelopment() {

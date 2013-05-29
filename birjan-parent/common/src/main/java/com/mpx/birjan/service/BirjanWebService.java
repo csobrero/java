@@ -33,4 +33,6 @@ public interface BirjanWebService {
 
 	String[] getAuthorities();
 
+	BalanceDTO[] closeBalance(String day, Boolean close);
+
 }

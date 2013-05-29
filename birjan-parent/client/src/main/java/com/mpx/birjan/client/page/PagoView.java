@@ -33,7 +33,7 @@ import com.mpx.birjan.common.Status;
 import com.mpx.birjan.common.Ticket;
 
 @Repository
-public class CheckCodeView extends JPanel {
+public class PagoView extends JPanel {
 
 	private static final long serialVersionUID = -5632793035915116152L;
 
@@ -68,7 +68,7 @@ public class CheckCodeView extends JPanel {
 		map.put("PROVINCIA_NOCTURNA", "Prov. Nocturna");
 	}
 
-	public CheckCodeView() {
+	public PagoView() {
 		this.setSize(800, 400);
 		
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -160,7 +160,7 @@ public class CheckCodeView extends JPanel {
 						}
 					});
 					
-					String[][] loteriesMap = TicketView.loteriesMap;
+					String[][] loteriesMap = JugadaView.loteriesMap;
 					for (int i = 0; i < loteriesMap.length; i++) {
 						for (int j = 0; j < loteriesMap[i].length; j++) {
 							lotteryTable.getModel().setValueAt(

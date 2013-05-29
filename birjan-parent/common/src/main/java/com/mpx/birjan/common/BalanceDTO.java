@@ -1,6 +1,7 @@
 package com.mpx.birjan.common;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.joda.time.DateTime;
 
@@ -8,22 +9,14 @@ public class BalanceDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private DateTime date;
-	private boolean closed = false;
+	private Status state;
+	private Date date;
 	private float cash = 0f;
 	private float payments = 0f;
 	private float income = 0f;
 	private float commission = 0f;
 	private float prizes = 0f;
 	private int winners = 0;
-
-	public boolean isClosed() {
-		return closed;
-	}
-
-	public void setClosed(boolean active) {
-		this.closed = active;
-	}
 
 	public float getIncome() {
 		return income;
@@ -94,12 +87,20 @@ public class BalanceDTO implements Serializable {
 		this.winners = winners;
 	}
 
-	public DateTime getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(DateTime date) {
+	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public Status getState() {
+		return state;
+	}
+
+	public void setState(Status state) {
+		this.state = state;
 	}
 
 }

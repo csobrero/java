@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -49,7 +48,7 @@ public class MainView extends JFrame {
 		JMenuItem item1 = new JMenuItem("Jugada");
 		item1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.actionMenu("Jugar");
+				controller.actionMenu("Jugada");
 			}
 		});
 		userMenu.add(item1);
@@ -57,7 +56,7 @@ public class MainView extends JFrame {
 		JMenuItem item2 = new JMenuItem("Pago");
 		item2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.actionMenu("Check");
+				controller.actionMenu("Pago");
 			}
 		});
 		userMenu.add(item2);
@@ -65,7 +64,7 @@ public class MainView extends JFrame {
 		JMenuItem item3 = new JMenuItem("Cierre");
 		item3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.actionMenu("Balance");
+				controller.actionMenu("Cierre");
 			}
 		});
 		userMenu.add(item3);
@@ -73,7 +72,7 @@ public class MainView extends JFrame {
 		JMenuItem item4 = new JMenuItem("Premios");
 		item4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.actionMenu("Loteria");
+				controller.actionMenu("Premios");
 			}
 		});
 		userMenu.add(item4);
@@ -92,18 +91,26 @@ public class MainView extends JFrame {
 		});
 		agenciaMenu.add(item5);
 		components.add(item5);
+		JMenuItem item6 = new JMenuItem("Balance");
+		item6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.actionMenu("Balance");
+			}
+		});
+		agenciaMenu.add(item6);
+		components.add(item6);
 		menuBar.add(agenciaMenu);
 		
 		
 		JMenu logoutMenu = new JMenu("Logout");
-		JMenuItem item6 = new JMenuItem("Logout");
-		item6.addActionListener(new ActionListener() {
+		JMenuItem item = new JMenuItem("Logout");
+		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				menuBar.setVisible(false);
 				controller.actionMenu("Logout");
 			}
 		});
-		logoutMenu.add(item6);
+		logoutMenu.add(item);
 		menuBar.add(logoutMenu);
 		
 		menuBar.setVisible(false);
@@ -128,6 +135,7 @@ public class MainView extends JFrame {
 		components.get(4).setEnabled(isUserOrAdmin);
 		components.get(5).setEnabled(isManagerOrAdmin);
 		components.get(6).setEnabled(isManagerOrAdmin);
+		components.get(7).setEnabled(isManagerOrAdmin);
 		menuBar.setVisible(true);
 	}
 

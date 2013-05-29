@@ -1,5 +1,6 @@
 package com.mpx.birjan.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -206,18 +207,6 @@ public class TransactionalManager {
 	}
 
 	@Transactional(readOnly=true)
-	public User identify2(String userName) {
-		Filter<String> userFilter = new Filter<String>("user.username",
-				(userName != null) ? userName : SecurityContextHolder
-						.getContext().getAuthentication().getName());
-		Filter<Status> statusFilter = new Filter<Status>("state", Status.OPEN);
-
-		Balance balance = balanceDao.findUniqueByFilter(statusFilter, userFilter);
-		
-		return balance.getUser();
-	}
-
-	@Transactional(readOnly=true)
 	public User identify(String userName) {
 		Filter<String> userFilter = new Filter<String>("username",
 				(userName != null) ? userName : SecurityContextHolder
@@ -267,6 +256,38 @@ public class TransactionalManager {
 	public boolean isDevelopment() {
 		return true;
 	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public BalanceDTO[] closeBalance(DateTime date, Boolean close) {
+	
+		Filter<Status> openFilter = new Filter<Status>("state", Status.OPEN);
+		Filter<Status> closeFilter = new Filter<Status>("state", Status.CLOSE);
+		Filter<Date> dateFilter = new Filter<Date>("date", date.toDateMidnight().toDate());		
+		List<Balance> openBalances = balanceDao.findByFilter(openFilter, dateFilter);
+		
+		List<Balance> balances = balanceDao.findByFilter(closeFilter, dateFilter);
+		if(balances==null)
+			return null;
+		balances.addAll(openBalances);
+		
+		PropertyUtilsBean utilsBean = new PropertyUtilsBean();
+		
+		BalanceDTO balanceDTO;
+		List<BalanceDTO> list = new ArrayList<BalanceDTO>();
+		for (Balance balance : balances) {
+			if(balance.getState().equals(Status.OPEN)){
+				balanceDTO = performBalance(date, balance.getUser(), false);
+			} else {
+				balanceDTO = new BalanceDTO();
+				try {
+					utilsBean.copyProperties(balanceDTO, balance);
+				} catch (Exception e) {new RuntimeException(e);}
+			}
+			list.add(balanceDTO);
+		}
+		
+		return list.toArray(new BalanceDTO[list.size()]);
+	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public synchronized void activateBalance(DateTime date, User user, float clearance){
@@ -302,7 +323,7 @@ public class TransactionalManager {
 			balance=balanceDao.findUniqueByFilter(activeFilter, userFilter);
 			try {
 				utilsBean.copyProperties(balanceDTO, balance);
-			} catch (Exception e) {}
+			} catch (Exception e) {new RuntimeException(e);}
 			
 		} else {
 			DateTime balanceDate = new DateTime(balance.getDate());
@@ -310,6 +331,8 @@ public class TransactionalManager {
 				date = balanceDate;
 			}
 			
+			balanceDTO.setDate(date.toDate());
+			balanceDTO.setState(Status.OPEN);
 			balanceDTO.setCash(balance.getBalance()-balance.getClearance());
 			
 			List<Game> games = retriveGames(null, null, date, null, user);
@@ -345,11 +368,10 @@ public class TransactionalManager {
 			}
 			
 			if(close){
+				balance.setState(Status.CLOSE);
 				try {
 					utilsBean.copyProperties(balance, balanceDTO);
-				} catch (Exception e) {}
-				balance.setState(Status.CLOSE);
-				balanceDTO.setClosed(close);
+				} catch (Exception e) {new RuntimeException(e);}
 			}
 		}
 		
