@@ -197,7 +197,6 @@ public class JugadaView extends AbstractView {
 	public void reset() {
 		comboBox.setModel(new DefaultComboBoxModel(getdays()));
 		comboBox.setSelectedIndex(0);
-		init();
 
 	}
 

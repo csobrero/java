@@ -37,7 +37,7 @@ public class BirjanUtils {
 	public static DateTime getDate(String day) {
 		DateTime dt = now().minusDays(20);//no more than 4 days modify this.
 		if(day!=null){
-			for (int i = 0; i < 21; i++) {
+			for (int i = 0; i < 28; i++) {
 				if(day.equals(String.valueOf(dt.getDayOfMonth()))){
 					return dt;
 				}

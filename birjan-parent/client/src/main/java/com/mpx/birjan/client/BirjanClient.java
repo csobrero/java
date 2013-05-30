@@ -18,13 +18,13 @@ import org.springframework.stereotype.Controller;
 
 import com.mpx.birjan.client.page.BalanceView;
 import com.mpx.birjan.client.page.CierreView;
-import com.mpx.birjan.client.page.PagoView;
 import com.mpx.birjan.client.page.ControlView;
-import com.mpx.birjan.client.page.PremiosView;
-import com.mpx.birjan.client.page.MainView;
-import com.mpx.birjan.client.page.PasswordView;
-import com.mpx.birjan.client.page.PrintView;
 import com.mpx.birjan.client.page.JugadaView;
+import com.mpx.birjan.client.page.MainView;
+import com.mpx.birjan.client.page.PagoView;
+import com.mpx.birjan.client.page.PasswordView;
+import com.mpx.birjan.client.page.PremiosView;
+import com.mpx.birjan.client.page.PrintView;
 import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.common.Wrapper;
