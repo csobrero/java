@@ -272,6 +272,7 @@ public class TransactionalManager {
 		
 		PropertyUtilsBean utilsBean = new PropertyUtilsBean();
 		
+		BalanceDTO closeBalanceDTO = new BalanceDTO();
 		BalanceDTO balanceDTO;
 		List<BalanceDTO> list = new ArrayList<BalanceDTO>();
 		for (Balance balance : balances) {
@@ -279,12 +280,19 @@ public class TransactionalManager {
 				balanceDTO = performBalance(date, balance.getUser(), false);
 			} else {
 				balanceDTO = new BalanceDTO();
+				closeBalanceDTO.addCash(balance.getCash());
+				closeBalanceDTO.addPayments(balance.getPayments());
+				closeBalanceDTO.addIncome(balance.getIncome());
+				closeBalanceDTO.addCommission(balance.getCommission());
+				closeBalanceDTO.addPrizes(balance.getPrizes());
 				try {
 					utilsBean.copyProperties(balanceDTO, balance);
 				} catch (Exception e) {new RuntimeException(e);}
 			}
+			balanceDTO.setUserName(balance.getUser().getUsername());
 			list.add(balanceDTO);
 		}
+		list.add(closeBalanceDTO);
 		
 		return list.toArray(new BalanceDTO[list.size()]);
 	}

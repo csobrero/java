@@ -3,14 +3,13 @@ package com.mpx.birjan.common;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.joda.time.DateTime;
-
 public class BalanceDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Status state;
 	private Date date;
+	private String userName;
 	private float cash = 0f;
 	private float payments = 0f;
 	private float income = 0f;
@@ -101,6 +100,22 @@ public class BalanceDTO implements Serializable {
 
 	public void setState(Status state) {
 		this.state = state;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public float getCashBalance() {
+		return getCash() - getPayments() + getIncome() - getCommission();
+	}
+
+	public float getBalance() {
+		return getCashBalance() - getPrizes();
 	}
 
 }

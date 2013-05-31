@@ -303,8 +303,8 @@ public class BirjanClient extends JApplet {
 		return webService.retrieveAvailability(day);
 	}
 
-	public BalanceDTO[] balance() {
-		return webService.closeBalance(balanceView.getDay(),null);
+	public BalanceDTO[] balance(boolean close) {
+		return webService.closeBalance(balanceView.getDay(), close);
 	
 	}
 }
