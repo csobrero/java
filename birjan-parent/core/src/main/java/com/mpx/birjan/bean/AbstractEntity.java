@@ -25,10 +25,14 @@ public abstract class AbstractEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Property(policy = PojomaticPolicy.EQUALS_TO_STRING)
 	protected Long id;
+	
+	@Column(nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date created;
 
 	@Column(nullable = false)
 	@Temporal(TemporalType.DATE)
-	protected Date created;
+	protected Date createdDate;
 
 	public Long getId() {
 		return id;
@@ -44,8 +48,10 @@ public abstract class AbstractEntity {
 
 	@PrePersist
 	protected void onCreate() {
-		if (this.created == null)
+		if (this.created == null){
 			this.created = new DateTime().toDate();
+			this.createdDate = this.created;
+		}
 	}
 
 	@Override

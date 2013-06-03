@@ -55,11 +55,27 @@ public class TimeTest {
 		
 		DateTimeUtils.setCurrentMillisOffset(l);
 		
-		for (int i = 0; i < 100; i++) {
-			System.out.println(new DateMidnight().toDateTime());
+//		for (int i = 0; i < 100; i++) {
+//			System.out.println(new DateMidnight().toDateTime());
+//			
+//			Thread.currentThread().sleep(1000);
+//		}
+		
+		Thread thread = new Thread(new Runnable() {
 			
-			Thread.currentThread().sleep(1000);
-		}
+			@Override
+			public void run() {
+				for (int i = 0; i < 100; i++) {
+					System.out.println(new DateTime());
+					
+					try {
+						Thread.currentThread().sleep(1000);
+					} catch (InterruptedException e) {}
+				}
+				
+			}
+		});
+		thread.run();
 		
 //		System.out.println(fmt.print(dateTime));
 	}

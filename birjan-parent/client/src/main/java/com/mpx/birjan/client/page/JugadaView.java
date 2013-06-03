@@ -141,7 +141,7 @@ public class JugadaView extends ReseteableView {
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		horizontalBox.add(horizontalStrut);
 
-		lblTotal = new JLabel("TOTAL: $ 0.00");
+		lblTotal = new JLabel();
 		lblTotal.setFont(new Font("Tahoma", Font.BOLD, 20));
 		horizontalBox.add(lblTotal);
 
@@ -186,6 +186,7 @@ public class JugadaView extends ReseteableView {
 	private void init() {
 		String day = Combos.getDay(comboBox.getSelectedItem().toString());
 		lotteryTable.setModel((createLoteryModel(controller.retrieveAvailability(day))));
+		lblTotal.setText("TOTAL: $ 0.00");
 		btnClear.setEnabled(true);
 		btnDone.setEnabled(false);
 		table.setModel((createModel(false)));

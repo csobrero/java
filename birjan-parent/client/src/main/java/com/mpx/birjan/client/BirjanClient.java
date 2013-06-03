@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JApplet;
@@ -111,29 +112,8 @@ public class BirjanClient extends JApplet {
     }
 	
 	public void start() {
-//		BindingProvider bindingProvider = (BindingProvider) webService;
-//
-//		Map<String, Object> reqCtx = bindingProvider.getRequestContext();
-//
-//		reqCtx.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, "true");
-//		reqCtx.put(BindingProvider.USERNAME_PROPERTY, "xris");
-//		reqCtx.put(BindingProvider.PASSWORD_PROPERTY, "xris");
-		
-//		CredentialsHolder.set(new CredentialsHolder.Crendentials("xris", "xris"));
-//		this.user = "xris";
-//		this.password = "xris";
-		
-//		Authenticator.setDefault(new Authenticator() {
-//	        @Override
-//	        protected PasswordAuthentication getPasswordAuthentication() {
-//	            return new PasswordAuthentication("xris", "xris".toCharArray());
-//	        }
-//	    });
-		
 		setView(passwordView);
 		passwordView.reset();
-		
-		
 	}
 
 	private void setView(JPanel panel) {
@@ -185,6 +165,7 @@ public class BirjanClient extends JApplet {
 		}
 		if(menu.equals("Pago")){
 			setView(pagoView);
+			pagoView.reset();
 		}
 		if(menu.equals("Premios")){
 			setView(premiosView);
@@ -282,7 +263,7 @@ public class BirjanClient extends JApplet {
 			this.authorities = webService.getAuthorities();
 			
 			this.serverDateTime = new DateTime(webService.updateServerDateTime(date==null?null:date.toDate()));
-			DateTimeUtils.setCurrentMillisOffset(System.currentTimeMillis()-serverDateTime.getMillis());
+			DateTimeUtils.setCurrentMillisOffset(serverDateTime.getMillis()-new Date().getTime());
 			mainView.reset();
 			
 			boolean development = webService.isDevelopment();

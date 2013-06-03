@@ -41,8 +41,7 @@ public class PrintView extends JPanel {
 	private JButton btnPrint;
 
 	private JButton btnCancel;
-	
-	private JTextField textUser;
+	private JTextField textField;
 
 	public PrintView() {
 
@@ -56,11 +55,24 @@ public class PrintView extends JPanel {
 
 		Component verticalStrut = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut);
+		
+		Box horizontalBox_2 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_2);
 
 		lblcCode = new JLabel();
-		lblcCode.setText("CODE:");
+		horizontalBox_2.add(lblcCode);
+		lblcCode.setText("VERIFICACION:");
 		lblcCode.setFont(new Font("Tahoma", Font.BOLD, 18));
-		verticalBox.add(lblcCode);
+		
+		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+		horizontalStrut_1.setEnabled(false);
+		horizontalBox_2.add(horizontalStrut_1);
+		
+		textField = new JTextField();
+		horizontalBox_2.add(textField);
+		textField.setColumns(12);
+		textField.setFont(new Font("Tahoma", Font.BOLD, 18));
+		textField.setEditable(false);
 
 		Component verticalStrut_1 = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut_1);
@@ -73,31 +85,6 @@ public class PrintView extends JPanel {
 		
 		Box horizontalBox_1 = Box.createHorizontalBox();
 		verticalBox_2.add(horizontalBox_1);
-		
-		textUser = new JTextField();
-		textUser.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_ENTER:
-					btnPrint.doClick();
-					break;
-				case KeyEvent.VK_ESCAPE:
-					btnCancel.doClick();
-					break;
-				}
-
-			}
-		});
-		textUser.setToolTipText("cliente");
-		horizontalBox_1.add(textUser);
-		textUser.setColumns(15);
-		
-		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
-		horizontalBox_1.add(horizontalStrut_1);
-		
-		JButton btnSearch = new JButton("Buscar");
-		horizontalBox_1.add(btnSearch);
 
 		JPanel bottomPanel = new JPanel();
 		add(bottomPanel, BorderLayout.SOUTH);
@@ -115,7 +102,7 @@ public class PrintView extends JPanel {
 		btnPrint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				print();
-				controller.start();
+				controller.actionMenu("Jugada");
 			}
 		});
 		horizontalBox.add(btnPrint);
@@ -126,7 +113,7 @@ public class PrintView extends JPanel {
 		btnCancel = new JButton("Cancelar");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.start();
+				controller.actionMenu("Jugada");
 			}
 		});
 		horizontalBox.add(btnCancel);
@@ -137,8 +124,8 @@ public class PrintView extends JPanel {
 
 	public void setTicket(TicketPrintable ticket) {
 		this.ticket = ticket;
-		lblcCode.setText("VERIFICACION: " + ticket.getHash());
-		textUser.requestFocusInWindow();
+		textField.setText(ticket.getHash());
+		textField.requestFocusInWindow();
 		btnPrint.setEnabled(true);
 
 	}

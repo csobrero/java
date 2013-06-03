@@ -93,7 +93,7 @@ public class TransactionalManager {
 		User user = identifyMe();
 
 		Filter<Lottery> lotteryFilter = new Filter<Lottery>("lottery", lottery);
-		Filter<Date> dateFilter = new Filter<Date>("date", date.toDate());
+		Filter<Date> dateFilter = new Filter<Date>("date", date.toDateMidnight().toDate());
 
 		Draw draw = drawDao.findUniqueByFilter(lotteryFilter, dateFilter);
 
@@ -120,13 +120,7 @@ public class TransactionalManager {
 				Preconditions.checkArgument(Pattern.matches("\\d{4}", winnerNumber), "Can not validate Draw.");
 			}
 
-			// List<Game> winners = retriveGames(WINNER, lottery, date,
-			// null);
-			// List<Game> losers = retriveGames(LOSER, lottery, date,
-			// null);
 			List<Game> games = retriveGames(VALID, lottery, date, null, null);
-			// games.addAll(winners);
-			// games.addAll(losers);
 			for (Game game : games) {
 				Object[][] data = game.getData();
 				boolean win = true;
@@ -171,14 +165,7 @@ public class TransactionalManager {
 		}
 
 		List<String> list = new ArrayList<String>();
-//		if (isDevelopment()) {
-//			VARIANT[] values = VARIANT.values();
-//			for (VARIANT variant : values) {
-//				list.add(variant.name());
-//			}
-//		} else {
-			list = BirjanUtils.retrieveVariantAvailability(view, Rule.National, day);
-//		}
+		list = BirjanUtils.retrieveVariantAvailability(view, Rule.National, day);
 		return list.toArray(new String[list.size()]);
 	}
 
@@ -208,8 +195,8 @@ public class TransactionalManager {
 		Filter<Status> statusFilter = new Filter<Status>("status", status);
 		Filter<Lottery> lotteryFilter = new Filter<Lottery>("lottery", lottery);
 		Filter<Date> dateFilter = new Filter<Date>("date", (date != null) ? date.toDateMidnight().toDate() : null);
-		Filter<Date> createdFilter = new Filter<Date>("created", (created != null) ? created.toDateMidnight().toDate()
-				: null);
+		Filter<Date> createdFilter = new Filter<Date>("createdDate", (created != null) ? created.toDateMidnight()
+				.toDate() : null);
 		Filter<User> userFilter = new Filter<User>("wager.user", user);
 
 		List<Game> games = gameDao.findByFilter(statusFilter, lotteryFilter, dateFilter, createdFilter, userFilter);
@@ -280,7 +267,8 @@ public class TransactionalManager {
 			if (close) {
 				for (Balance closedBalance : balances) {
 					closedBalance.setState(DONE);
-					Balance nextBalance = new Balance(new DateTime().toDate(), closedBalance.getUser(), closedBalance.getBalance());// ACTIVE
+					Balance nextBalance = new Balance(new DateTime().toDate(), closedBalance.getUser(),
+							closedBalance.getBalance());// ACTIVE
 					balanceDao.create(nextBalance);
 				}
 			} else {
@@ -359,7 +347,7 @@ public class TransactionalManager {
 				item.add(game.getBetAmount(), game.getPrize());
 			}
 
-			Item[] items = new Item[] { map.get(WINNER), map.get(LOSER), map.get(VALID) };
+			Item[] items = new Item[] { map.get(WINNER), map.get(LOSER), map.get(VALID), map.get(OPEN) };
 			for (Item item : items) {
 				if (item != null) {
 					balanceDTO.addIncome(item.getAmounts()[0]);

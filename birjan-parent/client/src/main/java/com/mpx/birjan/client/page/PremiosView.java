@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.swing.Box;
@@ -64,7 +63,7 @@ public class PremiosView extends AbstractView {
 		Box vb_2 = Box.createVerticalBox();
 		panel.add(vb_2);
 
-		JLabel lblLoteria = new JLabel("Lot");
+		JLabel lblLoteria = new JLabel("Premio");
 		lblLoteria.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblLoteria.setFont(new Font("Tahoma", Font.BOLD, 18));
 		vb_2.add(lblLoteria);
@@ -140,8 +139,6 @@ public class PremiosView extends AbstractView {
 		btnDone = new JButton("Update");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (btnDone.isEnabled())
-					btnDone.setEnabled(false);// prevent double click.
 				controller.updateDraw(false);
 			}
 		});
@@ -167,12 +164,9 @@ public class PremiosView extends AbstractView {
 		btnValidate = new JButton("Validar");
 		btnValidate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (btnValidate.isEnabled())
-					btnValidate.setEnabled(false);// prevent double click.
 				controller.validateDraw();
 			}
 		});
-		btnValidate.setVisible(false);
 		hb_1.add(btnValidate);
 	}
 
@@ -193,7 +187,6 @@ public class PremiosView extends AbstractView {
 	public void reset() {
 			comboBox.setModel(new DefaultComboBoxModel(getdays()));
 			comboBox.setSelectedIndex(0);
-			init();
 	}
 	
 	public void init() {
@@ -204,6 +197,7 @@ public class PremiosView extends AbstractView {
 		comboBox_1.requestFocusInWindow();
 		comboBox_2.setModel(new DefaultComboBoxModel());
 		comboBox_2.setEnabled(false);
+		btnValidate.setVisible(false);
 		btnClear.setEnabled(false);
 		btnDone.setEnabled(false);
 		table.setEnabled(false);
@@ -225,10 +219,10 @@ public class PremiosView extends AbstractView {
 				}
 			}
 			if(validate){
-				controller.validateDraw();
-//				btnDone.setVisible(false);
-//				btnClear.setVisible(false);
-//				btnValidate.setVisible(true);
+//				controller.validateDraw();
+				btnDone.setVisible(false);
+				btnClear.setVisible(false);
+				btnValidate.setVisible(true);
 			}
 		}
 	}

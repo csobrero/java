@@ -33,30 +33,30 @@ import com.mpx.birjan.common.Status;
 import com.mpx.birjan.common.Ticket;
 
 @Repository
-public class PagoView extends JPanel {
+public class PagoView extends ReseteableView {
 
 	private static final long serialVersionUID = -5632793035915116152L;
 
 	@Autowired
 	private BirjanClient controller;
-	
+
 	private JButton btnPay, btnClear;
 
 	private JTextField textCode;
 
 	private JTable table;
-	
+
 	private JTable lotteryTable;
-	
+
 	private JLabel label;
-	
+
 	private JLabel lblTotal;
-	
+
 	private List<JLabel> winLotteries;
-	
+
 	private static Map<String, String> map;
-	
-	static{	
+
+	static {
 		map = new HashMap<String, String>();
 		map.put("NACIONAL_PRIMERA", "Nac. Primera");
 		map.put("NACIONAL_MATUTINA", "Nac. Matutina");
@@ -70,60 +70,60 @@ public class PagoView extends JPanel {
 
 	public PagoView() {
 		this.setSize(800, 400);
-		
+
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		
+
 		Box verticalBox_5 = Box.createVerticalBox();
 		add(verticalBox_5);
 
 		Box horizontalBox = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox);
-		
+
 		Box verticalBox = Box.createVerticalBox();
 		horizontalBox.add(verticalBox);
-		
+
 		Component verticalStrut_5 = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut_5);
-		
+
 		Box horizontalBox_2 = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox_2);
-		
+
 		Component horizontalStrut_5 = Box.createHorizontalStrut(20);
 		horizontalBox_2.add(horizontalStrut_5);
-		
+
 		JPanel panel = new JPanel();
 		horizontalBox_2.add(panel);
-		
+
 		Box verticalBox_1 = Box.createVerticalBox();
 		panel.add(verticalBox_1);
-		
+
 		label = new JLabel("Fecha: ");
 		label.setFont(new Font("Tahoma", Font.BOLD, 18));
 		label.setAlignmentX(0.5f);
 		verticalBox_1.add(label);
-		
+
 		Component verticalStrut_4 = Box.createVerticalStrut(10);
 		verticalBox_1.add(verticalStrut_4);
-		
+
 		lotteryTable = new JTable();
 		JScrollPane scrollPane_1 = new JScrollPane(lotteryTable);
 		scrollPane_1.setPreferredSize(new Dimension(150, 100));
 		verticalBox_1.add(scrollPane_1);
-		
+
 		Component horizontalStrut_6 = Box.createHorizontalStrut(120);
 		verticalBox_1.add(horizontalStrut_6);
-		
+
 		Component horizontalStrut_7 = Box.createHorizontalStrut(20);
 		horizontalBox_2.add(horizontalStrut_7);
-		
+
 		Component verticalStrut_6 = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut_6);
 
 		Box verticalBox_2 = Box.createVerticalBox();
 		horizontalBox.add(verticalBox_2);
 
-		Component verticalStrut = Box.createVerticalStrut(10);
-		verticalBox_2.add(verticalStrut);
+		Component verticalStrut_1 = Box.createVerticalStrut(20);
+		verticalBox_2.add(verticalStrut_1);
 
 		Box horizontalBox_1 = Box.createHorizontalBox();
 		verticalBox_2.add(horizontalBox_1);
@@ -132,7 +132,6 @@ public class PagoView extends JPanel {
 		horizontalBox_1.add(horizontalStrut);
 
 		textCode = new JTextField();
-		textCode.setToolTipText("cliente");
 		horizontalBox_1.add(textCode);
 		textCode.setColumns(15);
 
@@ -152,28 +151,26 @@ public class PagoView extends JPanel {
 					for (Object[] data : ticket.getData()) {
 						model.addRow(data);
 					}
-					
+
 					@SuppressWarnings("unchecked")
 					Collection<String> lotteryNames = CollectionUtils.collect(ticket.getPayments(), new Transformer() {
 						public Object transform(Object input) {
-							return ((Payment)input).getLottery().name();
+							return ((Payment) input).getLottery().name();
 						}
 					});
-					
+
 					String[][] loteriesMap = JugadaView.loteriesMap;
 					for (int i = 0; i < loteriesMap.length; i++) {
 						for (int j = 0; j < loteriesMap[i].length; j++) {
-							lotteryTable.getModel().setValueAt(
-									lotteryNames.contains(loteriesMap[i][j]),
-									i, j + 1);
+							lotteryTable.getModel().setValueAt(lotteryNames.contains(loteriesMap[i][j]), i, j + 1);
 						}
 					}
-					((DefaultTableModel) lotteryTable.getModel())
-							.fireTableDataChanged();
+					((DefaultTableModel) lotteryTable.getModel()).fireTableDataChanged();
 
-					if(paymentSummary(ticket)>0){
-//						lblTotal.setText(String.format("TOTAL: $ %.2f", total));
-//						lblTotal.setVisible(true);
+					if (paymentSummary(ticket) > 0) {
+						// lblTotal.setText(String.format("TOTAL: $ %.2f",
+						// total));
+						// lblTotal.setVisible(true);
 						btnPay.setVisible(true);
 					}
 				}
@@ -184,16 +181,18 @@ public class PagoView extends JPanel {
 		Component horizontalStrut_2 = Box.createHorizontalStrut(100);
 		horizontalBox_1.add(horizontalStrut_2);
 
-		Component verticalStrut_1 = Box.createVerticalStrut(10);
-		verticalBox_2.add(verticalStrut_1);
+		Component verticalStrut = Box.createVerticalStrut(20);
+		verticalBox_2.add(verticalStrut);
 
 		JScrollPane scrollPane = new JScrollPane();
-//		scrollPane.setPreferredSize(new Dimension(400, 200));
+		// scrollPane.setPreferredSize(new Dimension(400, 200));
 		verticalBox_2.add(scrollPane);
-		scrollPane.setViewportBorder(null);
 
 		table = new JTable();
 		scrollPane.setViewportView(table);
+
+		Component verticalStrut_2 = Box.createVerticalStrut(100);
+		verticalBox_2.add(verticalStrut_2);
 
 		Box verticalBox_3 = Box.createVerticalBox();
 		horizontalBox.add(verticalBox_3);
@@ -230,23 +229,22 @@ public class PagoView extends JPanel {
 			verticalBox_4.add(jLabel);
 		}
 		
+		Component vs8 = Box.createVerticalStrut(10);
+		verticalBox_4.add(vs8);
+
 		lblTotal = new JLabel();
 		lblTotal.setFont(new Font("Tahoma", Font.BOLD, 20));
 		verticalBox_4.add(lblTotal);
-		
 
 		Component horizontalStrut_9 = Box.createHorizontalStrut(20);
 		horizontalBox_3.add(horizontalStrut_9);
-		
-		Component verticalStrut_8 = Box.createVerticalStrut(20);
-		verticalBox_5.add(verticalStrut_8);
-		
+
 		Box hb_1 = Box.createHorizontalBox();
 		verticalBox_5.add(hb_1);
-		
+
 		Component horizontalStrut_4 = Box.createHorizontalStrut(20);
 		hb_1.add(horizontalStrut_4);
-		
+
 		btnPay = new JButton("Pagar");
 		btnPay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -275,7 +273,8 @@ public class PagoView extends JPanel {
 		btnClear.setFont(new Font("Tahoma", Font.BOLD, 10));
 		hb_1.add(btnClear);
 
-		init();
+		Component verticalStrut_8 = Box.createVerticalStrut(20);
+		verticalBox_5.add(verticalStrut_8);
 	}
 
 	public void reset() {
@@ -289,26 +288,27 @@ public class PagoView extends JPanel {
 		buildJTable(createModel());
 		buildLoteryTable();
 	}
-	
+
 	private void buildJTable(TableModel model) {
 		table.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		table.setRowHeight(40);
 		table.setModel(model);
-		
+
 		table.getColumnModel().getColumn(0).setPreferredWidth(50);
 		table.getColumnModel().getColumn(1).setPreferredWidth(50);
 		table.getColumnModel().getColumn(2).setPreferredWidth(100);
 
 	}
-	
+
 	private void buildLoteryTable() {
 		lotteryTable.setCellSelectionEnabled(false);
 		lotteryTable.getTableHeader().setReorderingAllowed(false);
 		lotteryTable.setRowSelectionAllowed(false);
 		lotteryTable.setColumnSelectionAllowed(false);
-		
-		lotteryTable.setModel(createLoteryModel(new Object[][]{{"Nacional",false,false,false,false},{"Provincia",false,false,false,false}}));
-		
+
+		lotteryTable.setModel(createLoteryModel(new Object[][] { { "Nacional", false, false, false, false },
+				{ "Provincia", false, false, false, false } }));
+
 		lotteryTable.getColumnModel().getColumn(0).setMaxWidth(100);
 		lotteryTable.getColumnModel().getColumn(1).setMaxWidth(20);
 		lotteryTable.getColumnModel().getColumn(2).setMaxWidth(20);
@@ -329,14 +329,13 @@ public class PagoView extends JPanel {
 			}
 		};
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private DefaultTableModel createLoteryModel(Object[][] model) {
 
-		return new DefaultTableModel(model, new String[] { "Loteria", "P", "M",
-				"V", "N" }) {
-			Class[] columnTypes = new Class[] { String.class, Boolean.class,
-					Boolean.class, Boolean.class, Boolean.class };
+		return new DefaultTableModel(model, new String[] { "Loteria", "P", "M", "V", "N" }) {
+			Class[] columnTypes = new Class[] { String.class, Boolean.class, Boolean.class, Boolean.class,
+					Boolean.class };
 
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -347,7 +346,7 @@ public class PagoView extends JPanel {
 			}
 		};
 	}
-	
+
 	private float paymentSummary(Ticket ticket) {
 		float total = 0f;
 		int i = 0;
@@ -359,8 +358,7 @@ public class PagoView extends JPanel {
 					s = String.format(": $ %.2f", payment.getAmount());
 				}
 				JLabel jLabel = winLotteries.get(i++);
-				jLabel.setText(map.get(payment.getLottery().name())
-						+ s);
+				jLabel.setText(map.get(payment.getLottery().name()) + s);
 
 				jLabel.setVisible(true);
 			}

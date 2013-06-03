@@ -70,7 +70,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		Lottery lottery = Lottery.valueOf((lotteryName + "_" + variant)
 				.toUpperCase());
 
-		Preconditions.checkArgument(BirjanUtils.isValid(lottery, date),
+		Preconditions.checkArgument(BirjanUtils.isValid(lottery, date, false),
 				"Invalid entry");
 
 		txManager.createDraw(lottery, date, data);
@@ -92,7 +92,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	@Secured({ "ROLE_MANAGER" })
+//	@Secured({ "ROLE_MANAGER" })
 	public void validateDraw(String lotteryName, String variant, String day) {
 		Preconditions.checkNotNull(lotteryName);
 		Preconditions.checkNotNull(variant);
@@ -167,6 +167,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		
 		List<List<Object>> list = new ArrayList<List<Object>>();
 		List<Object> availables;
+		DateTime dateTime = new DateTime();
 		
 		for (Lottery[] lotteries : Lottery.ALL) {
 			availables = BirjanUtils.retrieveVariantAvailability(lotteries, day);
@@ -189,7 +190,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		List<Lottery> lotteries = new ArrayList<Lottery>();
 		for (String str : lotteryNames) {
 			Lottery lottery = Lottery.valueOf(str);
-			Preconditions.checkArgument(BirjanUtils.isValid(lottery, date),
+			Preconditions.checkArgument(BirjanUtils.isValid(lottery, date, true),
 					"Invalid entry");
 			
 			lotteries.add(lottery);
@@ -232,8 +233,9 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	@Override
 	public Date updateServerDateTime(Date date) {
 		if(date!=null)
-			DateTimeUtils.setCurrentMillisOffset(System.currentTimeMillis()-date.getTime());
-		return new DateTime().toDate();
+			DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
+		DateTime dateTime = new DateTime();
+		return dateTime.toDate();
 	}
 
 }

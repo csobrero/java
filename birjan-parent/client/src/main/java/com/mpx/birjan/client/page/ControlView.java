@@ -67,7 +67,7 @@ public class ControlView extends AbstractView {
 		Box vb_2 = Box.createVerticalBox();
 		panel.add(vb_2);
 
-		JLabel lblLoteria = new JLabel("Lot");
+		JLabel lblLoteria = new JLabel("Control");
 		lblLoteria.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblLoteria.setFont(new Font("Tahoma", Font.BOLD, 18));
 		vb_2.add(lblLoteria);
