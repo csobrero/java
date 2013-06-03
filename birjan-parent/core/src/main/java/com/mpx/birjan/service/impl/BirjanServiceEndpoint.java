@@ -167,7 +167,6 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		
 		List<List<Object>> list = new ArrayList<List<Object>>();
 		List<Object> availables;
-		DateTime dateTime = new DateTime();
 		
 		for (Lottery[] lotteries : Lottery.ALL) {
 			availables = BirjanUtils.retrieveVariantAvailability(lotteries, day);

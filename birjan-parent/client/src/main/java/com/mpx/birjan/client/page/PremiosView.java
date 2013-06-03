@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Locale;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -19,16 +18,26 @@ import javax.swing.ScrollPaneLayout;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.mpx.birjan.client.BirjanClient;
 import com.mpx.birjan.client.editor.NumberCellEditor;
+import com.mpx.birjan.util.Utils.Combos;
 
 @Repository
-public class PremiosView extends AbstractView {
+public class PremiosView extends ReseteableView {
 
 	private static final long serialVersionUID = 4334436586243521165L;
+
+	@Autowired
+	protected BirjanClient controller;
+
+	protected JTable table;
+
+	protected JComboBox comboBox, comboBox_1, comboBox_2;
+
+	protected JButton btnDone, btnClear, btnValidate;
 
 	public PremiosView() {
 
@@ -85,9 +94,9 @@ public class PremiosView extends AbstractView {
 		comboBox_1 = new JComboBox();
 		comboBox_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String day = comboBox.getSelectedItem().toString().split(" ")[2];
+				String day = Combos.getDay(comboBox.getSelectedItem().toString());
 				String selected = comboBox_1.getSelectedItem().toString();
-				comboBox_2.setModel(new DefaultComboBoxModel(controller.populateCombo("draw",selected, day)));
+				comboBox_2.setModel(new DefaultComboBoxModel(controller.populateCombo("draw", selected, day)));
 				comboBox_2.setEnabled(true);
 				comboBox_2.requestFocusInWindow();
 			}
@@ -101,7 +110,8 @@ public class PremiosView extends AbstractView {
 		comboBox_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buildJTable(createModel());
-				controller.updateDraw(true);
+				controller.updateDraw(comboBox_1.getSelectedItem().toString(), comboBox_2.getSelectedItem().toString(),
+						Combos.getDay(comboBox.getSelectedItem().toString()), true);
 				table.changeSelection(0, 1, false, false);
 				table.requestFocusInWindow();
 				btnClear.setEnabled(true);
@@ -139,7 +149,8 @@ public class PremiosView extends AbstractView {
 		btnDone = new JButton("Update");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.updateDraw(false);
+				controller.updateDraw(comboBox_1.getSelectedItem().toString(), comboBox_2.getSelectedItem().toString(),
+						Combos.getDay(comboBox.getSelectedItem().toString()), false);
 			}
 		});
 		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -147,7 +158,7 @@ public class PremiosView extends AbstractView {
 
 		Component hs_2 = Box.createHorizontalStrut(20);
 		hb_1.add(hs_2);
-		
+
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -157,43 +168,29 @@ public class PremiosView extends AbstractView {
 		});
 		btnClear.setFont(new Font("Tahoma", Font.BOLD, 10));
 		hb_1.add(btnClear);
-		
+
 		Component hs_1 = Box.createHorizontalStrut(20);
 		hb_1.add(hs_1);
-		
+
 		btnValidate = new JButton("Validar");
 		btnValidate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.validateDraw();
+				controller.validateDraw(comboBox_1.getSelectedItem().toString(), comboBox_2.getSelectedItem()
+						.toString(), Combos.getDay(comboBox.getSelectedItem().toString()));
 			}
 		});
 		hb_1.add(btnValidate);
 	}
 
-	private String[] getdays() {
-		String[] days = new String[3];
-		Locale locale = new Locale("es");
-		DateTime dt = new DateTime();
-		for (int i = 0; i < days.length; i++) {
-			if (dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
-				dt = dt.minusDays(1);
-			days[i] = dt.toString("EEEE", locale).toUpperCase() + "  "
-					+ dt.getDayOfMonth();
-			dt = dt.minusDays(1);
-		}
-		return days;
+	public void reset() {
+		comboBox.setModel(new DefaultComboBoxModel(Combos.buildDays(3, false)));
+		comboBox.setSelectedIndex(0);
 	}
 
-	public void reset() {
-			comboBox.setModel(new DefaultComboBoxModel(getdays()));
-			comboBox.setSelectedIndex(0);
-	}
-	
 	public void init() {
 		buildJTable(createModel());
-		String day = comboBox.getSelectedItem().toString().split(" ")[2];
-		comboBox_1.setModel(new DefaultComboBoxModel(controller
-				.populateCombo("ticket", "LOTERIA", day)));
+		String day = Combos.getDay(comboBox.getSelectedItem().toString());
+		comboBox_1.setModel(new DefaultComboBoxModel(controller.populateCombo("ticket", "LOTERIA", day)));
 		comboBox_1.requestFocusInWindow();
 		comboBox_2.setModel(new DefaultComboBoxModel());
 		comboBox_2.setEnabled(false);
@@ -201,13 +198,13 @@ public class PremiosView extends AbstractView {
 		btnClear.setEnabled(false);
 		btnDone.setEnabled(false);
 		table.setEnabled(false);
-	
-}
-	
+
+	}
+
 	public void updateModel(String[] data) {
-		if(data != null){
+		if (data != null) {
 			boolean validate = true;
-			if (data.length>0) {
+			if (data.length > 0) {
 				btnDone.setEnabled(true);
 				for (int i = 0; i < data.length; i++) {
 					if (i < 10) {
@@ -218,8 +215,8 @@ public class PremiosView extends AbstractView {
 					validate &= !data[i].equals("");
 				}
 			}
-			if(validate){
-//				controller.validateDraw();
+			if (validate) {
+				// controller.validateDraw();
 				btnDone.setVisible(false);
 				btnClear.setVisible(false);
 				btnValidate.setVisible(true);
@@ -240,7 +237,7 @@ public class PremiosView extends AbstractView {
 		table.getColumnModel().getColumn(2).setMaxWidth(50);
 		table.getColumnModel().getColumn(3).setPreferredWidth(100);
 		table.getColumnModel().getColumn(3).setMaxWidth(100);
-		
+
 		table.getColumnModel().getColumn(1).setCellEditor(new NumberCellEditor());
 		table.getColumnModel().getColumn(3).setCellEditor(new NumberCellEditor());
 
@@ -252,25 +249,25 @@ public class PremiosView extends AbstractView {
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private DefaultTableModel createModel() {
-		return new DefaultTableModel(new Object[][] { { "1", "", "11", "" },
-				{ "2", "", "12", "" }, { "3", "", "13", "" },
-				{ "4", "", "14", "" }, { "5", "", "15", "" },
-				{ "6", "", "16", "" }, { "7", "", "17", "" },
-				{ "8", "", "18", "" }, { "9", "", "19", "" },
-				{ "10", "", "20", "" } }, new String[] { "#", "Numero", "#",
-				"Numero" }) {
+		return new DefaultTableModel(new Object[][] { { "1", "", "11", "" }, { "2", "", "12", "" },
+				{ "3", "", "13", "" }, { "4", "", "14", "" }, { "5", "", "15", "" }, { "6", "", "16", "" },
+				{ "7", "", "17", "" }, { "8", "", "18", "" }, { "9", "", "19", "" }, { "10", "", "20", "" } },
+				new String[] { "#", "Numero", "#", "Numero" }) {
 
 			public Class getColumnClass(int columnIndex) {
 				return String.class;
 			}
 
-			boolean[] columnEditables = new boolean[] { false, true, false,
-					true };
+			boolean[] columnEditables = new boolean[] { false, true, false, true };
 
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
-			
+
 		};
+	}
+
+	public DefaultTableModel getTableModel() {
+		return (DefaultTableModel) table.getModel();
 	}
 }

@@ -1,7 +1,6 @@
 package com.mpx.lotery;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -78,11 +77,10 @@ public class BasicIntegrationTest {
 
 	@Test
 	@Rollback(value = false)
+	@SuppressWarnings("static-access")
 	public void createGames() throws InterruptedException {
 		
 		getAdminUser();
-		
-		List<Balance> all = balanceDao.getAll();
 		
 		Lottery[] lotteries = new Lottery[]{Lottery.NACIONAL_MATUTINA};
 		

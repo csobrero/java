@@ -2,19 +2,13 @@ package com.mpx.lotery;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.joda.time.Days;
-import org.joda.time.TimeOfDay;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 
 import com.mpx.birjan.bean.BirjanUtils;
@@ -64,6 +58,7 @@ public class TimeTest {
 		Thread thread = new Thread(new Runnable() {
 			
 			@Override
+			@SuppressWarnings("static-access")
 			public void run() {
 				for (int i = 0; i < 100; i++) {
 					System.out.println(new DateTime());

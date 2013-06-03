@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Locale;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,19 +19,29 @@ import javax.swing.JPanel;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.mpx.birjan.client.BirjanClient;
+import com.mpx.birjan.util.Utils.Combos;
+
 @Repository
-public class ControlView extends AbstractView {
+public class ControlView extends ReseteableView {
 
 	private static final long serialVersionUID = 4334436586243521165L;
 
+	@Autowired
+	protected BirjanClient controller;
+
+	protected JComboBox comboBox, comboBox_1, comboBox_2, comboBox_3;
+
+	protected JButton btnClear, btnExport;
+
 	private Workbook workbook;
 
-	public final String[] states = { null, "WINNER", "LOSER", "PAID" };
+	private static final String[] states = { null, "WINNER", "LOSER", "PAID" };
 
 	public ControlView() {
 
@@ -89,7 +98,7 @@ public class ControlView extends AbstractView {
 		comboBox_1 = new JComboBox();
 		comboBox_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String day = comboBox.getSelectedItem().toString().split(" ")[2];
+				String day = Combos.getDay(comboBox.getSelectedItem().toString());
 				String selected = comboBox_1.getSelectedItem().toString();
 				comboBox_2.setModel(new DefaultComboBoxModel(controller
 						.populateCombo("draw", selected, day)));
@@ -123,7 +132,9 @@ public class ControlView extends AbstractView {
 		comboBox_3 = new JComboBox();
 		comboBox_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.retriveGames();
+				controller.retriveGames(comboBox_1.getSelectedItem().toString(), comboBox_2.getSelectedItem()
+						.toString(), Combos.getDay(comboBox.getSelectedItem().toString()),
+						states[comboBox_3.getSelectedIndex()]);
 				btnExport.setEnabled(workbook!=null);
 			}
 		});
@@ -188,9 +199,9 @@ public class ControlView extends AbstractView {
 			}
 
 			private String buildFileName() {
-				String lottery = getComboBox_1().getSelectedItem().toString();
-				String variant = getComboBox_2().getSelectedItem().toString();
-				DateTime date = getDate(getComboBox().getSelectedItem().toString().split("  ")[1]);
+				String lottery = comboBox_1.getSelectedItem().toString();
+				String variant = comboBox_2.getSelectedItem().toString();
+				DateTime date = getDate(Combos.getDay(comboBox.getSelectedItem().toString()));
 				DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd");
 				return lottery+"_"+variant+"_"+fmt.print(date)+".xls";
 			}
@@ -211,20 +222,6 @@ public class ControlView extends AbstractView {
 		btnClear.setFont(new Font("Tahoma", Font.BOLD, 10));
 		hb_1.add(btnClear);
 	}
-
-	private String[] getdays() {
-		String[] days = new String[20];
-		Locale locale = new Locale("es");
-		DateTime dt = new DateTime();
-		for (int i = 0; i < days.length; i++) {
-			if (!development && dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
-				dt = dt.minusDays(1);
-			days[i] = dt.toString("EEEE", locale).toUpperCase() + "  "
-					+ dt.getDayOfMonth();
-			dt = dt.minusDays(1);
-		}
-		return days;
-	}
 	
 	public static DateTime getDate(String day) {
 		DateTime dt = new DateTime().minusDays(20);//no more than 4 days modify this.
@@ -240,13 +237,13 @@ public class ControlView extends AbstractView {
 	}
 
 	public void reset() {
-		comboBox.setModel(new DefaultComboBoxModel(getdays()));
+		comboBox.setModel(new DefaultComboBoxModel(Combos.buildDays(20, false)));
 		comboBox.setSelectedIndex(0);
 		init();
 	}
 
 	private void init() {
-		String day = comboBox.getSelectedItem().toString().split(" ")[2];
+		String day = Combos.getDay(comboBox.getSelectedItem().toString());
 		comboBox_1.setModel(new DefaultComboBoxModel(controller.populateCombo(
 				"ticket", "LOTERIA", day)));
 		comboBox_1.requestFocusInWindow();

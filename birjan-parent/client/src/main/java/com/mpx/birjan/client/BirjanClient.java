@@ -199,18 +199,12 @@ public class BirjanClient extends JApplet {
 		return jugada;
 	}
 
-	public void updateDraw(boolean viewOnly) {
+	public void updateDraw(String lottery, String variant, String day, boolean viewOnly) {
 		String[] data = new String[20];
-
-		String lottery = premiosView.getComboBox_1().getSelectedItem().toString();
-		String variant = premiosView.getComboBox_2().getSelectedItem().toString();
-		String day = premiosView.getComboBox().getSelectedItem().toString()
-				.split(" ")[2];
 
 		if (!viewOnly) {
 			@SuppressWarnings("unchecked")
-			List<List<String>> vector = premiosView.getTableModel()
-					.getDataVector();
+			List<List<String>> vector = premiosView.getTableModel().getDataVector();
 
 			for (int i = 0; i < 10; i++) {
 				data[i] = vector.get(i).get(1);
@@ -219,19 +213,14 @@ public class BirjanClient extends JApplet {
 
 			webService.createDraw(lottery, variant, day, data);
 		}
-		
+
 		data = webService.retrieveDraw(lottery, variant, day);
 
 		premiosView.updateModel(data);
 
 	}
 
-	public void validateDraw() {
-		String lottery = premiosView.getComboBox_1().getSelectedItem().toString();
-		String variant = premiosView.getComboBox_2().getSelectedItem().toString();
-		String day = premiosView.getComboBox().getSelectedItem().toString()
-				.split(" ")[2];
-		
+	public void validateDraw(String lottery, String variant, String day) {
 		webService.validateDraw(lottery, variant, day);
 	}
 	
@@ -242,11 +231,7 @@ public class BirjanClient extends JApplet {
 		return balance;	
 	}
 
-	public void retriveGames() {
-		String day = controlView.getComboBox().getSelectedItem().toString().split(" ")[2];
-		String lottery = controlView.getComboBox_1().getSelectedItem().toString();
-		String variant = controlView.getComboBox_2().getSelectedItem().toString();
-		String state = controlView.states[controlView.getComboBox_3().getSelectedIndex()];
+	public void retriveGames(String lottery, String variant, String day, String state) {
 		
 		Wrapper[] data = webService.retriveGames(lottery, variant, state, day);
 		
@@ -262,15 +247,10 @@ public class BirjanClient extends JApplet {
 		try {
 			this.authorities = webService.getAuthorities();
 			
+//			boolean development = webService.isDevelopment();
 			this.serverDateTime = new DateTime(webService.updateServerDateTime(date==null?null:date.toDate()));
 			DateTimeUtils.setCurrentMillisOffset(serverDateTime.getMillis()-new Date().getTime());
 			mainView.reset();
-			
-			boolean development = webService.isDevelopment();
-			if(development){
-				controlView.setDevelopment(development);
-				premiosView.setDevelopment(development);
-			}
 			
 			if(isManager()){
 				setView(balanceView);
@@ -279,7 +259,6 @@ public class BirjanClient extends JApplet {
 				setView(jugadaView);
 				jugadaView.reset();
 			}
-			
 			
 		} catch (BusinessException e) {
 			setView(exceptionView);

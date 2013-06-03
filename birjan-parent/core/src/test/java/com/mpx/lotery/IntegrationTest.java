@@ -1,7 +1,6 @@
 package com.mpx.lotery;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -19,10 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mpx.birjan.bean.Authorities;
 import com.mpx.birjan.bean.Balance;
-import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.common.Lottery;
-import com.mpx.birjan.common.Status;
 import com.mpx.birjan.core.TransactionalManager;
 import com.mpx.birjan.service.dao.IGenericDAO;
 
@@ -46,6 +43,7 @@ public class IntegrationTest {
 
 	@Test
 	@Rollback(value = false)
+	@SuppressWarnings("static-access")
 	public void createGames() throws InterruptedException {
 		
 		SecurityContextHolder.getContext().setAuthentication(
@@ -64,7 +62,7 @@ public class IntegrationTest {
 			Thread.currentThread().sleep(50);
 		}
 		
-		List<Game> retriveGames = manager.retriveGames(null, Lottery.NACIONAL_MATUTINA, date, null, null);
+//		List<Game> retriveGames = manager.retriveGames(null, Lottery.NACIONAL_MATUTINA, date, null, null);
 		
 		String[] numbers = new String[]{"3332","1111","1111","1111","1111",
 				"1111","1111","1111","1111","1111","1111","1111","1111","1111","1111",
