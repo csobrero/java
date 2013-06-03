@@ -15,7 +15,6 @@ import org.pojomatic.annotations.AutoProperty;
 import org.pojomatic.annotations.PojomaticPolicy;
 import org.pojomatic.annotations.Property;
 
-import com.mpx.birjan.util.BirjanUtils;
 
 @Entity
 @AutoProperty

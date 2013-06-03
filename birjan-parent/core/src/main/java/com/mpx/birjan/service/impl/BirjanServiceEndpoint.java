@@ -1,8 +1,8 @@
 package com.mpx.birjan.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.jws.WebService;
@@ -10,14 +10,16 @@ import javax.jws.WebService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.mpx.birjan.bean.Authorities;
+import com.mpx.birjan.Exception.BusinessException;
+import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.User;
@@ -28,7 +30,6 @@ import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.common.Wrapper;
 import com.mpx.birjan.core.TransactionalManager;
 import com.mpx.birjan.service.BirjanWebService;
-import com.mpx.birjan.util.BirjanUtils;
 
 @Service
 @WebService(serviceName = "birjanws", endpointInterface = "com.mpx.birjan.service.BirjanWebService")
@@ -46,14 +47,14 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	@Override
 	public Ticket retrieveByHash(String hash) {
 		Preconditions.checkNotNull(hash);
-		Ticket jugada = txManager.processWinners(hash, false);
+		Ticket jugada = txManager.payTicket(hash, false);
 		return jugada;
 	}
 
 	@Override
 	public Ticket pay(String hash) {
 		Preconditions.checkNotNull(hash);
-		Ticket jugada = txManager.processWinners(hash, true);
+		Ticket jugada = txManager.payTicket(hash, true);
 		return jugada;
 	}
 
@@ -69,8 +70,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		Lottery lottery = Lottery.valueOf((lotteryName + "_" + variant)
 				.toUpperCase());
 
-		Preconditions.checkArgument(
-				isDevelopment() || BirjanUtils.isValid(lottery, date),
+		Preconditions.checkArgument(BirjanUtils.isValid(lottery, date),
 				"Invalid entry");
 
 		txManager.createDraw(lottery, date, data);
@@ -159,7 +159,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	
 	@Override
 	public boolean isDevelopment() {
-		return txManager.isDevelopment();
+		return false;
 	}
 	
 	@Override
@@ -169,8 +169,6 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		List<Object> availables;
 		
 		for (Lottery[] lotteries : Lottery.ALL) {
-			if(isDevelopment())
-				availables = Arrays.asList(new Object[]{true,true,true,true});
 			availables = BirjanUtils.retrieveVariantAvailability(lotteries, day);
 			availables.add(0, lotteries[0].getName());
 			list.add(availables);
@@ -191,8 +189,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		List<Lottery> lotteries = new ArrayList<Lottery>();
 		for (String str : lotteryNames) {
 			Lottery lottery = Lottery.valueOf(str);
-			Preconditions.checkArgument(
-					isDevelopment() || BirjanUtils.isValid(lottery, date),
+			Preconditions.checkArgument(BirjanUtils.isValid(lottery, date),
 					"Invalid entry");
 			
 			lotteries.add(lottery);
@@ -206,18 +203,37 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 	}
 
 	@Override
-	public String[] getAuthorities() {
+	public String[] getAuthorities() throws BusinessException {
 		
-		List<Authorities> authorities = txManager.getAuthorities();
+		Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
 		
 		@SuppressWarnings("unchecked")
 		Collection<String> collect = CollectionUtils.collect(authorities, new Transformer() {
 			public Object transform(Object input) {
-				return ((Authorities)input).getAuthority();
+				return ((GrantedAuthority)input).getAuthority();
 			}
 		});
 		
+		if(!collect.contains("ROLE_MANAGER") && txManager.getActiveBalance(SecurityContextHolder
+						.getContext().getAuthentication().getName())==null)
+			throw new BusinessException("NOT ACTIVE BALANCE");
+		
+		
 		return collect.toArray(new String[collect.size()]);	
 	}
-	
+
+	@Override
+	@Secured({ "ROLE_MANAGER" })
+	public String[] getUsers() {
+		Collection<String> collect = txManager.getOnlyUsers();
+		return collect.toArray(new String[collect.size()]);
+	}
+
+	@Override
+	public Date updateServerDateTime(Date date) {
+		if(date!=null)
+			DateTimeUtils.setCurrentMillisOffset(System.currentTimeMillis()-date.getTime());
+		return new DateTime().toDate();
+	}
+
 }

@@ -8,39 +8,60 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.joda.time.Days;
 import org.joda.time.TimeOfDay;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 
+import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.common.Rule;
-import com.mpx.birjan.util.BirjanUtils;
 
 public class TimeTest {
 
 	@Test
-	public void time() {
-		TimeOfDay tod = new TimeOfDay(23, 59, 59, 999);
-
-		System.out.println(tod);
-
-		Days d = Days.SEVEN;
-
-		System.out.println(d);
-
-		DateTime dt = new DateTime(new Date());
+	public void time() throws Exception {
+//		TimeOfDay tod = new TimeOfDay(23, 59, 59, 999);
+//
+//		System.out.println(tod);
+//
+//		Days d = Days.SEVEN;
+//
+//		System.out.println(d);
+//
+//		DateTime dt = new DateTime();
+//		
+////		dt = dt.plusDays(-1);
+//		
+//
+//		DateTime dateTime = new DateTime(dt.year().get(), dt.monthOfYear()
+//				.get(), dt.dayOfMonth().get(), 23, 59, 59, 999);
+//		
+//		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd");
 		
-//		dt = dt.plusDays(-1);
+		DateTime dt = new DateTime(2013,1,1,1,1,1,0);
 		
-
-		DateTime dateTime = new DateTime(dt.year().get(), dt.monthOfYear()
-				.get(), dt.dayOfMonth().get(), 23, 59, 59, 999);
 		
-		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd");
 		
-		System.out.println(fmt.print(dateTime));
+		System.out.println(dt);
+//		DateTimeUtils.setCurrentMillisFixed(dt.getMillis());
+		
+		DateTime dateTime = new DateTime();
+		
+		long l = dt.getMillis()-dateTime.getMillis();
+		
+		DateTimeUtils.setCurrentMillisOffset(l);
+		
+		for (int i = 0; i < 100; i++) {
+			System.out.println(new DateMidnight().toDateTime());
+			
+			Thread.currentThread().sleep(1000);
+		}
+		
+//		System.out.println(fmt.print(dateTime));
 	}
 	
 	@Test
@@ -51,7 +72,7 @@ public class TimeTest {
 //		Float g = null;
 		System.out.println(df.format(f));
 		
-		DateTime dt = new DateTime(new Date());
+		DateTime dt = new DateTime();
 		
 		
 		System.out.println(dt);

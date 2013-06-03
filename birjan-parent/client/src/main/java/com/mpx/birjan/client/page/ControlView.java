@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.swing.Box;
@@ -25,8 +24,6 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Repository;
-
-import com.mpx.birjan.util.BirjanUtils;
 
 @Repository
 public class ControlView extends AbstractView {
@@ -193,7 +190,7 @@ public class ControlView extends AbstractView {
 			private String buildFileName() {
 				String lottery = getComboBox_1().getSelectedItem().toString();
 				String variant = getComboBox_2().getSelectedItem().toString();
-				DateTime date = BirjanUtils.getDate(getComboBox().getSelectedItem().toString().split("  ")[1]);
+				DateTime date = getDate(getComboBox().getSelectedItem().toString().split("  ")[1]);
 				DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd");
 				return lottery+"_"+variant+"_"+fmt.print(date)+".xls";
 			}
@@ -218,7 +215,7 @@ public class ControlView extends AbstractView {
 	private String[] getdays() {
 		String[] days = new String[20];
 		Locale locale = new Locale("es");
-		DateTime dt = new DateTime(new Date());
+		DateTime dt = new DateTime();
 		for (int i = 0; i < days.length; i++) {
 			if (!development && dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
 				dt = dt.minusDays(1);
@@ -227,6 +224,19 @@ public class ControlView extends AbstractView {
 			dt = dt.minusDays(1);
 		}
 		return days;
+	}
+	
+	public static DateTime getDate(String day) {
+		DateTime dt = new DateTime().minusDays(20);//no more than 4 days modify this.
+		if(day!=null){
+			for (int i = 0; i < 28; i++) {
+				if(day.equals(String.valueOf(dt.getDayOfMonth()))){
+					return dt;
+				}
+				dt = dt.plusDays(1);
+			}
+		}
+		return null;
 	}
 
 	public void reset() {

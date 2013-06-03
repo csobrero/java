@@ -1,7 +1,10 @@
 package com.mpx.birjan.service;
 
+import java.util.Date;
+
 import javax.jws.WebService;
 
+import com.mpx.birjan.Exception.BusinessException;
 import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.common.Wrapper;
@@ -31,8 +34,12 @@ public interface BirjanWebService {
 
 	Ticket pay(String hash);
 
-	String[] getAuthorities();
+	String[] getAuthorities() throws BusinessException;
 
 	BalanceDTO[] closeBalance(String day, Boolean close);
+
+	String[] getUsers();
+
+	Date updateServerDateTime(Date date);
 
 }

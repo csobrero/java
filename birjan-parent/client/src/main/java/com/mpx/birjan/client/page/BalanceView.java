@@ -1,11 +1,12 @@
 package com.mpx.birjan.client.page;
 
+import static com.mpx.birjan.common.Status.CLOSE;
+import static com.mpx.birjan.common.Status.DONE;
+
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -30,7 +31,6 @@ import org.springframework.stereotype.Repository;
 import com.mpx.birjan.client.BirjanClient;
 import com.mpx.birjan.client.editor.CustomTableCellRender;
 import com.mpx.birjan.common.BalanceDTO;
-import com.mpx.birjan.common.Status;
 
 @Repository
 public class BalanceView extends JPanel {
@@ -44,12 +44,10 @@ public class BalanceView extends JPanel {
 
 	protected JComboBox comboBox, comboBox_3;
 
-	protected JButton btnDone, btnClear, btnExport, btnClose;
-	
-	
-	
+	protected JButton btnBalance, btnClear, btnExport, btnClose;
+
 	protected boolean development = false;
-	
+
 	public BalanceView() {
 
 		this.setSize(800, 400);
@@ -121,18 +119,18 @@ public class BalanceView extends JPanel {
 		Box hb_1 = Box.createHorizontalBox();
 		vb.add(hb_1);
 
-		btnDone = new JButton("Balance");
-		btnDone.addActionListener(new ActionListener() {
+		btnBalance = new JButton("Balance");
+		btnBalance.addActionListener(new ActionListener() {
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			public void actionPerformed(ActionEvent e) {
 				DefaultTableModel tableModel = getTableModel();
 				BalanceDTO[] balance = controller.balance(false);
 				Vector rowData;
-				if(balance!=null){
-					for (int i=0; i<balance.length-1; i++) {
+				if (balance != null) {
+					for (int i = 0; i < balance.length - 1; i++) {
 						rowData = new Vector();
 						DateTime dt = new DateTime(balance[i].getDate());
-						rowData.add(dt.getDayOfMonth()+"/"+dt.getMonthOfYear());
+						rowData.add(dt.getDayOfMonth() + "/" + dt.getMonthOfYear());
 						rowData.add(balance[i].getUserName());
 						rowData.add(balance[i].getCash());
 						rowData.add(balance[i].getPayments());
@@ -140,33 +138,37 @@ public class BalanceView extends JPanel {
 						rowData.add(balance[i].getCommission());
 						rowData.add(balance[i].getCashBalance());
 						rowData.add(balance[i].getPrizes());
-						rowData.add(balance[i].getState().equals(Status.CLOSE)?
-								balance[i].getBalance():null);
+						rowData.add(balance[i].is(CLOSE) || balance[i].is(DONE) ? balance[i].getBalance() : null);
 						tableModel.addRow(rowData);
 					}
 					tableModel.addRow(new Vector());
 					rowData = new Vector();
+					BalanceDTO summaryBalance = balance[balance.length - 1];
 					rowData.add(null);
 					rowData.add(null);
-					rowData.add(balance[balance.length-1].getCash());
-					rowData.add(balance[balance.length-1].getPayments());
-					rowData.add(balance[balance.length-1].getIncome());
-					rowData.add(balance[balance.length-1].getCommission());
-					rowData.add(balance[balance.length-1].getCashBalance());
-					rowData.add(balance[balance.length-1].getPrizes());
-					rowData.add(balance[balance.length-1].getBalance());
+					rowData.add(summaryBalance.getCash());
+					rowData.add(summaryBalance.getPayments());
+					rowData.add(summaryBalance.getIncome());
+					rowData.add(summaryBalance.getCommission());
+					rowData.add(summaryBalance.getCashBalance());
+					rowData.add(summaryBalance.getPrizes());
+					rowData.add(summaryBalance.getBalance());
 					tableModel.addRow(rowData);
-					btnDone.setVisible(false);
-					btnClose.setVisible(true);
+					if (summaryBalance.is(CLOSE)) {
+						btnBalance.setVisible(false);
+						btnClose.setVisible(true);
+					} else if (summaryBalance.is(DONE)) {
+						btnBalance.setVisible(false);
+					}
 				}
 			}
 		});
-		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
-		hb_1.add(btnDone);
+		btnBalance.setFont(new Font("Tahoma", Font.BOLD, 11));
+		hb_1.add(btnBalance);
 
 		Component hs_2 = Box.createHorizontalStrut(20);
 		hb_1.add(hs_2);
-		
+
 		btnClose = new JButton("Cierre");
 		btnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -175,7 +177,10 @@ public class BalanceView extends JPanel {
 		});
 		btnClose.setFont(new Font("Tahoma", Font.BOLD, 11));
 		hb_1.add(btnClose);
-		
+
+		Component hs_3 = Box.createHorizontalStrut(20);
+		hb_1.add(hs_3);
+
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -184,33 +189,29 @@ public class BalanceView extends JPanel {
 		});
 		btnClear.setFont(new Font("Tahoma", Font.BOLD, 11));
 		hb_1.add(btnClear);
-		
-		Component hs_1 = Box.createHorizontalStrut(20);
-		hb_1.add(hs_1);
 	}
 
 	private String[] getdays() {
 		String[] days = new String[3];
 		Locale locale = new Locale("es");
-		DateTime dt = new DateTime(new Date());
+		DateTime dt = new DateTime();
 		for (int i = 0; i < days.length; i++) {
 			if (dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
 				dt = dt.minusDays(1);
-			days[i] = dt.toString("EEEE", locale).toUpperCase() + "  "
-					+ dt.getDayOfMonth();
+			days[i] = dt.toString("EEEE", locale).toUpperCase() + "  " + dt.getDayOfMonth();
 			dt = dt.minusDays(1);
 		}
 		return days;
 	}
 
 	public void reset() {
-			comboBox.setModel(new DefaultComboBoxModel(getdays()));
-			comboBox.setSelectedIndex(0);
+		comboBox.setModel(new DefaultComboBoxModel(getdays()));
+		comboBox.setSelectedIndex(0);
 	}
-	
+
 	public void init() {
 		buildJTable(createModel());
-		btnDone.setVisible(true);
+		btnBalance.setVisible(true);
 		btnClose.setVisible(false);
 		table.setEnabled(false);
 	}
@@ -242,7 +243,6 @@ public class BalanceView extends JPanel {
 		table.getColumnModel().getColumn(8).setPreferredWidth(150);
 		table.getColumnModel().getColumn(8).setMaxWidth(150);
 
-		
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setRowSelectionAllowed(false);
 		table.setColumnSelectionAllowed(false);
@@ -251,25 +251,24 @@ public class BalanceView extends JPanel {
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private DefaultTableModel createModel() {
-		return new DefaultTableModel(null, new String[] { "Fecha", "Usuario", "Caja", 
-				"Pagos", "Recaudacion", "Comision",	"Saldo", "Premios", "Balance" }) {
+		return new DefaultTableModel(null, new String[] { "Fecha", "Usuario", "Caja", "Pagos", "Recaudacion",
+				"Comision", "Saldo", "Premios", "Balance" }) {
 
 			public Class getColumnClass(int columnIndex) {
-				return (columnIndex<2)?String.class:Float.class;
+				return (columnIndex < 2) ? String.class : Float.class;
 			}
 
-			boolean[] columnEditables = new boolean[] { false, true, false,
-					true };
+//			boolean[] columnEditables = new boolean[] { false, true, false, true };
 
 			public boolean isCellEditable(int row, int column) {
-				return false;//columnEditables[column];
+				return false;// columnEditables[column];
 			}
-			
+
 		};
 	}
-	
+
 	public DefaultTableModel getTableModel() {
-		return (DefaultTableModel)table.getModel();
+		return (DefaultTableModel) table.getModel();
 	}
 
 	public String getDay() {

@@ -11,6 +11,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.joda.time.DateTime;
 import org.pojomatic.Pojomatic;
 import org.pojomatic.annotations.AutoProperty;
 import org.pojomatic.annotations.PojomaticPolicy;
@@ -44,7 +45,7 @@ public abstract class AbstractEntity {
 	@PrePersist
 	protected void onCreate() {
 		if (this.created == null)
-			this.created = new Date();
+			this.created = new DateTime().toDate();
 	}
 
 	@Override

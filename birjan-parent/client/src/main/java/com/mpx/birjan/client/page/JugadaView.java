@@ -9,11 +9,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 import javax.swing.Box;
@@ -31,27 +28,28 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
 import org.springframework.stereotype.Repository;
 
+import com.mpx.birjan.util.Utils.Combos;
+
 @Repository
-public class JugadaView extends AbstractView {
+public class JugadaView extends ReseteableView {
 
 	private static final long serialVersionUID = 4334436586243521165L;
 
 	private JTable lotteryTable;
-	
+
 	private JLabel lblTotal;
-	
-	DecimalFormat formatter = new DecimalFormat("#.##");
-	
+
+	protected JTable table;
+
+	protected JComboBox comboBox;
+
+	protected JButton btnDone, btnClear;
+
 	public static String[][] loteriesMap = {
-			{ "NACIONAL_PRIMERA", "NACIONAL_MATUTINA", "NACIONAL_VESPERTINA",
-					"NACIONAL_NOCTURNA" },
-			{ "PROVINCIA_PRIMERA", "PROVINCIA_MATUTINA",
-					"PROVINCIA_VESPERTINA", "PROVINCIA_NOCTURNA" } };
-	
+			{ "NACIONAL_PRIMERA", "NACIONAL_MATUTINA", "NACIONAL_VESPERTINA", "NACIONAL_NOCTURNA" },
+			{ "PROVINCIA_PRIMERA", "PROVINCIA_MATUTINA", "PROVINCIA_VESPERTINA", "PROVINCIA_NOCTURNA" } };
 
 	public JugadaView() {
 		this.setSize(800, 400);
@@ -85,7 +83,7 @@ public class JugadaView extends AbstractView {
 		Box vb_2 = Box.createVerticalBox();
 		panel.add(vb_2);
 
-		JLabel lblLoteria = new JLabel("Lot");
+		JLabel lblLoteria = new JLabel("Jugada");
 		lblLoteria.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblLoteria.setFont(new Font("Tahoma", Font.BOLD, 18));
 		vb_2.add(lblLoteria);
@@ -127,26 +125,26 @@ public class JugadaView extends AbstractView {
 		table = new JTable();
 		buildJTable();
 		mainPanel.setViewportView(table);
-		
+
 		Box verticalBox = Box.createVerticalBox();
 		hb.add(verticalBox);
-		
+
 		Component horizontalStrut_2 = Box.createHorizontalStrut(180);
 		verticalBox.add(horizontalStrut_2);
-		
+
 		Component verticalStrut = Box.createVerticalStrut(100);
 		verticalBox.add(verticalStrut);
-		
+
 		Box horizontalBox = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox);
-		
+
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		horizontalBox.add(horizontalStrut);
-		
+
 		lblTotal = new JLabel("TOTAL: $ 0.00");
 		lblTotal.setFont(new Font("Tahoma", Font.BOLD, 20));
 		horizontalBox.add(lblTotal);
-		
+
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		horizontalBox.add(horizontalStrut_1);
 
@@ -159,9 +157,8 @@ public class JugadaView extends AbstractView {
 		btnDone = new JButton("Done");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (btnDone.isEnabled())
-					btnDone.setEnabled(false);// prevent double click.
-				controller.play();
+				controller.play(Combos.getDay(comboBox.getSelectedItem().toString()),
+						selectedLotteries().toArray(new String[] {}), getData());
 			}
 		});
 		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -180,28 +177,14 @@ public class JugadaView extends AbstractView {
 		hb_1.add(btnClear);
 	}
 
-	private String[] getdays() {
-		String[] days = new String[6];
-		Locale locale = new Locale("es");
-		DateTime dt = new DateTime(new Date());
-		for (int i = 0; i < days.length; i++) {
-			if (!development && dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
-				dt = dt.plusDays(1);
-			days[i] = dt.toString("EEEE", locale).toUpperCase() + "  "
-					+ dt.getDayOfMonth();
-			dt = dt.plusDays(1);
-		}
-		return days;
-	}
-
 	public void reset() {
-		comboBox.setModel(new DefaultComboBoxModel(getdays()));
+		comboBox.setModel(new DefaultComboBoxModel(Combos.buildDays(6, true)));
 		comboBox.setSelectedIndex(0);
 
 	}
 
 	private void init() {
-		String day = comboBox.getSelectedItem().toString().split(" ")[2];
+		String day = Combos.getDay(comboBox.getSelectedItem().toString());
 		lotteryTable.setModel((createLoteryModel(controller.retrieveAvailability(day))));
 		btnClear.setEnabled(true);
 		btnDone.setEnabled(false);
@@ -239,20 +222,20 @@ public class JugadaView extends AbstractView {
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private DefaultTableModel createModel(boolean empty) {
-		return new DefaultTableModel((empty) ? new Object[][] {}
-				: new Object[][] { { 1, "", null } }, new String[] { "Ubicacion", "Numero", "Importe" }) {
+		return new DefaultTableModel((empty) ? new Object[][] {} : new Object[][] { { 1, "", null } }, new String[] {
+				"Ubicacion", "Numero", "Importe" }) {
 			Class[] columnTypes = new Class[] { Integer.class, String.class, Float.class };
 
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
 
-//			boolean[] columnEditables = new boolean[] { true, true, true };
+			// boolean[] columnEditables = new boolean[] { true, true, true };
 
 			public boolean isCellEditable(int row, int column) {
 				return true;
-//				return columnEditables[column]
-//						&& row != (this.getRowCount() - 1);
+				// return columnEditables[column]
+				// && row != (this.getRowCount() - 1);
 			}
 		};
 	}
@@ -265,9 +248,8 @@ public class JugadaView extends AbstractView {
 				int row = lotteryTable.rowAtPoint(e.getPoint());
 				int col = lotteryTable.columnAtPoint(e.getPoint());
 				if (col == 0) {
-					DefaultTableModel model = (DefaultTableModel) lotteryTable
-							.getModel();
-					
+					DefaultTableModel model = (DefaultTableModel) lotteryTable.getModel();
+
 					@SuppressWarnings("unchecked")
 					List<List<Object>> data = model.getDataVector();
 					List<Object> list = data.get(row);
@@ -290,7 +272,7 @@ public class JugadaView extends AbstractView {
 			public void mouseClicked(MouseEvent e) {
 				int idx = tableHeader.columnAtPoint(e.getPoint());
 				DefaultTableModel model = (DefaultTableModel) lotteryTable.getModel();
-				
+
 				@SuppressWarnings("unchecked")
 				List<List<Object>> data = model.getDataVector();
 				for (int j = (idx != 0) ? idx : 1; j < data.get(0).size(); j++) {
@@ -323,18 +305,16 @@ public class JugadaView extends AbstractView {
 			for (int j = 0; j < 5; j++)
 				model[i][j] = (j == 0) ? availability[i][j] : false;
 
-		return new DefaultTableModel(model, new String[] { "Loteria", "P", "M",
-				"V", "N" }) {
-			Class[] columnTypes = new Class[] { String.class, Boolean.class,
-					Boolean.class, Boolean.class, Boolean.class };
+		return new DefaultTableModel(model, new String[] { "Loteria", "P", "M", "V", "N" }) {
+			Class[] columnTypes = new Class[] { String.class, Boolean.class, Boolean.class, Boolean.class,
+					Boolean.class };
 
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
 
 			public boolean isCellEditable(int row, int column) {
-				return (column == 0) ? false
-						: (Boolean) availability[row][column];
+				return (column == 0) ? false : (Boolean) availability[row][column];
 			}
 		};
 	}
@@ -344,21 +324,21 @@ public class JugadaView extends AbstractView {
 		table.getColumnModel().getColumn(1).setPreferredWidth(50);
 		table.getColumnModel().getColumn(2).setPreferredWidth(100);
 
-//		table.getColumnModel().getColumn(1)
-//				.setCellRenderer(new DefaultTableCellRenderer() {
-//					@Override
-//					protected void setValue(Object value) {
-//						if (value != null) {
-//							if (Pattern.matches("\\d{1,4}", value.toString())) {
-//								String str = "xxx" + value.toString();
-//								setText(str.substring(str.length() - 4,
-//										str.length()));
-//							} else
-//								setText("");
-//						}
-//					}
-//				});
-		
+		// table.getColumnModel().getColumn(1)
+		// .setCellRenderer(new DefaultTableCellRenderer() {
+		// @Override
+		// protected void setValue(Object value) {
+		// if (value != null) {
+		// if (Pattern.matches("\\d{1,4}", value.toString())) {
+		// String str = "xxx" + value.toString();
+		// setText(str.substring(str.length() - 4,
+		// str.length()));
+		// } else
+		// setText("");
+		// }
+		// }
+		// });
+
 		table.getModel().addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
@@ -368,21 +348,19 @@ public class JugadaView extends AbstractView {
 					DefaultTableModel model = (DefaultTableModel) e.getSource();
 
 					Object value = model.getValueAt(row, column);
-					if (column==1 && Pattern.matches("\\d{1,4}", value.toString())) {
-							String str = "xxx" + value.toString();
-							model.setValueAt(str.substring(str.length() - 4,str.length()),row,column);
+					if (column == 1 && Pattern.matches("\\d{1,4}", value.toString())) {
+						String str = "xxx" + value.toString();
+						model.setValueAt(str.substring(str.length() - 4, str.length()), row, column);
 					}
-					
-					if (row == (model.getRowCount() - 1)
-							&& model.getValueAt(row, 0) != null
-							&& !model.getValueAt(row, 1).toString().equals("")
-							&& model.getValueAt(row, 2) != null) {
+
+					if (row == (model.getRowCount() - 1) && model.getValueAt(row, 0) != null
+							&& !model.getValueAt(row, 1).toString().equals("") && model.getValueAt(row, 2) != null) {
 						model.addRow(new Object[] { 20, "", null });
 					}
-					if(column == 2) {
+					if (column == 2) {
 						updateTotal();
 					}
-					
+
 				}
 			}
 		});
@@ -400,29 +378,27 @@ public class JugadaView extends AbstractView {
 			}
 		});
 	}
-	
-	public Object[][] getData(){
-		
+
+	private Object[][] getData() {
+
 		@SuppressWarnings("unchecked")
 		List<List<Object>> vector = getTableModel().getDataVector();
-		Object[][] data = new Object[vector.size()-1][];
-		int size = (vector.get(vector.size()-1).get(2)==null) ? vector
-				.size() - 1 : vector.size();
+		Object[][] data = new Object[vector.size() - 1][];
+		int size = (vector.get(vector.size() - 1).get(2) == null) ? vector.size() - 1 : vector.size();
 		for (int i = 0; i < size; i++) {
-			data[i] = vector.get(i).toArray(new Object[]{});
+			data[i] = vector.get(i).toArray(new Object[] {});
 		}
 		return data;
 	}
-	
-	public List<String> selectedLotteries(){
+
+	private List<String> selectedLotteries() {
 		@SuppressWarnings("unchecked")
-		List<List<Object>> lottery = ((DefaultTableModel) lotteryTable.getModel())
-				.getDataVector();
+		List<List<Object>> lottery = ((DefaultTableModel) lotteryTable.getModel()).getDataVector();
 		List<String> loteries = new ArrayList<String>();
 		for (int i = 0; i < lottery.size(); i++)
 			for (int j = 1; j < lottery.get(0).size(); j++)
-				if((Boolean)lottery.get(i).get(j))
-					loteries.add(loteriesMap[i][j-1]);
+				if ((Boolean) lottery.get(i).get(j))
+					loteries.add(loteriesMap[i][j - 1]);
 		return loteries;
 	}
 
@@ -433,7 +409,7 @@ public class JugadaView extends AbstractView {
 		if (model.getRowCount() > 1 && count > 0) {
 			for (int i = 0; i < model.getRowCount() - 1; i++)
 				total += (Float) model.getValueAt(i, 2);
-			total *=count;
+			total *= count;
 		}
 		lblTotal.setText(String.format("TOTAL: $ %.2f", total));
 		btnDone.setEnabled(model.getRowCount() > 1 && count > 0);
@@ -441,6 +417,10 @@ public class JugadaView extends AbstractView {
 
 	public JTable getLotteryTable() {
 		return lotteryTable;
+	}
+
+	public DefaultTableModel getTableModel() {
+		return (DefaultTableModel) table.getModel();
 	}
 
 }

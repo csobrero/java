@@ -8,16 +8,23 @@ public class Filter<T> {
 
 	private T term;
 
-	private boolean isEqualSearch;
+	private boolean equal;
+	
+	private boolean not;
 
 	public Filter(String fieldName, T term) {
-		this(fieldName, term, true);
+		this(fieldName, term, true, false);
 	}
 
-	public Filter(String fieldName, T term, boolean isEqualSearch) {
+	public Filter(String fieldName, T term, boolean not) {
+		this(fieldName, term, true, not);
+	}
+
+	public Filter(String fieldName, T term, boolean equal, boolean not) {
 		this.fieldName = fieldName;
 		this.term = term;
-		this.isEqualSearch = isEqualSearch;
+		this.equal = equal;
+		this.not = not;
 	}
 	
 	public Path<?> getPath(Path<?> entity) {
@@ -36,8 +43,12 @@ public class Filter<T> {
 		return term;
 	}
 
-	public final boolean isEqualSearch() {
-		return isEqualSearch;
+	public final boolean isEqual() {
+		return equal;
+	}
+
+	public final boolean isNot() {
+		return not;
 	}
 
 }

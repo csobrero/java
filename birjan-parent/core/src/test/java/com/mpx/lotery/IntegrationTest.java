@@ -38,7 +38,7 @@ public class IntegrationTest {
 	private IGenericDAO<Balance> balanceDao;
 	
 
-	DateTime date = new DateTime(new Date());
+	DateTime date = new DateTime();
 	DateTime yesterday = date.minusDays(1);
 	
 	@Autowired

@@ -105,4 +105,8 @@ public class Game extends AbstractEntity implements Serializable {
 		return f;
 	}
 
+	public boolean is(Status state) {
+		return this.status.equals(state);
+	}
+
 }

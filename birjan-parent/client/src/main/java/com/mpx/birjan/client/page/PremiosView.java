@@ -179,7 +179,7 @@ public class PremiosView extends AbstractView {
 	private String[] getdays() {
 		String[] days = new String[3];
 		Locale locale = new Locale("es");
-		DateTime dt = new DateTime(new Date());
+		DateTime dt = new DateTime();
 		for (int i = 0; i < days.length; i++) {
 			if (dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
 				dt = dt.minusDays(1);

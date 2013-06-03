@@ -8,6 +8,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -43,12 +44,17 @@ public class GenericJpaDAO<T extends Serializable> extends AbstractJpaDAO<T>
 
 		List<Predicate> list = new ArrayList<Predicate>();
 		for (Filter<?> filter : filters) {
-			if(filter.getTerm()!=null)
-				if (filter.isEqualSearch())
-					list.add(cb.equal(filter.getPath(entity), filter.getTerm()));
-				else
-					list.add(cb.like(entity.<String> get(filter.getFieldName()),
-							"%" + ((String) filter.getTerm()).trim() + "%"));
+			if(filter!=null && filter.getTerm()!=null)
+				if (filter.isEqual()){
+					Path<?> path = filter.getPath(entity);
+					Object term = filter.getTerm();
+					list.add(filter.isNot()?cb.notEqual(path, term):cb.equal(path, term));
+				}
+				else{
+					Path<String> path = entity.<String> get(filter.getFieldName());
+					String term = "%" + ((String) filter.getTerm()).trim() + "%";
+					list.add(filter.isNot()?cb.notLike(path,term):cb.like(path,term));
+				}
 		}
 
 		cq.where(cb.and(list.toArray(new Predicate[list.size()])));

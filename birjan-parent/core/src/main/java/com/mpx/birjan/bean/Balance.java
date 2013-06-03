@@ -45,7 +45,7 @@ public class Balance extends AbstractEntity implements Serializable {
 	}
 	
 	public Balance(Date date, User user, float clearance) {
-		this.state = Status.OPEN;
+		this.state = Status.ACTIVE;
 		this.date = date;
 		this.user = user;
 		this.clearance = clearance;
@@ -127,6 +127,10 @@ public class Balance extends AbstractEntity implements Serializable {
 
 	public void setState(Status state) {
 		this.state = state;
+	}
+	
+	public boolean is(Status state) {
+		return this.state.equals(state);
 	}
 
 }

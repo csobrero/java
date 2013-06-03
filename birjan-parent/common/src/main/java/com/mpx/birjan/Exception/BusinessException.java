@@ -1,6 +1,9 @@
 package com.mpx.birjan.Exception;
 
-public class BusinessException extends RuntimeException {
+import javax.xml.ws.WebFault;
+
+@WebFault(name = "BusinessException") 
+public class BusinessException extends Exception {
 
 	private static final long serialVersionUID = -705011064087233469L;
 

@@ -38,7 +38,7 @@ public class BasicIntegrationTest {
 	private IGenericDAO<Balance> balanceDao;
 	
 
-	DateTime date = new DateTime(new Date());
+	DateTime date = new DateTime();
 	DateTime yesterday = date.minusDays(1);
 	
 	@Autowired
@@ -51,7 +51,7 @@ public class BasicIntegrationTest {
 		User user = new User("xris", "xris", true);
 		usersDao.create(user);
 		
-		manager.activateBalance(date, user, 0f);
+		manager.openBalance(date, user);
 
 		Authorities authorities = new Authorities(user.getUsername(), "ROLE_ADMIN");
 		authoritiesDao.create(authorities);
@@ -66,13 +66,13 @@ public class BasicIntegrationTest {
 		authoritiesDao.create(authorities);
 		authorities = new Authorities(user.getUsername(), "ROLE_USER");
 		authoritiesDao.create(authorities);
-		manager.activateBalance(date, user, 0f);
+		manager.openBalance(date, user);
 		
 		user = new User("lucy", "lucy", true);
 		usersDao.create(user);
 		authorities = new Authorities(user.getUsername(), "ROLE_USER");
 		authoritiesDao.create(authorities);
-		manager.activateBalance(date, user, 0f);
+		manager.openBalance(date, user);
 
 	}
 
@@ -144,7 +144,7 @@ public class BasicIntegrationTest {
 				null, null);
 		
 		for (Game game : winners) { //pago 2.45x7=17.15
-			manager.processWinners(game.getWager().getHash(),true);
+			manager.payTicket(game.getWager().getHash(),true);
 		}
 		
 	}

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JApplet;
@@ -11,14 +12,18 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import com.mpx.birjan.Exception.BusinessException;
 import com.mpx.birjan.client.page.BalanceView;
 import com.mpx.birjan.client.page.CierreView;
 import com.mpx.birjan.client.page.ControlView;
+import com.mpx.birjan.client.page.ExceptionView;
 import com.mpx.birjan.client.page.JugadaView;
 import com.mpx.birjan.client.page.MainView;
 import com.mpx.birjan.client.page.PagoView;
@@ -67,10 +72,14 @@ public class BirjanClient extends JApplet {
 
 	@Autowired
 	private PasswordView passwordView;
+	
+	@Autowired
+	private ExceptionView exceptionView;
 
 	private String user;
 	private String password;
 	private String[] authorities;
+	private DateTime serverDateTime;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -148,14 +157,8 @@ public class BirjanClient extends JApplet {
 		return result;
 	}
 	
-	public void play() {
-		
-		
-		String day = jugadaView.getComboBox().getSelectedItem().toString().split(" ")[2];
-		String[] lotteries = jugadaView.selectedLotteries().toArray(new String[]{});
-		Object[][] data = jugadaView.getData();
+	public void play(String day, String[] lotteries, Object[][] data) {
 
-		
 		String hash = webService.createGames(day, lotteries, data);
 
 		if (hash != null) {
@@ -199,7 +202,12 @@ public class BirjanClient extends JApplet {
 			setView(balanceView);
 			balanceView.reset();
 		}
-		if(menu.equals("Logout")){
+		if (menu.equals("Logout") || menu.equals("ChangeTime")) {
+			password = null;
+			authorities = null;
+			if (menu.equals("Logout")) {
+				serverDateTime = null;
+			}
 			setView(passwordView);
 			passwordView.reset();
 		}
@@ -247,12 +255,10 @@ public class BirjanClient extends JApplet {
 	}
 	
 	public BalanceDTO performBalance(boolean close) {
-		String day = cierreView.getComboBox().getSelectedItem().toString().split(" ")[2];
-		
-		BalanceDTO balance = webService.performBalance(day, cierreView.getTextCode().getText(), close);
-		
-		return balance;
-		
+		String day = cierreView.getDay();		
+		String userName = cierreView.getSelectedUser();
+		BalanceDTO balance = webService.performBalance(day, userName, close);	
+		return balance;	
 	}
 
 	public void retriveGames() {
@@ -269,22 +275,36 @@ public class BirjanClient extends JApplet {
 		
 	}
 
-	public void login(String userName, String password) {
+	public void login(String userName, String password, DateTime date) {
 		this.user = userName;
 		this.password = password;
-		this.authorities = webService.getAuthorities();
-		
-		mainView.reset(authorities);
-		
-		boolean development = webService.isDevelopment();
-		if(development){
-			jugadaView.setDevelopment(development);
-			controlView.setDevelopment(development);
-			premiosView.setDevelopment(development);
+		try {
+			this.authorities = webService.getAuthorities();
+			
+			this.serverDateTime = new DateTime(webService.updateServerDateTime(date==null?null:date.toDate()));
+			DateTimeUtils.setCurrentMillisOffset(System.currentTimeMillis()-serverDateTime.getMillis());
+			mainView.reset();
+			
+			boolean development = webService.isDevelopment();
+			if(development){
+				controlView.setDevelopment(development);
+				premiosView.setDevelopment(development);
+			}
+			
+			if(isManager()){
+				setView(balanceView);
+				balanceView.reset();
+			} else {
+				setView(jugadaView);
+				jugadaView.reset();
+			}
+			
+			
+		} catch (BusinessException e) {
+			setView(exceptionView);
+			exceptionView.reset(e);
 		}
-
-		setView(jugadaView);
-		jugadaView.reset();
+		
 	}
 
 	public final String getUser() {
@@ -306,5 +326,31 @@ public class BirjanClient extends JApplet {
 	public BalanceDTO[] balance(boolean close) {
 		return webService.closeBalance(balanceView.getDay(), close);
 	
+	}
+
+	
+	public boolean isAdmin() {
+		return Arrays.asList(authorities).contains("ROLE_ADMIN");
+	}
+	
+	public boolean isManager() {
+		return Arrays.asList(authorities).contains("ROLE_MANAGER");
+	}
+	
+	public boolean isUser() {
+		return Arrays.asList(authorities).contains("ROLE_USER");
+	}
+
+	public String[] getAllUser() {
+		return webService.getUsers();
+	}
+
+	public void closeUser() {
+		mainView.closeUser();
+		
+	}
+
+	public DateTime getServerDateTime() {
+		return serverDateTime;
 	}
 }

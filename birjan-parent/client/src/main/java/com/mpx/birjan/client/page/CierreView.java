@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.swing.Box;
@@ -19,21 +18,27 @@ import javax.swing.JTextField;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.mpx.birjan.client.BirjanClient;
 import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.common.Status;
 
 @Repository
-public class CierreView extends AbstractView {
+public class CierreView extends JPanel {
 
 	private static final long serialVersionUID = -937229003775095821L;
 
 	public final String[] states = { null, "WINNER", "LOSER", "PAID" };
+	
+	@Autowired
+	protected BirjanClient controller;
+	
+	protected JComboBox comboBox2;
 
-	private JTextField textCode;
+	protected JButton btnBalance, btnClear;
 
-	private BalanceDTO balance;
 	private JTextField cashField;
 	private JTextField paymentsField;
 	private JTextField cashBalanceField;
@@ -43,9 +48,13 @@ public class CierreView extends AbstractView {
 	private JTextField prizesField;
 	private JTextField balanceField;
 	
+	protected boolean development = false;
+	
 	DecimalFormat df = new DecimalFormat("0.##");
 
 	private JLabel fechaLbl;
+
+	private JComboBox comboBox1;
 
 	public CierreView() {
 
@@ -80,7 +89,7 @@ public class CierreView extends AbstractView {
 		Box vb_2 = Box.createVerticalBox();
 		panel.add(vb_2);
 
-		JLabel lblLoteria = new JLabel("Lot");
+		JLabel lblLoteria = new JLabel("Cierre");
 		lblLoteria.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblLoteria.setFont(new Font("Tahoma", Font.BOLD, 18));
 		vb_2.add(lblLoteria);
@@ -88,19 +97,25 @@ public class CierreView extends AbstractView {
 		Component vs_6 = Box.createVerticalStrut(20);
 		vb_2.add(vs_6);
 		
-		textCode = new JTextField();
-		textCode.setColumns(15);
-		vb_2.add(textCode);
+		vb_2.add(Box.createVerticalStrut(10));
+		
+		comboBox1 = new JComboBox();
+		comboBox1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				init();
+			}
+		});
+		vb_2.add(comboBox1);
 		
 		vb_2.add(Box.createVerticalStrut(10));
 
-		comboBox = new JComboBox();
-		comboBox.addActionListener(new ActionListener() {
+		comboBox2 = new JComboBox();
+		comboBox2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				init();
 			}
 		});
-		vb_2.add(comboBox);
+		vb_2.add(comboBox2);
 
 		Component hs = Box.createHorizontalStrut(120);
 		vb_2.add(hs);
@@ -299,12 +314,12 @@ public class CierreView extends AbstractView {
 		Box hb_1 = Box.createHorizontalBox();
 		vb.add(hb_1);
 
-		btnDone = new JButton("Balance");
-		btnDone.addActionListener(new ActionListener() {
+		btnBalance = new JButton("Balance");
+		btnBalance.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean close = btnDone.getText().equals("Cierre");
+				boolean close = btnBalance.getText().equals("Cierre");
 				BalanceDTO balanceDTO = controller.performBalance(close);
-				if(balanceDTO!=null){
+				if(balanceDTO!=null && balanceDTO.getState()!=null){
 					DateTime dt = new DateTime(balanceDTO.getDate());
 					fechaLbl.setText("Fecha: "+dt.getDayOfMonth()+"/"+dt.getMonthOfYear());
 					cashField.setText("$"+df.format(balanceDTO.getCash()));
@@ -318,15 +333,18 @@ public class CierreView extends AbstractView {
 					prizesField.setText("$"+df.format(balanceDTO.getPrizes()));
 					balanceField.setText("$"+df.format(cashBalance-balanceDTO.getPrizes()));
 					if(balanceDTO.getState().equals(Status.CLOSE)){
-						btnDone.setVisible(false);
+						btnBalance.setVisible(false);
+						controller.closeUser();
 					} else {
-						btnDone.setText("Cierre");
+						btnBalance.setText("Cierre");
 					}
+				} else {
+					btnBalance.setVisible(false);
 				}
 			}
 		});
-		btnDone.setFont(new Font("Tahoma", Font.BOLD, 11));
-		hb_1.add(btnDone);
+		btnBalance.setFont(new Font("Tahoma", Font.BOLD, 11));
+		hb_1.add(btnBalance);
 		
 		Component hs_2 = Box.createHorizontalStrut(20);
 		hb_1.add(hs_2);
@@ -344,7 +362,7 @@ public class CierreView extends AbstractView {
 	private String[] getdays() {
 		String[] days = new String[20];
 		Locale locale = new Locale("es");
-		DateTime dt = new DateTime(new Date());
+		DateTime dt = new DateTime();
 		for (int i = 0; i < days.length; i++) {
 			if (!development && dt.getDayOfWeek() == DateTimeConstants.SUNDAY)
 				dt = dt.minusDays(1);
@@ -356,13 +374,17 @@ public class CierreView extends AbstractView {
 	}
 
 	public void reset() {
-		comboBox.setModel(new DefaultComboBoxModel(getdays()));
-		comboBox.setSelectedIndex(0);
-		init();
+		comboBox1.setModel(new DefaultComboBoxModel(controller.isManager()?
+				controller.getAllUser():new String[]{controller.getUser()}));
+		comboBox2.setModel(new DefaultComboBoxModel(getdays()));
+		comboBox1.setEnabled(controller.isManager());
+		comboBox2.setEnabled(controller.isManager());
+		comboBox1.setSelectedIndex(0);
+		comboBox2.setSelectedIndex(0);
+		
 	}
 
 	private void init() {
-		textCode.setText(controller.getUser());
 		fechaLbl.setText("Fecha: ");
 		balanceField.setText("");
 		prizesField.setText("");
@@ -372,15 +394,20 @@ public class CierreView extends AbstractView {
 		incomeField.setText("");
 		paymentsField.setText("");
 		cashField.setText("");
-		btnDone.setText("Balance");
-		btnDone.setVisible(true);
+		btnBalance.setText("Balance");
+		btnBalance.setVisible(true);
+		btnClear.setVisible(controller.isManager());
 	}
 
-	public JTextField getTextCode() {
-		return textCode;
+	public void setDevelopment(boolean development) {
+		this.development = development;
 	}
 
-	public void setBalance(BalanceDTO balance) {
-		this.balance = balance;		
+	public String getDay() {
+		return comboBox2.getSelectedItem().toString().split(" ")[2];
+	}
+
+	public String getSelectedUser() {
+		return comboBox1.getSelectedItem().toString();
 	}
 }

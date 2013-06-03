@@ -1,9 +1,10 @@
-package com.mpx.birjan.util;
+package com.mpx.birjan.bean;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
 import com.mpx.birjan.common.Lottery;
@@ -35,7 +36,7 @@ public class BirjanUtils {
 	}
 
 	public static DateTime getDate(String day) {
-		DateTime dt = now().minusDays(20);//no more than 4 days modify this.
+		DateTime dt = new DateTime().minusDays(20);//no more than 4 days modify this.
 		if(day!=null){
 			for (int i = 0; i < 28; i++) {
 				if(day.equals(String.valueOf(dt.getDayOfMonth()))){
@@ -64,7 +65,7 @@ public class BirjanUtils {
 		List<String> values = new ArrayList<String>();
 		DateTime date = BirjanUtils.getDate(day);
 		if (date != null) {
-			DateTime today = now().toDateMidnight().toDateTime();
+			DateTime today = new DateMidnight().toDateTime();
 			DateTime tomorrow = today.plusDays(1);
 			for (Rule rule : rules) {
 				DateTime to = rule.getTo(today);
@@ -80,7 +81,7 @@ public class BirjanUtils {
 	}
 
 	public static boolean isValid(Lottery lottery, DateTime date) {
-		DateTime today = now().toDateMidnight().toDateTime();
+		DateTime today = new DateMidnight().toDateTime();
 		DateTime tomorrow = today.plusDays(1);
 		DateTime to = lottery.getRule().getTo(today);
 		if (date.isAfter(today) && (date.isBefore(to)) || date.isAfter(tomorrow))
@@ -88,14 +89,10 @@ public class BirjanUtils {
 		return false;
 	}
 
-	public static DateTime now() {
-		return new DateTime(new Date());
-	}
-
 	public static List<Object> retrieveVariantAvailability(Lottery[] lottery, String day) {
 		List<Object> results = new ArrayList<Object>();
 		DateTime date = BirjanUtils.getDate(day);
-		DateTime today = now().toDateMidnight().toDateTime();
+		DateTime today = new DateMidnight().toDateTime();
 		DateTime tomorrow = today.plusDays(1);
 		for (Lottery lott : lottery) {
 			DateTime to = lott.getRule().getTo(today);
@@ -119,21 +116,5 @@ public class BirjanUtils {
 		}
 		return null;
 	}
-
-	
-//	public static Float calculateWinAmount(Game game) {
-//		Object[][] data = (Object[][])SerializationUtils.deserialize(game.getData());
-//		if(game.getStatus().equals(Status.WINNER)||game.getStatus().equals(Status.PAID)){
-//			Float winAmount = 0f;
-//			if(game.getStatus().equals(Status.WINNER)){
-//				for (Object[] row : data) {
-//					int hits = 3 -((String)row[1]).lastIndexOf('x');
-//					winAmount += ((Float)row[2])*Rule.defaultWinRatios[hits];
-//				}
-//			}
-//			return winAmount;
-//		}
-//		return null;
-//	}
 
 }

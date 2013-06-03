@@ -17,6 +17,13 @@ public class BalanceDTO implements Serializable {
 	private float prizes = 0f;
 	private int winners = 0;
 
+	public BalanceDTO() {
+	}
+	
+	public BalanceDTO(String userName) {
+		this.userName = userName;
+	}
+
 	public float getIncome() {
 		return income;
 	}
@@ -116,6 +123,10 @@ public class BalanceDTO implements Serializable {
 
 	public float getBalance() {
 		return getCashBalance() - getPrizes();
+	}
+
+	public boolean is(Status state) {
+		return this.state.equals(state);
 	}
 
 }
