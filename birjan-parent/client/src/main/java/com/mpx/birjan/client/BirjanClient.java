@@ -1,9 +1,11 @@
 package com.mpx.birjan.client;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +33,7 @@ import com.mpx.birjan.client.page.PagoView;
 import com.mpx.birjan.client.page.PasswordView;
 import com.mpx.birjan.client.page.PremiosView;
 import com.mpx.birjan.client.page.PrintView;
+import com.mpx.birjan.client.page.ReseteableView;
 import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.common.Wrapper;
@@ -112,8 +115,19 @@ public class BirjanClient extends JApplet {
     }
 	
 	public void start() {
+		EventQueue queue = Toolkit.getDefaultToolkit().getSystemEventQueue();
+		queue.push(new EventQueue(){
+			@Override
+			protected void dispatchEvent(AWTEvent event) {
+				try {
+		            super.dispatchEvent(event);
+		        } catch (Throwable t) {
+		        	setView(exceptionView);
+		        	exceptionView.show(t);		        	
+		        }
+			}
+		});
 		setView(passwordView);
-		passwordView.reset();
 	}
 
 	private void setView(JPanel panel) {
@@ -124,33 +138,22 @@ public class BirjanClient extends JApplet {
 			components[i].setVisible(false);
 		}
 		panel.setVisible(true);
+		if(panel instanceof ReseteableView){
+			((ReseteableView)panel).reset();
+		}
 	}
 
 	public String[] populateCombo(String view, String comboName, String day) {
 		String[] result = null;
-		try {
 			result = webService.populateCombo(view, comboName, day);
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
 		return result;
 	}
 	
 	public void play(String day, String[] lotteries, Object[][] data) {
-
 		String hash = webService.createGames(day, lotteries, data);
-
-		if (hash != null) {
-			TicketPrintable ticket = new TicketPrintable(lotteries, data, hash);
-
-			printView.setTicket(ticket);
-			setView(printView);
-			System.out.println(hash);
-		} else {
-			throw new RuntimeException("WEBSERVICE ERROR");
-		}
-
+		TicketPrintable ticket = new TicketPrintable(lotteries, data, hash);
+		printView.setTicket(ticket);
+		setView(printView);
 	}
 
 	public Ticket pay(String hash) {
@@ -161,27 +164,21 @@ public class BirjanClient extends JApplet {
 	public void actionMenu(String menu) {
 		if(menu.equals("Jugada")){
 			setView(jugadaView);
-			jugadaView.reset();
 		}
 		if(menu.equals("Pago")){
 			setView(pagoView);
-			pagoView.reset();
 		}
 		if(menu.equals("Premios")){
 			setView(premiosView);
-			premiosView.reset();
 		}
 		if(menu.equals("Control")){
 			setView(controlView);
-			controlView.reset();
 		}
 		if(menu.equals("Cierre")){
 			setView(cierreView);
-			cierreView.reset();
 		}
 		if(menu.equals("Balance")){
 			setView(balanceView);
-			balanceView.reset();
 		}
 		if (menu.equals("Logout") || menu.equals("ChangeTime")) {
 			password = null;
@@ -190,7 +187,6 @@ public class BirjanClient extends JApplet {
 				serverDateTime = null;
 			}
 			setView(passwordView);
-			passwordView.reset();
 		}
 	}
 
@@ -261,8 +257,7 @@ public class BirjanClient extends JApplet {
 			}
 			
 		} catch (BusinessException e) {
-			setView(exceptionView);
-			exceptionView.reset(e);
+			throw new RuntimeException(e);
 		}
 		
 	}

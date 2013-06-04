@@ -213,12 +213,9 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 				return ((GrantedAuthority)input).getAuthority();
 			}
 		});
-		
-		if(!collect.contains("ROLE_MANAGER") && txManager.getActiveBalance(SecurityContextHolder
-						.getContext().getAuthentication().getName())==null)
-			throw new BusinessException("NOT ACTIVE BALANCE");
-		
-		
+		if (!collect.contains("ROLE_MANAGER"))
+			txManager.getActiveBalance(SecurityContextHolder.getContext().getAuthentication().getName());
+			
 		return collect.toArray(new String[collect.size()]);	
 	}
 

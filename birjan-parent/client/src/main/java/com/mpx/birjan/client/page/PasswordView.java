@@ -16,18 +16,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mpx.birjan.client.BirjanClient;
-
 @Repository
-public class PasswordView extends JPanel {
+public class PasswordView extends ReseteableView {
 
 	private static final long serialVersionUID = -3938082696927332283L;
-	
-	@Autowired
-	protected BirjanClient controller;
 	
 	private JTextField userTextField;
 	private JTextField passwordTextFiled;

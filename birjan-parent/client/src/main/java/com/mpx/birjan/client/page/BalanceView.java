@@ -25,20 +25,15 @@ import javax.swing.table.TableModel;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mpx.birjan.client.BirjanClient;
 import com.mpx.birjan.client.editor.CustomTableCellRender;
 import com.mpx.birjan.common.BalanceDTO;
 
 @Repository
-public class BalanceView extends JPanel {
+public class BalanceView extends ReseteableView {
 
 	private static final long serialVersionUID = 4334436586243521165L;
-
-	@Autowired
-	protected BirjanClient controller;
 
 	protected JTable table;
 

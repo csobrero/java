@@ -18,22 +18,17 @@ import javax.swing.JTextField;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mpx.birjan.client.BirjanClient;
 import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.common.Status;
 
 @Repository
-public class CierreView extends JPanel {
+public class CierreView extends ReseteableView {
 
 	private static final long serialVersionUID = -937229003775095821L;
 
 	public final String[] states = { null, "WINNER", "LOSER", "PAID" };
-	
-	@Autowired
-	protected BirjanClient controller;
 	
 	protected JComboBox comboBox2;
 

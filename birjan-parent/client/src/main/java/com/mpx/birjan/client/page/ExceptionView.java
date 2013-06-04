@@ -11,18 +11,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mpx.birjan.client.BirjanClient;
-
 @Repository
-public class ExceptionView extends JPanel {
+public class ExceptionView extends ReseteableView {
 
 	private static final long serialVersionUID = 1L;
-
-	@Autowired
-	protected BirjanClient controller;
 
 	private JTextArea textArea;
 
@@ -53,11 +47,15 @@ public class ExceptionView extends JPanel {
 		verticalBox.add(verticalStrut_1);
 	}
 
-	public void reset(Exception ex) {
+	public void show(Throwable t) {
 		StringWriter errors = new StringWriter();
-		ex.printStackTrace(new PrintWriter(errors));
+		t.printStackTrace(new PrintWriter(errors));
 		textArea.setText(errors.toString());
 		textArea.setCaretPosition(0);
+	}
+
+	@Override
+	public void reset() {
 	}
 
 }

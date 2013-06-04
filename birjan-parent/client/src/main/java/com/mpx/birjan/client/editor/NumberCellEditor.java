@@ -1,6 +1,8 @@
 package com.mpx.birjan.client.editor;
 
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
 
 import javax.swing.DefaultCellEditor;
@@ -17,6 +19,17 @@ public class NumberCellEditor extends DefaultCellEditor {
 
 	public NumberCellEditor() {
 		super(new JTextField());
+		((JTextField) getComponent()).addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_ENTER:
+					System.out.println("zarasaaa");
+					break;
+				}
+
+			}
+		});
 		((JTextField) getComponent()).setHorizontalAlignment(JTextField.CENTER);
 	}
 

@@ -4,18 +4,23 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -228,6 +233,7 @@ public class PremiosView extends ReseteableView {
 		table.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		table.setRowHeight(40);
 		table.setModel(model);
+		table.setName("PREMIOS");
 
 		table.getColumnModel().getColumn(0).setPreferredWidth(50);
 		table.getColumnModel().getColumn(0).setMaxWidth(50);
@@ -240,6 +246,13 @@ public class PremiosView extends ReseteableView {
 
 		table.getColumnModel().getColumn(1).setCellEditor(new NumberCellEditor());
 		table.getColumnModel().getColumn(3).setCellEditor(new NumberCellEditor());
+		
+		table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+	       .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "none");
+//		table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		
+//		table.getColumnModel().getColumn(1).setCellRenderer(new CustomTableCellRender());
+//		table.getColumnModel().getColumn(3).setCellRenderer(new CustomTableCellRender());
 
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setRowSelectionAllowed(false);

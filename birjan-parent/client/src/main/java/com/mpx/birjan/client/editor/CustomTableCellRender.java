@@ -32,6 +32,15 @@ public class CustomTableCellRender extends DefaultTableCellRenderer {
 				c.setFont(getFont().deriveFont(Font.BOLD)); 
 			}
 		}
+		
+		if(table.getName().equals("PREMIOS")) {
+			if(hasFocus){
+				value="";
+			}
+			if(value.toString()=="1"){
+				c.setForeground(Color.RED);
+			}
+		}
 
 		// c.setFont(/* special font */);
 		// c.setForeground(/* special foreground color */);

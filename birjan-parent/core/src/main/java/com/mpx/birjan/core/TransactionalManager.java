@@ -217,37 +217,37 @@ public class TransactionalManager {
 	}
 
 	@Resource(name = "genericJpaDAO")
-	public final void setDrawDao(final GenericJpaDAO<Draw> daoToSet) {
+	public void setDrawDao(final GenericJpaDAO<Draw> daoToSet) {
 		drawDao = daoToSet;
 		drawDao.setClazz(Draw.class);
 	}
 
 	@Resource(name = "genericJpaDAO")
-	public final void setWagerDao(final GenericJpaDAO<Wager> daoToSet) {
+	public void setWagerDao(final GenericJpaDAO<Wager> daoToSet) {
 		wagerDao = daoToSet;
 		wagerDao.setClazz(Wager.class);
 	}
 
 	@Resource(name = "genericJpaDAO")
-	public final void setGameDao(final GenericJpaDAO<Game> daoToSet) {
+	public void setGameDao(final GenericJpaDAO<Game> daoToSet) {
 		gameDao = daoToSet;
 		gameDao.setClazz(Game.class);
 	}
 
 	@Resource(name = "genericJpaDAO")
-	public final void setUsersDao(final GenericJpaDAO<User> daoToSet) {
+	public void setUsersDao(final GenericJpaDAO<User> daoToSet) {
 		usersDao = daoToSet;
 		usersDao.setClazz(User.class);
 	}
 
 	@Resource(name = "genericJpaDAO")
-	public final void setBalanceDao(final GenericJpaDAO<Balance> daoToSet) {
+	public void setBalanceDao(final GenericJpaDAO<Balance> daoToSet) {
 		balanceDao = daoToSet;
 		balanceDao.setClazz(Balance.class);
 	}
 
 	@Resource(name = "genericJpaDAO")
-	public final void setAuthoritiesDao(final GenericJpaDAO<Authorities> daoToSet) {
+	public void setAuthoritiesDao(final GenericJpaDAO<Authorities> daoToSet) {
 		authoritiesDao = daoToSet;
 		authoritiesDao.setClazz(Authorities.class);
 	}
@@ -388,6 +388,8 @@ public class TransactionalManager {
 		Balance balance = balanceDao.findUniqueByFilter(activeFilter, userFilter);
 		if (balance == null)
 			balance = balanceDao.findUniqueByFilter(openFilter, userFilter, dateFilter);
+		if(balance == null)
+			throw new RuntimeException("NOT ACTIVE BALANCE");
 		return balance;
 	}
 

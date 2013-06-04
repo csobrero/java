@@ -12,21 +12,37 @@
 			<param name="LevelMax" value="FATAL" />
 		</filter>
 	</appender>
+	<appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
+      <param name="append" value="false"/>
+      <param name="file" value="logs/birjan.log"/>
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="|%d{ISO8601}|%p|%C{1}|%X{sessionID}|%m|%n"/>
+      </layout>
+   </appender>
 	
 	<category name="org.hibernate.tool.hbm2ddl" additivity="false">
-		<level value="info" />
+		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="fileAppender" />
 	</category>
+	
+	<!--category name="org.apache.cxf.interceptor.Fault" additivity="false">
+		<level value="WARN" />
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="fileAppender" />
+	</category-->
 
 	<category name="org.hibernate" additivity="false">
-		<level value="warn" />
+		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="fileAppender" />
 	</category>
 
 	<!-- DEFAULT LOGGING LEVEL -->
 	<root>
-		<level value="ALL" />
+		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="fileAppender" />
 	</root>
 
 </log4j:configuration>
