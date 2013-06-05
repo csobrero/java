@@ -4,15 +4,14 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,7 +19,6 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,9 +99,12 @@ public class PremiosView extends ReseteableView {
 			public void actionPerformed(ActionEvent e) {
 				String day = Combos.getDay(comboBox.getSelectedItem().toString());
 				String selected = comboBox_1.getSelectedItem().toString();
-				comboBox_2.setModel(new DefaultComboBoxModel(controller.populateCombo("draw", selected, day)));
-				comboBox_2.setEnabled(true);
-				comboBox_2.requestFocusInWindow();
+				String[] comboOptions = controller.populateCombo("draw", selected, day);
+					if(comboOptions!=null){
+					comboBox_2.setModel(new DefaultComboBoxModel(comboOptions));
+					comboBox_2.setEnabled(true);
+					comboBox_2.requestFocusInWindow();
+				}
 			}
 		});
 		vb_2.add(comboBox_1);
@@ -247,19 +248,30 @@ public class PremiosView extends ReseteableView {
 		table.getColumnModel().getColumn(1).setCellEditor(new NumberCellEditor());
 		table.getColumnModel().getColumn(3).setCellEditor(new NumberCellEditor());
 		
-		table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-	       .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "none");
-//		table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-		
-//		table.getColumnModel().getColumn(1).setCellRenderer(new CustomTableCellRender());
-//		table.getColumnModel().getColumn(3).setCellRenderer(new CustomTableCellRender());
+		Object key = table.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).get(KeyStroke.getKeyStroke("ENTER"));
+		final Action oldAction = table.getActionMap().get(key);
+		table.getActionMap().put(key, new AbstractAction("wrap") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int row = table.getSelectionModel().getLeadSelectionIndex();
+				int column = table.getColumnModel().getSelectionModel().getLeadSelectionIndex();
+				if (row == table.getRowCount() - 1) {
+					table.getSelectionModel().setLeadSelectionIndex(0);
+					table.getColumnModel().getSelectionModel().setLeadSelectionIndex(column == 1 ? 3 : 1);
+					return;
+				}
+				oldAction.actionPerformed(e);
+			}
+		});
 
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setRowSelectionAllowed(false);
 		table.setColumnSelectionAllowed(false);
 		table.setEnabled(false);
 	}
-
+	
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private DefaultTableModel createModel() {
 		return new DefaultTableModel(new Object[][] { { "1", "", "11", "" }, { "2", "", "12", "" },
