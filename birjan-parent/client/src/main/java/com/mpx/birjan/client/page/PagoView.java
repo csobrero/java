@@ -318,7 +318,7 @@ public class PagoView extends ReseteableView {
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private DefaultTableModel createModel() {
-		return new DefaultTableModel(new String[][] {}, new String[] { "Ubicacion", "Numero", "Importe" }) {
+		return new DefaultTableModel(new String[][] {}, new String[] { "Numero", "Ubicacion", "Importe" }) {
 
 			public Class getColumnClass(int columnIndex) {
 				return String.class;

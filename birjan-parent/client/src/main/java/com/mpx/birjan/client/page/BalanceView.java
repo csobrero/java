@@ -118,6 +118,7 @@ public class BalanceView extends ReseteableView {
 		btnBalance.addActionListener(new ActionListener() {
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			public void actionPerformed(ActionEvent e) {
+				buildJTable(createModel());
 				DefaultTableModel tableModel = getTableModel();
 				BalanceDTO[] balance = controller.balance(false);
 				Vector rowData;

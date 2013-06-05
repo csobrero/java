@@ -2,6 +2,7 @@ package com.mpx.lotery;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,11 +159,47 @@ public class TimeTest {
 	}
 
 	private String getRandomInteger(Random r) {
-		String str = "";
-		for (int i = 0; i < 20; i++) {
-			str += randomInteger(0, 9999, r);
+//		String str = "";
+//		for (int i = 0; i < 20; i++) {
+//			str += randomInteger(0, 9999, r);
+//		}
+//		return str;
+		
+		String[] win = new String[100];
+		Integer[] s = {77, 34, 87, 00, 23, 77, 88, 29, 92, 57};
+		for (int i = 0; i < s.length; i++) {
+			win[s[i]] = i+"";
 		}
-		return str;
+		
+		
+		Integer[] t = {92, 11, 34};
+		String w = "";
+		for (Integer in : t) {
+			w+=win[in];
+		}
+		
+		System.out.println(w);
+		
+		
+		
+		return null;
+	}
+	
+	@Test
+	public void efrqw() {
+		String[] win = new String[100];
+		Integer[] s = { 77, 34, 87, 00, 23, 77, 88, 29, 92, 57 };
+		for (int i = 0; i < s.length; i++) {
+			win[s[i]] = i + "";
+		}
+
+		Integer[] t = { 92, 11, 34 };
+		String w = "";
+		for (Integer in : t) {
+			w += win[in]!=null?win[in]:"";
+		}
+
+		System.out.println(w);
 	}
 
 	private static String randomInteger(int aStart, int aEnd, Random aRandom) {
@@ -187,6 +224,8 @@ public class TimeTest {
 		
 		System.out.println(list);
 	}
+	
+	
 	
 	@Test
 	public void arraycompare2() {

@@ -190,7 +190,7 @@ public class JugadaView extends ReseteableView {
 		btnClear.setEnabled(true);
 		btnDone.setEnabled(false);
 		table.setModel((createModel(false)));
-		table.changeSelection(0, 1, false, false);
+		table.changeSelection(0, 0, false, false);
 		table.requestFocusInWindow();
 		modifyModels();
 	}
@@ -223,9 +223,9 @@ public class JugadaView extends ReseteableView {
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 	private DefaultTableModel createModel(boolean empty) {
-		return new DefaultTableModel((empty) ? new Object[][] {} : new Object[][] { { 1, "", null } }, new String[] {
-				"Ubicacion", "Numero", "Importe" }) {
-			Class[] columnTypes = new Class[] { Integer.class, String.class, Float.class };
+		return new DefaultTableModel((empty) ? new Object[][] {} : new Object[][] { { "", 1, null } }, new String[] {
+				"Numero", "Ubicacion", "Importe" }) {
+			Class[] columnTypes = new Class[] { String.class, Integer.class, Float.class };
 
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -349,14 +349,14 @@ public class JugadaView extends ReseteableView {
 					DefaultTableModel model = (DefaultTableModel) e.getSource();
 
 					Object value = model.getValueAt(row, column);
-					if (column == 1 && Pattern.matches("\\d{1,4}", value.toString())) {
+					if (column == 0 && Pattern.matches("\\d{1,4}", value.toString())) {
 						String str = "xxx" + value.toString();
 						model.setValueAt(str.substring(str.length() - 4, str.length()), row, column);
 					}
 
-					if (row == (model.getRowCount() - 1) && model.getValueAt(row, 0) != null
-							&& !model.getValueAt(row, 1).toString().equals("") && model.getValueAt(row, 2) != null) {
-						model.addRow(new Object[] { 20, "", null });
+					if (row == (model.getRowCount() - 1) && model.getValueAt(row, 1) != null
+							&& !model.getValueAt(row, 0).toString().equals("") && model.getValueAt(row, 2) != null) {
+						model.addRow(new Object[] { null, null, null });
 					}
 					if (column == 2) {
 						updateTotal();

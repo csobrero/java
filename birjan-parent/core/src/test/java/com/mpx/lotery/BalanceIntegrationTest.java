@@ -56,7 +56,7 @@ public class BalanceIntegrationTest {
 		Thread t1 = new Thread(new Runnable() {public void run() {
 				getUser("u1");
 				
-				games.add(new Object[][]{{1,"xx01",1f}});
+				games.add(new Object[][]{{"xx01",1,1f}});
 				for (Object[][] data : games) {
 					try {
 						manager.createGames(lotteries , today , data );
@@ -70,7 +70,7 @@ public class BalanceIntegrationTest {
 		Thread t2 = new Thread(new Runnable() {public void run() {
 				getUser("u2");
 				
-				games.add(new Object[][]{{1,"xx01",1f}});
+				games.add(new Object[][]{{"xx01",1,1f}});
 				for (Object[][] data : games) {
 					try {
 						manager.createGames(lotteries , today , data );

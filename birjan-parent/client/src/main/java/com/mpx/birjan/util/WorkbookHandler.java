@@ -34,8 +34,8 @@ public class WorkbookHandler {
 				
 				row = details.createRow((short) 0);
 				row.createCell(0).setCellValue("Ticket");
-				row.createCell(1).setCellValue("Ubicacion");
-				row.createCell(2).setCellValue("Numero");
+				row.createCell(1).setCellValue("Numero");
+				row.createCell(2).setCellValue("Ubicacion");
 				row.createCell(3).setCellValue("Importe");
 				row.createCell(4).setCellValue("Estado");
 				row.createCell(5).setCellValue("Premio");
@@ -51,8 +51,8 @@ public class WorkbookHandler {
 					Float prize = data[i].getPrize();
 					row = details.createRow((short) rowIndex++);
 					row.createCell(0).setCellValue(data[i].getHash());
-					row.createCell(1).setCellValue((Integer)vector[0][0]);
-					row.createCell(2).setCellValue((String)vector[0][1]);
+					row.createCell(1).setCellValue((String)vector[0][0]);
+					row.createCell(2).setCellValue((Integer)vector[0][1]);
 					map.get(status).add((Float)vector[0][2], prize);
 					row.createCell(3).setCellValue((Float)vector[0][2]);
 					row.createCell(4).setCellValue(status);
@@ -63,8 +63,8 @@ public class WorkbookHandler {
 					for (int j = 1; j < vector.length; j++) {// if more than 1 line.
 						row = details.createRow((short) rowIndex++);
 						row.createCell(0);
-						row.createCell(1).setCellValue((Integer)vector[j][0]);
-						row.createCell(2).setCellValue((String)vector[j][1]);
+						row.createCell(1).setCellValue((String)vector[j][0]);
+						row.createCell(2).setCellValue((Integer)vector[j][1]);
 						map.get(status).addWithoutIncrementItem((Float)vector[j][2]);
 						row.createCell(3).setCellValue((Float)vector[j][2]);
 					}

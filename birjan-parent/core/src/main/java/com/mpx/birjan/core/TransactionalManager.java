@@ -116,27 +116,41 @@ public class TransactionalManager {
 
 		if (draw != null) {
 			String[] winnerNumbers = draw.getNumbers();
-			for (String winnerNumber : winnerNumbers) {
-				Preconditions.checkArgument(Pattern.matches("\\d{4}", winnerNumber), "Can not validate Draw.");
+			String[] borratina = new String[20];
+			for (int i = 0; i < winnerNumbers.length; i++) {
+				Preconditions.checkArgument(Pattern.matches("\\d{4}", winnerNumbers[i]), "Can not validate Draw.");
+				if(i<20){
+					int number = Integer.parseInt(winnerNumbers[i].substring(2));
+					borratina[number] = (borratina[number] != null) ? borratina[number] + "," + i : "|" + i;
+				}
 			}
 
 			List<Game> games = retriveGames(VALID, lottery, date, null, null);
 			for (Game game : games) {
 				Object[][] data = game.getData();
 				boolean win = true;
-				for (Object[] row : data) {
-					char[] winnerNumber = winnerNumbers[(Integer) row[0] - 1].toCharArray();
-					char[] number = ((String) row[1]).toCharArray();
+				if(data.length==1){
+					char[] winnerNumber = winnerNumbers[(Integer) data[0][1] - 1].toCharArray();
+					char[] number = ((String) data[0][0]).toCharArray();
 					for (int i = 0; win && i < 4; i++) {
 						win &= number[i] == 'x' || number[i] == winnerNumber[i];
 					}
+					
+				} else if (data.length==5) {
+					String w = "";
+					for (int i = 0; i < data.length; i++) {
+						int in = Integer.parseInt(((String)data[i][0]).substring(2));
+						w += borratina[in]!=null?borratina[in]:"";
+						
+					}
 				}
+				
 
 				game.setStatus(LOSER);
 				if (win) {
 					Float winAmount = 0f;
 					for (Object[] row : data) {
-						int hits = 3 - ((String) row[1]).lastIndexOf('x');
+						int hits = 3 - ((String) row[0]).lastIndexOf('x');
 						winAmount += ((Float) row[2]) * Rule.defaultWinRatios[hits - 1];
 					}
 					game.setStatus(WINNER);
