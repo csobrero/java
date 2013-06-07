@@ -11,9 +11,11 @@ import java.util.Random;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.common.Rule;
+import com.mpx.birjan.tweeter.TweetParser;
 
 public class TimeTest {
 
@@ -121,7 +123,39 @@ public class TimeTest {
 		return hits;
 	}
 	
+	@Test
+	public void tweetTest() {
+		
+		String[] tws = {"22 1 N","22 1 N P","22 1 1 N","22 1 1 N P"};
+		
+		for (String string : tws) {
+			
+		}
+		
+		String tw = "22 11 1.5 NP PMVN";
+		
+		boolean b = tw.matches("\\d{1,4} \\d{1,2}? \\d(\\.\\d)? [NP]{1,2} [PMVN*]{1,4}?");
+		
+		assertTrue(b);
+		
+//		TweetParser parser = new TweetParser();
+//		parser.parse(tw);
+		
+	}
 	
+	@Test
+	public void tweetTest2() {
+		
+		String tw = "efdsef eff se5fswef sedfwsf";
+		
+		boolean b = tw.matches(".^(6).*");
+		
+		assertTrue(b);
+		
+//		TweetParser parser = new TweetParser();
+//		parser.parse(tw);
+		
+	}
 	
 
 //	@Test
