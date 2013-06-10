@@ -1,5 +1,8 @@
 package com.mpx.birjan.bean;
 
+import static com.mpx.birjan.common.Status.LOSER;
+import static com.mpx.birjan.common.Status.WINNER;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -37,76 +40,86 @@ public class Game extends AbstractEntity implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date date;
 
+	@NotNull
+	private String number;
+
+	private Integer position;
+
+	@NotNull
+	private Float amount;
+
+	private Float prize;
+
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Wager wager;
 
-	@NotNull
-	private Object[][] data;
-	
-	private Float prize;
-
 	public Game() {
 	}
-
+	
 	public Game(Lottery lottery, Date date, Wager wager, Object[][] data) {
-		this(Status.VALID, lottery, date, wager, data);
+		this(lottery, date, (String)data[0][0], (Integer)data[0][1], (Float)data[0][2], wager);
+		
 	}
 
-	public Game(Status status, Lottery lottery, Date date, Wager wager,
-			Object[][] data) {
-		this.status = status;
+	public Game(Lottery lottery, Date date, String number, Integer position, Float amount, Wager wager) {
+		this.status = Status.VALID;
 		this.lottery = lottery;
 		this.date = date;
+		this.number = number;
+		this.position = position;
+		this.amount = amount;
 		this.wager = wager;
-		this.data = data;
+	}
+
+	public boolean is(Status state) {
+		return this.status.equals(state);
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 	public Lottery getLottery() {
 		return lottery;
 	}
 
-	public final Status getStatus() {
-		return status;
-	}
-
-	public final void setStatus(Status status) {
-		this.status = status;
-	}
-
-	public Wager getWager() {
-		return wager;
-	}
-
-	public void setWager(Wager wager) {
-		this.wager = wager;
-	}
-
-	public Object[][] getData() {
-		return data;
-	}
-
 	public Date getDate() {
 		return date;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public Integer getPosition() {
+		return position;
+	}
+
+	public Float getAmount() {
+		return amount;
 	}
 
 	public Float getPrize() {
 		return prize;
 	}
 
-	public void setPrize(Float paid) {
-		this.prize = paid;
-	}
-	
-	public float getBetAmount(){
-		float f = 0f;
-		for (int i = 0; i < data.length; i++) {
-			f += (Float)data[i][2];
-		}
-		return f;
+	public void setPrize(Float prize) {
+		this.prize = prize; 
+		this.status = prize!=null&&prize>0?WINNER:LOSER;
 	}
 
-	public boolean is(Status state) {
-		return this.status.equals(state);
+	public Wager getWager() {
+		return wager;
+	}
+
+	public Object[][] getData() {
+		Object[][] data = new Object[1][1];
+		data[0] = new Object[]{getNumber(),getPosition(),getAmount()};
+		return data;
 	}
 
 }

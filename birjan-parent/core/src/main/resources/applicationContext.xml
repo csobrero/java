@@ -48,14 +48,14 @@
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 
-	<!-- AUTH -->
+	<!-- =========AUTH============= -->
 
 	<bean id="authenticationManager"
 		class="org.springframework.security.authentication.ProviderManager">
 		<property name="providers">
-			<bean
-				class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+			<bean class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
 				<property name="userDetailsService" ref="userDetailsService" />
+				<property name="userCache" ref="userCache" />
 			</bean>
 		</property>
 	</bean>
@@ -63,8 +63,55 @@
 	<bean id="userDetailsService"
 		class="org.springframework.security.provisioning.JdbcUserDetailsManager">
 		<property name="dataSource" ref="dataSource" />
+		<property name="userCache" ref="userCache"></property>
 	</bean>
 
+	<bean id="userCache" class="org.springframework.security.core.userdetails.cache.EhCacheBasedUserCache">
+		<property name="cache">
+			<bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+				<property name="cacheManager">
+					<bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+						<property name="configLocation" value="classpath:/ehcache.xml" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	
+	
+	<!-- ==========AUTH============= -->
+	
+	<bean id="twitterStream" class="twitter4j.TwitterStream" factory-bean="twitterStreamFactory" factory-method="getInstance" />
+	
+	<bean id="twitterFactory" class="twitter4j.TwitterFactory">
+		<constructor-arg type="twitter4j.conf.Configuration" ref="configuration" />
+	</bean>
+	
+	<bean id="twitterStreamFactory" class="twitter4j.TwitterStreamFactory">
+		<constructor-arg type="twitter4j.conf.Configuration" ref="configuration"/>
+	</bean>
+	
+	<bean id="configuration" class="twitter4j.conf.Configuration" factory-bean="configurationBuilder" factory-method="build" />
+	
+	<bean id="configurationBuilder" class="twitter4j.conf.ConfigurationBuilder" scope="prototype">
+		<property name="debugEnabled" value="true" />
+		<property name="OAuthConsumerKey" value="piozU7GCQ2sSgBkvyNs6pw"/>
+		<property name="OAuthConsumerSecret" value="iOqu91UxDEvQwC2fWSLeJjCJUynYKYx0MAO9uQNqQ"/>
+		<property name="OAuthAccessToken" value="1491434672-NOJCS5heHjAX563VhMZy3ENA7AKvpzGOZmtbnea"/>
+		<property name="OAuthAccessTokenSecret" value="3LVYeMxSTrUwp35TgySczMFenXmJk5BoZl3lsH34JPU"/>
+	</bean>
+
+	<bean id="twitterHandlerFactory" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+     	<property name="targetBeanName" value="twitterHandler"/>
+   </bean>
+	
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="5" />
+		<property name="maxPoolSize" value="20" />
+		<property name="WaitForTasksToCompleteOnShutdown" value="true" />
+	</bean>
 
 
 	<jaxws:endpoint id="birjanws" implementor="#birjanServiceEndpoint"

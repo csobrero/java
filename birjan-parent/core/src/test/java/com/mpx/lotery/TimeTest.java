@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.common.Rule;
-import com.mpx.birjan.tweeter.TweetParser;
+import com.mpx.birjan.tweeter.TwitterParser;
 
 public class TimeTest {
 

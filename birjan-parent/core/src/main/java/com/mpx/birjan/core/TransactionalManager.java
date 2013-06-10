@@ -146,14 +146,12 @@ public class TransactionalManager {
 				}
 				
 
-				game.setStatus(LOSER);
 				if (win) {
 					Float winAmount = 0f;
 					for (Object[] row : data) {
 						int hits = 3 - ((String) row[0]).lastIndexOf('x');
 						winAmount += ((Float) row[2]) * Rule.defaultWinRatios[hits - 1];
 					}
-					game.setStatus(WINNER);
 					game.setPrize(winAmount);
 				}
 				gameDao.update(game);
@@ -358,7 +356,7 @@ public class TransactionalManager {
 					item = new Item(game.getStatus().name());
 					map.put(game.getStatus(), item);
 				}
-				item.add(game.getBetAmount(), game.getPrize());
+				item.add(game.getAmount(), game.getPrize());
 			}
 
 			Item[] items = new Item[] { map.get(WINNER), map.get(LOSER), map.get(VALID), map.get(OPEN) };

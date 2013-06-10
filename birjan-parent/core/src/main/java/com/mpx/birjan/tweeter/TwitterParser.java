@@ -1,23 +1,27 @@
 package com.mpx.birjan.tweeter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
-import com.mpx.birjan.bean.TweetBet;
+import com.mpx.birjan.bean.BirjanUtils;
+import com.mpx.birjan.bean.TwitterBet;
+import com.mpx.birjan.common.Lottery;
 
-public class TweetParser {
+public final class TwitterParser {
 
-	public static String tweetPattern = "\\d{1,4}( \\d{1,2})? \\d([\\.,]\\d)? ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?";
+	public static String tweetPattern = "\\d{1,4}( \\d{1,2})? \\d([\\.,]\\d)? ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?";
 
 	public static final List<String> lotteryNames = Arrays.asList("NACIONAL", "PROVINCIA");
 	public static final List<String> variantNames = Arrays.asList("PRIMERA", "MATUTINA", "VESPERTINA", "NOCTURNA");
 
-	public TweetBet decode(String tweet) {
+	public static TwitterBet unmarshal(String tweet) {
 
 		String tw=tweet.replace(",", ".").replaceAll(" +", " ").toUpperCase();
 		
@@ -27,20 +31,22 @@ public class TweetParser {
 		String[] data = str.split(" ");
 		String[] lottery = tw.substring(str.length()+1).split(" ");
 
-		int number = Integer.parseInt(data[0]);
-		int position = data.length > 2 ? Integer.parseInt(data[1]) : 1;
-		float amount = data.length > 2 ? Float.parseFloat(data[2]) : Float.parseFloat(data[1]);
+		String number = "xxx"+data[0];
+		number = number.substring(number.length()-4, number.length());
+		Integer position = data.length > 2 ? Integer.parseInt(data[1]) : 1;
+		Float amount = data.length > 2 ? Float.parseFloat(data[2]) : Float.parseFloat(data[1]);
+		DateTime date = lottery.length>2?BirjanUtils.getDate(lottery[2]):new DateTime();
 
 		Collection<String> lotteries = select(lotteryNames, lottery[0]);
 		Collection<String> variants = lottery.length > 1 ? select(variantNames, lottery[1]) : null;
 
-		TweetBet bet = new TweetBet(number, position, amount, lotteries, variants);
+		TwitterBet bet = new TwitterBet(number, position, amount, date, lotteries, variants);
 
 		return bet;
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<String> select(final Collection<String> collection, final String string) {
+	private static Collection<String> select(final Collection<String> collection, final String string) {
 		if (string.contains("T")) {
 			return collection;
 		}
