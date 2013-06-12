@@ -1,8 +1,15 @@
 package com.mpx.lotery;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,12 +17,14 @@ import java.util.Random;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.common.Rule;
-import com.mpx.birjan.tweeter.TwitterParser;
 
 public class TimeTest {
 
@@ -302,5 +311,38 @@ public class TimeTest {
 		
 		
 	}
-
+	
+	/**
+	 * @throws UnsupportedEncodingException
+	 * @throws IOException
+	 */
+	@Test
+	public void test1() throws UnsupportedEncodingException, IOException {
+		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
+		System.setProperty("http.proxyPort", "8080");
+		final URL url = new URL("http://www.vivitusuerte.com/datospizarra_loteria.php");
+		final URLConnection urlConnection = url.openConnection();
+		urlConnection.setDoOutput(true);
+		urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		urlConnection.connect();
+		final OutputStream outputStream = urlConnection.getOutputStream();
+		outputStream.write(("fecha=2013/006/11&loteria=25").getBytes("UTF-8"));
+		outputStream.flush();
+		final InputStream in = urlConnection.getInputStream();
+//		String encoding = urlConnection.getContentEncoding();
+//		encoding = encoding == null ? "UTF-8" : encoding;
+//		String body = IOUtils.toString(in, encoding);
+		Document doc = Jsoup.parse(in, urlConnection.getContentEncoding(), "http://www.vivitusuerte.com");
+		Elements newsHeadlines = doc.select("html body table tbody tr:eq(1) td table tbody tr td strong div");
+		Elements line1 = doc.select("html body table tbody tr:eq(1) td table tbody tr:eq(1) td:eq(1) div font");
+		Elements line2 = doc.select("html body table tbody tr:eq(1) td table tbody tr:eq(1) td:eq(3) div");
+		Elements line3 = doc.select("html body table tbody tr:eq(1) td table tbody tr:eq(2) td:eq(1) div font");
+		Elements line4 = doc.select(":matchesOwn(\\d{4})");
+		for (Element element : line4) {
+			System.out.println(element.childNode(0).outerHtml().replaceAll("\\s",""));
+		}
+//		System.out.println(body);
+		System.out.println();
+	}
+	
 }
