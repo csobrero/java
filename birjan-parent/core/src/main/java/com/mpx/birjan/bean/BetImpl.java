@@ -12,11 +12,11 @@ import com.mpx.birjan.common.Lottery;
 @AutoProperty
 public class BetImpl implements Bet {
 
-	private String number;
-	private Integer position;
-	private Float amount;
-	private Set<Lottery> lotteries;
-	private DateTime date;
+	protected String number;
+	protected Integer position;
+	protected Float amount;
+	protected Set<Lottery> lotteries;
+	protected DateTime date;
 
 	public BetImpl(String number, Integer position, Float amount, DateTime date) {
 		super();

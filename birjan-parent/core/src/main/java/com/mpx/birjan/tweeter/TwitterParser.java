@@ -1,6 +1,5 @@
 package com.mpx.birjan.tweeter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -12,11 +11,10 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.TwitterBet;
-import com.mpx.birjan.common.Lottery;
 
 public final class TwitterParser {
 
-	public static String tweetPattern = "\\d{1,4}( \\d{1,2})? \\d([\\.,]\\d)? ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?";
+	public static String tweetBetPattern = "\\d{1,4}( \\d{1,2})? \\d([\\.,]\\d)? ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?";
 
 	public static final List<String> lotteryNames = Arrays.asList("NACIONAL", "PROVINCIA");
 	public static final List<String> variantNames = Arrays.asList("PRIMERA", "MATUTINA", "VESPERTINA", "NOCTURNA");
@@ -25,7 +23,7 @@ public final class TwitterParser {
 
 		String tw=tweet.replace(",", ".").replaceAll(" +", " ").toUpperCase();
 		
-		Preconditions.checkArgument(tw.matches(tweetPattern), "TWEET INVALIDO");
+		Preconditions.checkArgument(tw.matches(tweetBetPattern), "TWEET INVALIDO");
 
 		String str = tw.split(" ([NP]{1,2}|T)")[0];
 		String[] data = str.split(" ");

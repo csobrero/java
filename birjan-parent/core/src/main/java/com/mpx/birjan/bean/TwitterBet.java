@@ -5,6 +5,9 @@ import java.util.Collection;
 import org.joda.time.DateTime;
 import org.pojomatic.annotations.AutoProperty;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+
 @AutoProperty
 public final class TwitterBet extends BetImpl {
 
@@ -16,6 +19,11 @@ public final class TwitterBet extends BetImpl {
 		super(number, position, amount, date);
 		this.lotteryNames = lotteryNames;
 		this.variantNames = variantNames;
+	}
+	
+	public String asText(){
+		return number + (position!=null?position:"") + amount + 
+				lotteryNames.toArray().toString() + variantNames.toArray().toString();
 	}
 
 	public Collection<String> getLotteryNames() {

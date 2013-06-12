@@ -14,7 +14,7 @@ public class TweetParserTest {
 
 		String tw = "22 1 1.5 N";
 
-		boolean b = tw.matches(TwitterParser.tweetPattern);	
+		boolean b = tw.matches(TwitterParser.tweetBetPattern);	
 		
 		assertTrue(b);
 	}
@@ -29,7 +29,7 @@ public class TweetParserTest {
 		boolean b = true;
 		int i = 0;
 		for (; b && i < tws.length; i++) {
-			b = tws[i].matches(TwitterParser.tweetPattern);
+			b = tws[i].matches(TwitterParser.tweetBetPattern);
 		}
 		assertTrue("fail ["+(i-1)+"]: " + tws[i-1], b);
 	}

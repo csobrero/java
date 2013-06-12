@@ -3,6 +3,8 @@ package com.mpx.birjan.core;
 import javax.annotation.Resource;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,8 @@ import com.mpx.birjan.service.dao.GenericJpaDAO;
 
 @Controller
 public class BirjanManager {
+	
+	final Logger logger = LoggerFactory.getLogger(BirjanManager.class);
 	
 	@Autowired
 	private TransactionalManager txManager;
@@ -41,14 +45,15 @@ public class BirjanManager {
 		Wager wager = new Wager(amount * lotteries.length, user);
 
 		for (Lottery lottery : lotteries) {
-
 			Game game = new Game(lottery, date.toDate(), number, position, amount, wager);
 			gameDao.create(game);
 		}
 
 		txManager.openBalance();
-
-		return wager.getHash();
+		
+		String hash = wager.getHash();
+		logger.debug(hash);
+		return hash;
 	}
 
 	@Resource(name = "genericJpaDAO")

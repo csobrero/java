@@ -22,16 +22,16 @@ public class BirjanServer {
 	private ThreadPoolTaskExecutor taskExecutor;
 
 	@Autowired
-	private ObjectFactory<TwitterHandler> twitterHandlerFactory;
+	private ObjectFactory<TwitterMessageHandler> twitterHandlerFactory;
 
 	@PostConstruct
-	public void start() throws IllegalStateException, TwitterException {
+	public void start() throws TwitterException {
 		final long id = twitter.getId();
 		twitter.addListener(new UserStreamAdapter() {
 			@Override
 			public void onDirectMessage(DirectMessage directMessage) {
 				if (id != directMessage.getSenderId()) {
-					TwitterHandler twitterHandler = twitterHandlerFactory.getObject();
+					TwitterMessageHandler twitterHandler = twitterHandlerFactory.getObject();
 					twitterHandler.setDirectMessage(directMessage);
 					taskExecutor.execute(twitterHandler);
 				}
