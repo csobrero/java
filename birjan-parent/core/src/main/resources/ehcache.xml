@@ -6,5 +6,8 @@
 
 	<defaultCache maxElementsInMemory="100" eternal="false"
 		overflowToDisk="false" timeToIdleSeconds="3600" timeToLiveSeconds="1800" />
+		
+		<cache name="lotteries" maxElementsInMemory="10" overflowToDisk="false"
+		 timeToLiveSeconds="3600"/>
 
 </ehcache>

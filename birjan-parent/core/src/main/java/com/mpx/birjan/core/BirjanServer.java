@@ -4,7 +4,6 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import twitter4j.DirectMessage;
@@ -19,9 +18,6 @@ public class BirjanServer {
 	private TwitterStream twitter;
 
 	@Autowired
-	private ThreadPoolTaskExecutor taskExecutor;
-
-	@Autowired
 	private ObjectFactory<TwitterMessageHandler> twitterHandlerFactory;
 
 	@PostConstruct
@@ -31,9 +27,8 @@ public class BirjanServer {
 			@Override
 			public void onDirectMessage(DirectMessage directMessage) {
 				if (id != directMessage.getSenderId()) {
-					TwitterMessageHandler twitterHandler = twitterHandlerFactory.getObject();
-					twitterHandler.setDirectMessage(directMessage);
-					taskExecutor.execute(twitterHandler);
+					TwitterMessageHandler twitterMessageHandler = twitterHandlerFactory.getObject();
+					twitterMessageHandler.handle(directMessage);
 				}
 			}
 		});

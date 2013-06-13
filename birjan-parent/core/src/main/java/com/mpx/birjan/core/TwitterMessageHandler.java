@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,11 +19,9 @@ import twitter4j.TwitterFactory;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TwitterMessageHandler implements Runnable {
+public class TwitterMessageHandler {
 
 	final Logger logger = LoggerFactory.getLogger(TwitterMessageHandler.class);
-
-	private DirectMessage directMessage;
 
 	@Autowired
 	private TwitterManager twitterManager;
@@ -33,8 +32,8 @@ public class TwitterMessageHandler implements Runnable {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
-	@Override
-	public void run() {
+	@Async
+	public void handle(DirectMessage directMessage) {
 
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(directMessage.getSenderId()
@@ -42,23 +41,22 @@ public class TwitterMessageHandler implements Runnable {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		String message = twitterManager.process(directMessage);
-		logger.debug(directMessage.getSenderId() + " : " + message);			
+		logger.debug(directMessage.getSenderId() + " : " + message);
 
 		Twitter twitterSender = twitterFactory.getInstance();
+		send(twitterSender, directMessage.getSenderId(), message);
+
+	}
+
+	private void send(Twitter twitterSender, long senderId, String message) {
 		try {
-			twitterSender.sendDirectMessage(directMessage.getSenderId(), message);
+			twitterSender.sendDirectMessage(senderId, message);
 		} catch (TwitterException e) {
+			if (e.getErrorCode() == 151)
+				send(twitterSender, senderId, message + ".");
 			logger.error(e.getMessage());
 		}
 
-	}
-
-	public DirectMessage getDirectMessage() {
-		return directMessage;
-	}
-
-	public void setDirectMessage(DirectMessage directMessage) {
-		this.directMessage = directMessage;
 	}
 
 }

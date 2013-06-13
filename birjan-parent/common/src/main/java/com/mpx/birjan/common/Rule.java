@@ -11,6 +11,7 @@ public abstract class Rule {
 
 	public abstract DateTime getFrom(DateTime date);
 
+	public abstract DateTime getTo();
 	public abstract DateTime getTo(DateTime date);
 	public static final Rule NAP = new Nacional(VARIANT.PRIMERA);
 	public static final Rule NAM = new Nacional(VARIANT.MATUTINA);
@@ -85,6 +86,11 @@ public abstract class Rule {
 			return new DateTime(date.year().get(), date.monthOfYear().get(),
 					date.dayOfMonth().get(), variant.hourFrom,
 					variant.minutesFrom, 0, 0);
+		}
+		
+		@Override
+		public DateTime getTo() {
+			return getTo(new DateTime());
 		}
 
 		@Override

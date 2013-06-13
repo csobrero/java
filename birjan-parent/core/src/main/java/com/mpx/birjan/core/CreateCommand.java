@@ -3,8 +3,6 @@ package com.mpx.birjan.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Repository;
 
 import twitter4j.DirectMessage;
 
@@ -21,7 +20,7 @@ import com.mpx.birjan.bean.TwitterBet;
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.tweeter.TwitterParser;
 
-@Resource
+@Repository
 @Secured("ROLE_USER")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CreateCommand implements Command<String> {
