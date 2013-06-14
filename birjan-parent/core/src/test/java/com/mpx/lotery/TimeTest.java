@@ -10,11 +10,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.jsoup.Jsoup;
@@ -318,28 +322,53 @@ public class TimeTest {
 	 */
 	@Test
 	public void test1() throws UnsupportedEncodingException, IOException {
-		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
-		System.setProperty("http.proxyPort", "8080");
+//		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
+//		System.setProperty("http.proxyPort", "8080");
+		
+		DateTime dt = new DateTime();
+		
 		final URL url = new URL("http://www.vivitusuerte.com/datospizarra_loteria.php");
 		final URLConnection urlConnection = url.openConnection();
 		urlConnection.setDoOutput(true);
 		urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 		urlConnection.connect();
 		final OutputStream outputStream = urlConnection.getOutputStream();
-		outputStream.write(("fecha=2013/006/11&loteria=25").getBytes("UTF-8"));
+		outputStream.write(("fecha="+dt.getYear()+"/"+dt.getMonthOfYear()+"/"+dt.getDayOfMonth()+"&loteria=25").getBytes("UTF-8"));
 		outputStream.flush();
 		final InputStream in = urlConnection.getInputStream();
 //		String encoding = urlConnection.getContentEncoding();
 //		encoding = encoding == null ? "UTF-8" : encoding;
 //		String body = IOUtils.toString(in, encoding);
 		Document doc = Jsoup.parse(in, urlConnection.getContentEncoding(), "http://www.vivitusuerte.com");
-		Elements newsHeadlines = doc.select("html body table tbody tr:eq(1) td table tbody tr td strong div");
-		Elements line1 = doc.select("html body table tbody tr:eq(1) td table tbody tr:eq(1) td:eq(1) div font");
-		Elements line2 = doc.select("html body table tbody tr:eq(1) td table tbody tr:eq(1) td:eq(3) div");
-		Elements line3 = doc.select("html body table tbody tr:eq(1) td table tbody tr:eq(2) td:eq(1) div font");
-		Elements line4 = doc.select(":matchesOwn(\\d{4})");
-		for (Element element : line4) {
-			System.out.println(element.childNode(0).outerHtml().replaceAll("\\s",""));
+//		Elements newsHeadlines = doc.select("html body table tbody tr:eq(1) td table tbody tr td strong div");
+//		Elements line1 = doc.select("html body table tbody tr:eq(1) td table tbody tr:eq(1) td:eq(1) div font");
+//		Elements line2 = doc.select("html body table tbody tr:eq(1) td table tbody tr:eq(1) td:eq(3) div");
+//		Elements line3 = doc.select("html body table tbody tr:eq(1) td table tbody tr:eq(2) td:eq(1) div font");
+		Elements elements = doc.select(":matchesOwn(\\d{4})");
+		
+		String[] list = new String[elements.size()];
+		for (int i = 0; i < elements.size(); i++) {
+			String s = elements.get(i).childNode(0).outerHtml().replaceAll("\\s","");
+			if(i%2==0){
+				
+			} else {
+				
+			}
+			
+			
+		}
+		
+		@SuppressWarnings("unchecked")
+		
+		
+		Collection<String> collect = CollectionUtils.collect(elements, new Transformer() {
+			public Object transform(Object input) {
+				return ((Element) input).childNode(0).outerHtml().replaceAll("\\s","");
+			}
+		});
+//		Collections.swap(collect, 1, 2);
+		for (String string : collect) {
+			System.out.println(string);
 		}
 //		System.out.println(body);
 		System.out.println();

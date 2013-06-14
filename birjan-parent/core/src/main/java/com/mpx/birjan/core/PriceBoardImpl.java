@@ -18,10 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Service;
 
 import com.mpx.birjan.common.Lottery;
 
-
+@Service
 public class PriceBoardImpl implements PriceBoardWebService {
 
 	final Logger logger = LoggerFactory.getLogger(PriceBoardImpl.class);
@@ -38,8 +39,8 @@ public class PriceBoardImpl implements PriceBoardWebService {
 	}
 
 	private String[] ajaxCall(Lottery lottery, DateTime date) {
-		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
-		System.setProperty("http.proxyPort", "8080");
+//		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
+//		System.setProperty("http.proxyPort", "8080");
 		try {
 			final URL url = new URL("http://www.vivitusuerte.com/datospizarra_loteria.php");
 			final URLConnection urlConnection = url.openConnection();
@@ -58,9 +59,9 @@ public class PriceBoardImpl implements PriceBoardWebService {
 					return ((Element) input).childNode(0).outerHtml().replaceAll("\\s","");
 				}
 			});
-			for (Element element : elements) {
-				System.out.println(element.childNode(0).outerHtml().replaceAll("\\s",""));
-			}
+//			for (Element element : elements) {
+//				System.out.println(element.childNode(0).outerHtml().replaceAll("\\s",""));
+//			}
 			return collect.toArray(new String[collect.size()]);
 		} catch (Exception e) {
 			logger.error(e.getMessage());

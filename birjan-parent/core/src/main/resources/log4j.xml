@@ -23,7 +23,7 @@
 	<category name="org.hibernate.tool.hbm2ddl" additivity="false">
 		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="fileAppender" />
+		<!--appender-ref ref="fileAppender" /-->
 	</category>
 	
 	<!--category name="org.apache.cxf.interceptor.Fault" additivity="false">
@@ -35,14 +35,14 @@
 	<category name="org.hibernate" additivity="false">
 		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="fileAppender" />
+		<!--appender-ref ref="fileAppender" /-->
 	</category>
 
 	<!-- DEFAULT LOGGING LEVEL -->
 	<root>
-		<level value="WARN" />
+		<level value="INFO" />
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="fileAppender" />
+		<!--appender-ref ref="fileAppender" /-->
 	</root>
 
 </log4j:configuration>
