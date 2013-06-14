@@ -27,7 +27,7 @@ public class PrizeManager {
 
 	private DateTime now;
 	
-	@Scheduled(fixedRate=600000) //10 mins.
+	@Scheduled(fixedRate=15000) //10 mins.
 	void updatePrizes(){
 		
 		for (Entry<Lottery, Future<String[]>> result : results.entrySet()) {

@@ -23,12 +23,16 @@ public enum Lottery {
 		this.rule = rule;
 	}
 	
-	public String getName(){
+	public String getLotteryName(){
 		return this.name().split("_")[0];
 	}
 	
 	public String getVariantName(){
 		return this.name().split("_")[1];
+	}
+	
+	public static String[] getLotteryNames(){
+		return new String[]{"NACIONAL", "PROVINCIA"};
 	}
 
 	private static final float DEFAULT_WIN_RATIO = 70;

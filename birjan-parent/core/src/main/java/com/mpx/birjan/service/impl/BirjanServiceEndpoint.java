@@ -170,7 +170,7 @@ public class BirjanServiceEndpoint implements BirjanWebService {
 		
 		for (Lottery[] lotteries : Lottery.ALL) {
 			availables = BirjanUtils.retrieveVariantAvailability(lotteries, day);
-			availables.add(0, lotteries[0].getName());
+			availables.add(0, lotteries[0].getLotteryName());
 			list.add(availables);
 		}
 		

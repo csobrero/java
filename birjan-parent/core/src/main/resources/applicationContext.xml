@@ -99,11 +99,11 @@
      	<property name="targetBeanName" value="twitterHandler"/>
    </bean>
 	
-	<bean id="twitterFactory" class="twitter4j.TwitterFactory">
+	<!--bean id="twitterFactory" class="twitter4j.TwitterFactory">
 		<constructor-arg type="twitter4j.conf.Configuration" ref="configuration" />
 	</bean>
 	
-	<bean id="twitterStream" class="twitter4j.TwitterStream" factory-bean="twitterStreamFactory" factory-method="getInstance" />
+	<bean id="twitterStream" class="twitter4j.TwitterStream" factory-bean="twitterStreamFactory" factory-method="getInstance" /-->
 	
 	<bean id="twitterStreamFactory" class="twitter4j.TwitterStreamFactory">
 		<constructor-arg type="twitter4j.conf.Configuration" ref="configuration"/>

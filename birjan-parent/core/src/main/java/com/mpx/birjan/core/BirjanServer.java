@@ -14,7 +14,7 @@ import twitter4j.UserStreamAdapter;
 @Service
 public class BirjanServer {
 
-	@Autowired
+	@Autowired(required=false)
 	private TwitterStream twitter;
 
 	@Autowired
@@ -22,17 +22,19 @@ public class BirjanServer {
 
 	@PostConstruct
 	public void start() throws TwitterException {
-		final long id = twitter.getId();
-		twitter.addListener(new UserStreamAdapter() {
-			@Override
-			public void onDirectMessage(DirectMessage directMessage) {
-				if (id != directMessage.getSenderId()) {
-					TwitterMessageHandler twitterMessageHandler = twitterHandlerFactory.getObject();
-					twitterMessageHandler.handle(directMessage);
+		if(twitter!=null){
+			final long id = twitter.getId();
+			twitter.addListener(new UserStreamAdapter() {
+				@Override
+				public void onDirectMessage(DirectMessage directMessage) {
+					if (id != directMessage.getSenderId()) {
+						TwitterMessageHandler twitterMessageHandler = twitterHandlerFactory.getObject();
+						twitterMessageHandler.handle(directMessage);
+					}
 				}
-			}
-		});
-		twitter.user();
+			});
+			twitter.user();
+		}
 	}
 
 }

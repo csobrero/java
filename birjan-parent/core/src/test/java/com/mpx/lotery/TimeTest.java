@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -322,10 +323,11 @@ public class TimeTest {
 	 */
 	@Test
 	public void test1() throws UnsupportedEncodingException, IOException {
-//		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
-//		System.setProperty("http.proxyPort", "8080");
+		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
+		System.setProperty("http.proxyPort", "8080");
 		
 		DateTime dt = new DateTime();
+		dt = dt.minusDays(1);
 		
 		final URL url = new URL("http://www.vivitusuerte.com/datospizarra_loteria.php");
 		final URLConnection urlConnection = url.openConnection();
@@ -347,31 +349,13 @@ public class TimeTest {
 		Elements elements = doc.select(":matchesOwn(\\d{4})");
 		
 		String[] list = new String[elements.size()];
-		for (int i = 0; i < elements.size(); i++) {
-			String s = elements.get(i).childNode(0).outerHtml().replaceAll("\\s","");
-			if(i%2==0){
-				
-			} else {
-				
-			}
-			
-			
+		for (int i = 0; i < list.length; i++) {
+			list[i + ((i % 2 == 0) ? 0 : 9) - ((i - (i/20)*20)/ 2)] = elements.get(i).childNode(0)
+					.outerHtml().replaceAll("\\s", "");
 		}
-		
-		@SuppressWarnings("unchecked")
-		
-		
-		Collection<String> collect = CollectionUtils.collect(elements, new Transformer() {
-			public Object transform(Object input) {
-				return ((Element) input).childNode(0).outerHtml().replaceAll("\\s","");
-			}
-		});
-//		Collections.swap(collect, 1, 2);
-		for (String string : collect) {
+		for (String string : list) {
 			System.out.println(string);
 		}
-//		System.out.println(body);
-		System.out.println();
 	}
 	
 }
