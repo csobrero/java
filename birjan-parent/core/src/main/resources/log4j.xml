@@ -37,10 +37,16 @@
 		<appender-ref ref="STDOUT" />
 		<!--appender-ref ref="fileAppender" /-->
 	</category>
+	
+	<category name="com.mpx.birjan" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="STDOUT" />
+		<!--appender-ref ref="fileAppender" /-->
+	</category>
 
 	<!-- DEFAULT LOGGING LEVEL -->
 	<root>
-		<level value="INFO" />
+		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
 		<!--appender-ref ref="fileAppender" /-->
 	</root>

@@ -25,9 +25,9 @@ import com.mpx.birjan.common.Lottery;
 @Service
 public class PriceBoardImpl implements PriceBoardWebService {
 
-	final Logger logger = LoggerFactory.getLogger(PriceBoardImpl.class);
+	private final Logger logger = LoggerFactory.getLogger(PriceBoardImpl.class);
 	
-	static Map<String, Integer> lookup;
+	private static Map<String, Integer> lookup;
 	
 	static{
 		lookup = new HashMap<String, Integer>();
@@ -37,11 +37,6 @@ public class PriceBoardImpl implements PriceBoardWebService {
 		lookup.put("MATUTINA", 40);
 		lookup.put("VESPERTINA", 60);
 		lookup.put("NOCTURNA", 80);
-	}
-	
-	@Override
-	public Future<String[]> retrieve(Lottery lottery) {
-		return retrieve(lottery, new DateTime());
 	}
 
 	@Async
@@ -66,18 +61,21 @@ public class PriceBoardImpl implements PriceBoardWebService {
 			final OutputStream outputStream = connection.getOutputStream();
 			outputStream.write(("fecha=" + date.getYear() + "/" + date.getMonthOfYear() + "/"
 					+ date.getDayOfMonth() + "&loteria=" + lotteryNumber).getBytes("UTF-8"));
+//			logger.info("fecha=" + date.getYear() + "/" + date.getMonthOfYear() + "/"
+//					+ date.getDayOfMonth() + "&loteria=" + lotteryNumber);
+			logger.info("Thread: " + Thread.currentThread().getName() + " | Id: " + Thread.currentThread().getId());
 			outputStream.flush();
 			final InputStream in = connection.getInputStream();
 			final Document doc = Jsoup.parse(in, connection.getContentEncoding(), "http://www.vivitusuerte.com");
 			final Elements matches = doc.select(":matchesOwn(\\d{4})");
-			if(matches!=null&&matches.size()<=idx){
+			if(matches!=null&&matches.size()>=idx){
 				List<Element> elements = matches.subList(idx-20, idx);
 				list = new String[elements.size()];
 				for (int i = 0; i < list.length; i++) {
 					list[i + ((i % 2 == 0) ? 0 : 9) - ((i - (i/20)*20)/ 2)] = elements.get(i).childNode(0)
 							.outerHtml().replaceAll("\\s", "");
 				}
-//				Thread.currentThread().sleep(600000);
+				Thread.currentThread().sleep(600000);
 			}
 		} catch (Exception e) {
 			logger.error("Exception: " + e.getClass().getName() + " || Message:  " + e.getMessage());

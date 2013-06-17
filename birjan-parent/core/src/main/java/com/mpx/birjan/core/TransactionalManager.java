@@ -116,7 +116,7 @@ public class TransactionalManager {
 
 		if (draw != null) {
 			String[] winnerNumbers = draw.getNumbers();
-			String[] borratina = new String[20];
+			String[] borratina = new String[100];
 			for (int i = 0; i < winnerNumbers.length; i++) {
 				Preconditions.checkArgument(Pattern.matches("\\d{4}", winnerNumbers[i]), "Can not validate Draw.");
 				if(i<20){
