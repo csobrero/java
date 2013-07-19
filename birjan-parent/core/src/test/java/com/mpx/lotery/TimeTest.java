@@ -317,6 +317,17 @@ public class TimeTest {
 		
 	}
 	
+	@Test
+	public void test12(){
+//		for (int i = 0; i < 3600; i++) {
+//			String hex = "00"+Integer.toHexString(i);
+//			System.out.println(hex.substring(hex.length()-3, hex.length()-1) + " :"+i);
+//		}
+		float f = 2.0f;
+		
+		System.out.println(String.format("%.2f",f));
+	}
+	
 	/**
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException

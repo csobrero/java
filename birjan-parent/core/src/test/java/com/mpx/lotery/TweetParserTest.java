@@ -44,9 +44,20 @@ public class TweetParserTest {
 		TwitterParser twParser = new TwitterParser();
 		
 		for (String tw : tws) {
-			TwitterBet bet = twParser.unmarshal(tw);
+			TwitterBet bet = twParser.unmarshalBet(tw);
 			System.out.println(bet);
 		}
+		
+	}
+	
+	@Test
+	public void test4() {
+
+		String tw = "BORRA GH01E.";
+
+		boolean b = tw.matches(TwitterParser.tweetDeletePattern);	
+		
+		assertTrue(b);
 		
 	}
 	

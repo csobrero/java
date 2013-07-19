@@ -1,6 +1,10 @@
 package com.mpx.birjan.service.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.criteria.Path;
+
 
 public class Filter<T> {
 
@@ -11,6 +15,8 @@ public class Filter<T> {
 	private boolean equal;
 	
 	private boolean not;
+	
+	private List<String> fetch;
 
 	public Filter(String fieldName, T term) {
 		this(fieldName, term, true, false);
@@ -34,6 +40,12 @@ public class Filter<T> {
 		}
 		return entity;
 	}
+	
+	public void addFetch(String fieldName){
+		if(fetch==null)
+			this.fetch = new ArrayList<String>();
+		fetch.add(fieldName);
+	}
 
 	public final String getFieldName() {
 		return fieldName;
@@ -49,6 +61,10 @@ public class Filter<T> {
 
 	public final boolean isNot() {
 		return not;
+	}
+
+	public List<String> getFetch() {
+		return fetch;
 	}
 
 }

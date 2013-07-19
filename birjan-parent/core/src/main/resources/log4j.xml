@@ -7,10 +7,10 @@
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="|%d{ISO8601}|%p|%C{1}|%X{sessionID}|%m|%n" />
 		</layout>
-		<filter class="org.apache.log4j.varia.LevelRangeFilter">
-			<param name="LevelMin" value="INFO" />
+		<!--filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="DEBUG" />
 			<param name="LevelMax" value="FATAL" />
-		</filter>
+		</filter-->
 	</appender>
 	<appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
       <param name="append" value="false"/>
@@ -39,7 +39,7 @@
 	</category>
 	
 	<category name="com.mpx.birjan" additivity="false">
-		<level value="INFO" />
+		<level value="DEBUG" />
 		<appender-ref ref="STDOUT" />
 		<!--appender-ref ref="fileAppender" /-->
 	</category>

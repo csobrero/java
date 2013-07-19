@@ -44,7 +44,7 @@ public class GenericJpaDAO<T extends Serializable> extends AbstractJpaDAO<T>
 
 		List<Predicate> list = new ArrayList<Predicate>();
 		for (Filter<?> filter : filters) {
-			if(filter!=null && filter.getTerm()!=null)
+			if(filter!=null && filter.getTerm()!=null){
 				if (filter.isEqual()){
 					Path<?> path = filter.getPath(entity);
 					Object term = filter.getTerm();
@@ -55,6 +55,12 @@ public class GenericJpaDAO<T extends Serializable> extends AbstractJpaDAO<T>
 					String term = "%" + ((String) filter.getTerm()).trim() + "%";
 					list.add(filter.isNot()?cb.notLike(path,term):cb.like(path,term));
 				}
+				if(filter.getFetch()!=null){
+					for (String fetch : filter.getFetch()) {
+						entity.fetch(fetch);						
+					}
+				}
+			}
 		}
 
 		cq.where(cb.and(list.toArray(new Predicate[list.size()])));

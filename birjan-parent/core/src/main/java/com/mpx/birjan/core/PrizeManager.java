@@ -32,7 +32,7 @@ public class PrizeManager {
 
 	private DateTime now;
 	
-	@Scheduled(fixedRate=15000) //10 mins.
+//	@Scheduled(fixedRate=15000) //10 mins.
 	public void updatePrizes(){
 		
 		SecurityContextHolder.getContext().setAuthentication(

@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.pojomatic.annotations.AutoProperty;
@@ -49,6 +50,9 @@ public class Game extends AbstractEntity implements Serializable {
 	private Float amount;
 
 	private Float prize;
+	
+	@Transient
+	private boolean recentlyPaid = false;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Wager wager;
@@ -80,6 +84,8 @@ public class Game extends AbstractEntity implements Serializable {
 	}
 
 	public void setStatus(Status status) {
+		if(status.equals(Status.PAID))
+			this.recentlyPaid = true;
 		this.status = status;
 	}
 
@@ -114,6 +120,10 @@ public class Game extends AbstractEntity implements Serializable {
 
 	public Wager getWager() {
 		return wager;
+	}
+
+	public boolean isRecentlyPaid() {
+		return recentlyPaid;
 	}
 
 	public Object[][] getData() {

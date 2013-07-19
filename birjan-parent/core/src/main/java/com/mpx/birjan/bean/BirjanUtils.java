@@ -1,5 +1,6 @@
 package com.mpx.birjan.bean;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,8 @@ import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Rule;
 
 public class BirjanUtils {
+	
+	public static final DecimalFormat money = new DecimalFormat("#.##");
 
 	public static String decode(long l) {
 		return null;
@@ -20,18 +23,20 @@ public class BirjanUtils {
 		DateTime dt = new DateTime(created);
 
 		int[] n = new int[3];
-		n[0] = dt.getMonthOfYear();
-		n[1] = dt.getDayOfMonth();
-		n[2] = dt.getHourOfDay();
-		String hex = Integer.toHexString(dt.getSecondOfMinute() * dt.getMinuteOfHour()).toUpperCase();
+//		n[0] = dt.getMonthOfYear();
+		n[0] = dt.getDayOfMonth();
+		n[1] = dt.getHourOfDay();
+		String hex = "00"+Integer.toHexString(dt.getSecondOfMinute() * dt.getMinuteOfHour()).toUpperCase();
 
-		String hash = userName.substring(0, 2).toUpperCase();
+		String hash = "";//userName.substring(0, 2).toUpperCase();
 		for (int i : n) {
 			hash += (char) ((i < 10) ? i + 48 : i + 55);
 		}
 
-		String millis = String.valueOf(dt.getMillis());
-		return hash + hex + millis.substring(millis.length() - 3, millis.length() - 1);
+//		String millis = String.valueOf(dt.getMillis());
+//		return hash + hex + millis.substring(millis.length() - 3, millis.length() - 1);
+		
+		return hash + hex.substring(hex.length()-3, hex.length()-1);
 	}
 
 	public static DateTime getDate(String day) {

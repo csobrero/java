@@ -1,13 +1,13 @@
 package com.mpx.birjan.core;
 
-import java.util.Date;
-
 import javax.annotation.PostConstruct;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import twitter4j.DirectMessage;
@@ -17,8 +17,12 @@ import twitter4j.UserStreamAdapter;
 
 @Service
 public class BirjanServer {
+	
+	private static final String CONFIG_PATH = "classpath*:applicationContext.xml";
 
-	@Autowired(required=false)
+	final Logger logger = LoggerFactory.getLogger(BirjanServer.class);
+	
+	@Autowired
 	private TwitterStream twitter;
 
 	@Autowired
@@ -26,8 +30,9 @@ public class BirjanServer {
 
 	@PostConstruct
 	public void start() throws TwitterException {
-		Date date = new DateTime(2013,6,14,22,0,0,0).toDate();
-		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
+//		Date date = new DateTime(2013,6,14,22,0,0,0).toDate();
+//		Date date = new DateTime().toDate();
+//		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
 		if(twitter!=null){
 			final long id = twitter.getId();
 			twitter.addListener(new UserStreamAdapter() {
@@ -41,6 +46,11 @@ public class BirjanServer {
 			});
 			twitter.user();
 		}
+		logger.info("Birjan Server Started.");
+	}
+	
+	public static void main(String[] args) {
+		final ApplicationContext context = new ClassPathXmlApplicationContext(CONFIG_PATH);
 	}
 
 }

@@ -1,5 +1,9 @@
 package com.mpx.birjan.core;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.Resource;
 
 import org.joda.time.DateTime;
@@ -9,13 +13,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.mpx.birjan.bean.Authorities;
 import com.mpx.birjan.bean.Balance;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
+import com.mpx.birjan.bean.TwitterBet;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.bean.Wager;
 import com.mpx.birjan.common.Lottery;
+import com.mpx.birjan.common.Status;
+import com.mpx.birjan.service.dao.Filter;
 import com.mpx.birjan.service.dao.GenericJpaDAO;
 
 @Controller
@@ -39,7 +48,7 @@ public class BirjanManager {
 	private GenericJpaDAO<Balance> balanceDao;
 
 	@Transactional(rollbackFor = Exception.class)
-	public String createGames(DateTime date, String number, Integer position, Float amount, Lottery... lotteries) {
+	public String createTicket(DateTime date, String number, Integer position, Float amount, Lottery... lotteries) {
 		
 		User user = txManager.identifyMe();
 		Wager wager = new Wager(amount * lotteries.length, user);
@@ -49,11 +58,57 @@ public class BirjanManager {
 			gameDao.create(game);
 		}
 
-		txManager.openBalance();
+//		txManager.openBalance();
 		
 		String hash = wager.getHash();
 		logger.debug(hash);
 		return hash;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteTicket(String hash) {
+		Filter<String> hashFilter = new Filter<String>("hash", hash);
+		Wager wager = wagerDao.findUniqueByFilter(hashFilter);
+		if (wager != null) {
+			for (Game game : wager.getGame()) {
+				if(game.is(Status.VALID))
+					game.setStatus(Status.INVALID);
+			}
+		}
+	}
+	
+	@Transactional
+	public Collection<Game> showTicket(String hash) {
+		Filter<String> hashFilter = new Filter<String>("hash", hash);
+		hashFilter.addFetch("games");
+		Wager wager = wagerDao.findUniqueByFilter(hashFilter);
+		if (wager != null) {
+			return Collections2.filter(wager.getGame(), new Predicate<Game>() {
+				public boolean apply(Game game){
+					return !game.is(Status.INVALID);
+				}
+			});
+		}
+		return null;
+	}
+
+	@Transactional
+	public Collection<Game> payTicket(String hash) {
+		Filter<String> hashFilter = new Filter<String>("hash", hash);
+		hashFilter.addFetch("games");
+		Wager wager = wagerDao.findUniqueByFilter(hashFilter);
+		if (wager != null) {
+			Collection<Game> games = Collections2.filter(wager.getGame(), new Predicate<Game>() {
+				public boolean apply(Game game){
+					if(game.is(Status.WINNER))
+						game.setStatus(Status.PAID);
+					return game.is(Status.PAID);
+				}
+			});
+			wagerDao.update(wager);
+			return games;
+		}
+		return null;
 	}
 
 	@Resource(name = "genericJpaDAO")

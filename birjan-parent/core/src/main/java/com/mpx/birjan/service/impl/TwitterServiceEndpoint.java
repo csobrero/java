@@ -26,7 +26,7 @@ public class TwitterServiceEndpoint {
 	private BirjanManager manager;
 
 	public Bet validate(DirectMessage directMessage){
-		TwitterBet bet = TwitterParser.unmarshal(directMessage.getText());
+		TwitterBet bet = TwitterParser.unmarshalBet(directMessage.getText());
 		
 //		twitterBet.add(Lottery.valueOf(l+"_"+v));
 		DateTime date = bet.getDate();

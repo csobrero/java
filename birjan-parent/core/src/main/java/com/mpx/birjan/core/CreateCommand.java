@@ -1,15 +1,11 @@
 package com.mpx.birjan.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Repository;
 
 import twitter4j.DirectMessage;
@@ -21,8 +17,7 @@ import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.tweeter.TwitterParser;
 
 @Repository
-@Secured("ROLE_USER")
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CreateCommand implements Command<String> {
 
 	final Logger logger = LoggerFactory.getLogger(CreateCommand.class);
@@ -36,27 +31,37 @@ public class CreateCommand implements Command<String> {
 	public String execute() {
 		TwitterBet bet = validate(directMessage);
 
-		String hash = birjanManager.createGames(bet.getDate(), bet.getNumber(), bet.getPosition(), bet.getAmount(),
+		String hash = birjanManager.createTicket(bet.getDate(), bet.getNumber(), bet.getPosition(), bet.getAmount(),
 						bet.getLotteries().toArray(new Lottery[bet.getLotteries().size()]));
 
-		String message = hash + " : " + bet.asText() + " : " + bet.getDate().getDayOfMonth() + "/"
-				+ bet.getDate().getMonthOfYear();
+		String message = buildMessage(bet, hash);
 
 		return message;
 	}
 
+	private String buildMessage(TwitterBet bet, String hash) {
+		
+		String message = hash
+				+ " : $"
+				+ BirjanUtils.money.format(bet.getAmount()
+						* bet.getLotteries().size()) + " : " + bet.asText()
+				+ " : " + bet.getDate().getDayOfMonth() + "/"
+				+ bet.getDate().getMonthOfYear();
+
+		return message.toUpperCase();
+	}
+
 	private TwitterBet validate(DirectMessage directMessage) {
-		TwitterBet bet = TwitterParser.unmarshal(directMessage.getText());
+		TwitterBet bet = TwitterParser.unmarshalBet(directMessage.getText());
 
 		// twitterBet.add(Lottery.valueOf(l+"_"+v));
 		DateTime date = bet.getDate();
-		List<Lottery> lotteries = new ArrayList<Lottery>();
 		for (String lotteryName : bet.getLotteryNames()) {
 			for (String variantName : bet.getVariantNames()) {
 				Lottery lottery = Lottery.valueOf(lotteryName + "_" + variantName);
 				Preconditions.checkArgument(BirjanUtils.isValid(lottery, date, true),
 						"[" + lottery.name() + "]" + " HORARIO NO VALIDO");
-				lotteries.add(lottery);
+				bet.add(lottery);
 			}
 		}
 		logger.debug(bet.toString());
@@ -64,6 +69,7 @@ public class CreateCommand implements Command<String> {
 		return bet;
 	}
 
+	@Override
 	public void setDirectMessage(DirectMessage directMessage) {
 		this.directMessage = directMessage;
 	}

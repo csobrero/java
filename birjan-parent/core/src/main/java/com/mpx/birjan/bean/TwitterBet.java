@@ -5,8 +5,7 @@ import java.util.Collection;
 import org.joda.time.DateTime;
 import org.pojomatic.annotations.AutoProperty;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
+import com.google.common.base.Joiner;
 
 @AutoProperty
 public final class TwitterBet extends BetImpl {
@@ -22,8 +21,8 @@ public final class TwitterBet extends BetImpl {
 	}
 	
 	public String asText(){
-		return number + (position!=null?position:"") + amount + 
-				lotteryNames.toArray().toString() + variantNames.toArray().toString();
+		return number +" "+ (position!=null?position:"") +" $"+ BirjanUtils.money.format(amount) +" "+ 
+				Joiner.on(',').skipNulls().join(lotteryNames.toArray()) +" "+ Joiner.on(',').skipNulls().join(variantNames.toArray());
 	}
 
 	public Collection<String> getLotteryNames() {

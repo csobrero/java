@@ -26,7 +26,7 @@ public class TwitterMessageHandler {
 	@Autowired
 	private TwitterManager twitterManager;
 
-	@Autowired(required=false)
+	@Autowired
 	private TwitterFactory twitterFactory;
 
 	@Autowired

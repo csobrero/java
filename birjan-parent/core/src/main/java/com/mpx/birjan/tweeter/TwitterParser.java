@@ -14,12 +14,15 @@ import com.mpx.birjan.bean.TwitterBet;
 
 public final class TwitterParser {
 
-	public static String tweetBetPattern = "\\d{1,4}( \\d{1,2})? \\d([\\.,]\\d)? ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?";
+	public static String tweetBetPattern = "\\d{1,4}( \\d{1,2})? \\d([\\.,]\\d)? ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?\\.*";
+	public static String tweetDeletePattern = "BORRA [0-9|A-Z]{5}\\.*";
+	public static String tweetShowPattern = "VER [0-9|A-Z]{5}\\.*";
+	public static String tweetPayPattern = "PAGA [0-9|A-Z]{5}\\.*";
 
 	public static final List<String> lotteryNames = Arrays.asList("NACIONAL", "PROVINCIA");
 	public static final List<String> variantNames = Arrays.asList("PRIMERA", "MATUTINA", "VESPERTINA", "NOCTURNA");
 
-	public static TwitterBet unmarshal(String tweet) {
+	public static TwitterBet unmarshalBet(String tweet) {
 
 		String tw=tweet.replace(",", ".").replaceAll(" +", " ").toUpperCase();
 		
@@ -42,6 +45,12 @@ public final class TwitterParser {
 
 		return bet;
 	}
+	
+	public static String unmarshal(String tweet) {
+		return tweet.replace(".", "").split(" ")[1];
+	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	private static Collection<String> select(final Collection<String> collection, final String string) {

@@ -47,8 +47,8 @@ public class PriceBoardImpl implements PriceBoardWebService {
 	}
 
 	private String[] ajaxCall(Lottery lottery, DateTime date) {
-		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
-		System.setProperty("http.proxyPort", "8080");
+//		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
+//		System.setProperty("http.proxyPort", "8080");
 		final Integer lotteryNumber = lookup.get(lottery.getLotteryName());
 		final Integer idx = lookup.get(lottery.getVariantName());
 		String[] list = new String[]{};
@@ -75,7 +75,7 @@ public class PriceBoardImpl implements PriceBoardWebService {
 					list[i + ((i % 2 == 0) ? 0 : 9) - ((i - (i/20)*20)/ 2)] = elements.get(i).childNode(0)
 							.outerHtml().replaceAll("\\s", "");
 				}
-				Thread.currentThread().sleep(600000);
+//				Thread.currentThread().sleep(600000);
 			}
 		} catch (Exception e) {
 			logger.error("Exception: " + e.getClass().getName() + " || Message:  " + e.getMessage());

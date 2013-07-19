@@ -93,17 +93,20 @@
 	
 	<bean id="twitterManager" class="com.mpx.birjan.core.TwitterManager">
 		<lookup-method name="getCreateCommand" bean="createCommand"/>
+		<lookup-method name="getDeleteCommand" bean="deleteCommand"/>
+		<lookup-method name="getShowCommand" bean="showCommand"/>
+		<lookup-method name="getPayCommand" bean="payCommand"/>
 	</bean>
 
 	<bean id="twitterHandlerFactory" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
      	<property name="targetBeanName" value="twitterHandler"/>
    </bean>
 	
-	<!--bean id="twitterFactory" class="twitter4j.TwitterFactory">
+	<bean id="twitterFactory" class="twitter4j.TwitterFactory">
 		<constructor-arg type="twitter4j.conf.Configuration" ref="configuration" />
 	</bean>
 	
-	<bean id="twitterStream" class="twitter4j.TwitterStream" factory-bean="twitterStreamFactory" factory-method="getInstance" /-->
+	<bean id="twitterStream" class="twitter4j.TwitterStream" factory-bean="twitterStreamFactory" factory-method="getInstance" />
 	
 	<bean id="twitterStreamFactory" class="twitter4j.TwitterStreamFactory">
 		<constructor-arg type="twitter4j.conf.Configuration" ref="configuration"/>
@@ -119,15 +122,15 @@
 		<property name="OAuthAccessTokenSecret" value="3LVYeMxSTrUwp35TgySczMFenXmJk5BoZl3lsH34JPU"/>
 	</bean>
 	
-	<!--bean id="taskExecutor"
+	<bean id="taskExecutor"
 		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 		<property name="corePoolSize" value="5" />
 		<property name="maxPoolSize" value="20" />
 		<property name="WaitForTasksToCompleteOnShutdown" value="true" />
-	</bean-->
+	</bean>
 
 
-	<!-- ========== CXF ============= -->
+	<!-- ========== CXF ============= ->
 	
 	<jaxws:endpoint id="birjanws" implementor="#birjanServiceEndpoint"
 		address="/birjanws">
@@ -155,19 +158,19 @@
 		</constructor-arg>
 	</bean>
 		
-	<!-- logging -->
+	<- logging ->
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 	<cxf:bus>
-		<!-- cxf:inInterceptors>
+		<!- cxf:inInterceptors>
 			<ref bean="logInbound" />
 		</cxf:inInterceptors>
 		<cxf:outInterceptors>
 			<ref bean="logOutbound" />
-		</cxf:outInterceptors-->
+		</cxf:outInterceptors->
 		<cxf:inFaultInterceptors>
 			<ref bean="logOutbound" />
 		</cxf:inFaultInterceptors>
-	</cxf:bus>
+	</cxf:bus-->
 
 </beans>
