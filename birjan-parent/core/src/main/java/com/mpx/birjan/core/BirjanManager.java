@@ -1,11 +1,14 @@
 package com.mpx.birjan.core;
 
+import static com.mpx.birjan.common.Status.CLOSE;
+import static com.mpx.birjan.common.Status.OPEN;
+
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +22,6 @@ import com.mpx.birjan.bean.Authorities;
 import com.mpx.birjan.bean.Balance;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
-import com.mpx.birjan.bean.TwitterBet;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.bean.Wager;
 import com.mpx.birjan.common.Lottery;
@@ -58,7 +60,7 @@ public class BirjanManager {
 			gameDao.create(game);
 		}
 
-//		txManager.openBalance();
+		txManager.openBalance();
 		
 		String hash = wager.getHash();
 		logger.debug(hash);
@@ -80,7 +82,6 @@ public class BirjanManager {
 	@Transactional
 	public Collection<Game> showTicket(String hash) {
 		Filter<String> hashFilter = new Filter<String>("hash", hash);
-		hashFilter.addFetch("games");
 		Wager wager = wagerDao.findUniqueByFilter(hashFilter);
 		if (wager != null) {
 			return Collections2.filter(wager.getGame(), new Predicate<Game>() {
@@ -88,25 +89,6 @@ public class BirjanManager {
 					return !game.is(Status.INVALID);
 				}
 			});
-		}
-		return null;
-	}
-
-	@Transactional
-	public Collection<Game> payTicket(String hash) {
-		Filter<String> hashFilter = new Filter<String>("hash", hash);
-		hashFilter.addFetch("games");
-		Wager wager = wagerDao.findUniqueByFilter(hashFilter);
-		if (wager != null) {
-			Collection<Game> games = Collections2.filter(wager.getGame(), new Predicate<Game>() {
-				public boolean apply(Game game){
-					if(game.is(Status.WINNER))
-						game.setStatus(Status.PAID);
-					return game.is(Status.PAID);
-				}
-			});
-			wagerDao.update(wager);
-			return games;
 		}
 		return null;
 	}

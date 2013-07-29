@@ -18,6 +18,7 @@ public final class TwitterParser {
 	public static String tweetDeletePattern = "BORRA [0-9|A-Z]{5}\\.*";
 	public static String tweetShowPattern = "VER [0-9|A-Z]{5}\\.*";
 	public static String tweetPayPattern = "PAGA [0-9|A-Z]{5}\\.*";
+	public static String tweetBalancePattern = "BALANCE( \\d{1,2})?\\.*";
 
 	public static final List<String> lotteryNames = Arrays.asList("NACIONAL", "PROVINCIA");
 	public static final List<String> variantNames = Arrays.asList("PRIMERA", "MATUTINA", "VESPERTINA", "NOCTURNA");
@@ -47,7 +48,7 @@ public final class TwitterParser {
 	}
 	
 	public static String unmarshal(String tweet) {
-		return tweet.replace(".", "").split(" ")[1];
+		return (tweet.contains(" ")) ? tweet.replace(".", "").split(" ")[1] : "";
 	}
 	
 	

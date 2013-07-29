@@ -1,32 +1,47 @@
 package com.mpx.birjan.core;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import twitter4j.DirectMessage;
 
 import com.mpx.birjan.tweeter.TwitterParser;
 
-public abstract class TwitterManager {
-	
+@Component
+public class TwitterManager {
+
 	final Logger logger = LoggerFactory.getLogger(TwitterManager.class);
+
+	private static final Map<String, Class<? extends Command<String>>> map = new HashMap<String, Class<? extends Command<String>>>();
+
+	static {
+		map.put(TwitterParser.tweetBetPattern, CreateCommand.class);
+		map.put(TwitterParser.tweetShowPattern, ShowCommand.class);
+		map.put(TwitterParser.tweetPayPattern, PayCommand.class);
+		map.put(TwitterParser.tweetDeletePattern, DeleteCommand.class);
+		map.put(TwitterParser.tweetBalancePattern, BalanceCommand.class);
+	}
+
+	@Autowired
+	private BeanFactory beanFactory;
 
 	public String process(final DirectMessage directMessage) {
 
-		logger.debug("Message received: "+ directMessage.getText());
-		Command<String> command = null;
+		String dm = directMessage.getText().toUpperCase();
+		logger.debug("Message received: " + dm);
+
 		try {
-			if (directMessage.getText().toUpperCase().matches(TwitterParser.tweetBetPattern)) {
-				command = this.getCreateCommand();
-			} else if(directMessage.getText().toUpperCase().matches(TwitterParser.tweetDeletePattern)) {
-				command = this.getDeleteCommand();
-			} else if(directMessage.getText().toUpperCase().matches(TwitterParser.tweetShowPattern)) {
-				command = this.getShowCommand();
-			} else if(directMessage.getText().toUpperCase().matches(TwitterParser.tweetPayPattern)) {
-				command = this.getPayCommand();
+			for (Entry<String, Class<? extends Command<String>>> entry : map.entrySet()) {
+				if (dm.matches(entry.getKey()))
+					return beanFactory.getBean(entry.getValue()).execute(directMessage);
 			}
-			command.setDirectMessage(directMessage);
-			return command.execute();
 		} catch (Throwable t) {
 			t.printStackTrace();
 			logger.error("Exception: " + t.getClass().getName() + " || Message:  " + t.getMessage());
@@ -34,13 +49,5 @@ public abstract class TwitterManager {
 
 		return "ERROR |" + directMessage.getText() + "|";
 	}
-
-	protected abstract CreateCommand getCreateCommand();
-
-	protected abstract DeleteCommand getDeleteCommand();
-
-	protected abstract ShowCommand getShowCommand();
-
-	protected abstract PayCommand getPayCommand();
 
 }

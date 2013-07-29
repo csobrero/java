@@ -19,7 +19,7 @@
 
 	<context:component-scan base-package="com.mpx.birjan" />
 
-	<tx:annotation-driven />
+	<tx:annotation-driven proxy-target-class="true"/>
 	
 	<security:global-method-security secured-annotations="enabled" />
 	
@@ -91,12 +91,11 @@
 	
 	<!-- ========== TWITTER ============= -->
 	
-	<bean id="twitterManager" class="com.mpx.birjan.core.TwitterManager">
+	<!--bean id="twitterManager" class="com.mpx.birjan.core.TwitterManager">
 		<lookup-method name="getCreateCommand" bean="createCommand"/>
 		<lookup-method name="getDeleteCommand" bean="deleteCommand"/>
 		<lookup-method name="getShowCommand" bean="showCommand"/>
-		<lookup-method name="getPayCommand" bean="payCommand"/>
-	</bean>
+	</bean-->
 
 	<bean id="twitterHandlerFactory" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
      	<property name="targetBeanName" value="twitterHandler"/>

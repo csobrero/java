@@ -12,6 +12,7 @@
 		<class>com.mpx.birjan.bean.Game</class>
 		<class>com.mpx.birjan.bean.Draw</class>
 		<class>com.mpx.birjan.bean.User</class>
+		<class>com.mpx.birjan.bean.Agency</class>
 		<class>com.mpx.birjan.bean.Authorities</class>
 		<class>com.mpx.birjan.bean.Balance</class>
 		

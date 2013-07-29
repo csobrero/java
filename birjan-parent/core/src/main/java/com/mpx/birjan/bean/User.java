@@ -2,8 +2,11 @@ package com.mpx.birjan.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.pojomatic.annotations.AutoProperty;
@@ -28,7 +31,8 @@ public class User extends AbstractEntity implements Serializable {
 	
 	private Float commisionRate = 0.2f;
 	
-	private Balance lastBalance;
+	@ManyToOne
+	private Agency agency;
 
 	public User() {
 	}
@@ -87,12 +91,12 @@ public class User extends AbstractEntity implements Serializable {
 		this.commisionRate = commisionRate;
 	}
 
-	public Balance getLastBalance() {
-		return lastBalance;
+	public Agency getAgency() {
+		return agency;
 	}
 
-	public void setLastBalance(Balance lastBalance) {
-		this.lastBalance = lastBalance;
+	public void setAgency(Agency agency) {
+		this.agency = agency;
 	}
 
 }

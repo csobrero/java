@@ -6,9 +6,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import twitter4j.DirectMessage;
 
@@ -18,22 +17,19 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.Game;
-import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.tweeter.TwitterParser;
 
 @Repository
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ShowCommand implements Command<String> {
 
 	final Logger logger = LoggerFactory.getLogger(ShowCommand.class);
-
-	private DirectMessage directMessage;
 
 	@Autowired
 	private BirjanManager birjanManager;
 
 	@Override
-	public String execute() {		
+	@Transactional
+	public String execute(DirectMessage directMessage) {		
 		String hash = TwitterParser.unmarshal(directMessage.getText());
 		
 		Collection<Game> games = birjanManager.showTicket(hash);
@@ -42,7 +38,8 @@ public class ShowCommand implements Command<String> {
 		
 		return message;
 	}
-	
+
+	@Transactional
 	private String buildMessage(Collection<Game> games, String hash) {
 
 		String message = hash;
@@ -65,15 +62,10 @@ public class ShowCommand implements Command<String> {
 					+ " : " + date.getDayOfMonth() + "/" + date.getMonthOfYear();
 		
 		} else {
-			message += " : inexistente.";
+			message += " : TICKET NO VALIDO.";
 		}
 
 		return message.toUpperCase();
-	}
-
-	@Override
-	public void setDirectMessage(DirectMessage directMessage) {
-		this.directMessage = directMessage;
 	}
 
 }

@@ -1,7 +1,11 @@
 package com.mpx.birjan.core;
 
+import java.util.Date;
+
 import javax.annotation.PostConstruct;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
@@ -30,9 +34,9 @@ public class BirjanServer {
 
 	@PostConstruct
 	public void start() throws TwitterException {
-//		Date date = new DateTime(2013,6,14,22,0,0,0).toDate();
+		Date date = new DateTime(2013,6,26,11,0,0,0).toDate();
 //		Date date = new DateTime().toDate();
-//		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
+		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
 		if(twitter!=null){
 			final long id = twitter.getId();
 			twitter.addListener(new UserStreamAdapter() {

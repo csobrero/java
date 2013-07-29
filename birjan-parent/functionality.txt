@@ -1,0 +1,17 @@
+-- Cliente
+		OK create ticket
+		OK invalida ticket
+		OK mostrar ticket
+		OK pagar ticket
+		OK balance diario
+		-- simpificar uso
+		-- revisar todas las variantes
+	
+-- Agencia
+		-- recibe mail sorteo
+		-- recibe mail balance diario
+		-- recibe mail balance mensual
+		-- autoriza nuevo usuario
+		-- invalida usuario
+		
+-- Administrador
