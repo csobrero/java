@@ -19,6 +19,7 @@ public final class TwitterParser {
 	public static String tweetShowPattern = "VER [0-9|A-Z]{5}\\.*";
 	public static String tweetPayPattern = "PAGA [0-9|A-Z]{5}\\.*";
 	public static String tweetBalancePattern = "BALANCE( \\d{1,2})?\\.*";
+	public static String tweetControlPattern = "CONTROL ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?\\.*";
 
 	public static final List<String> lotteryNames = Arrays.asList("NACIONAL", "PROVINCIA");
 	public static final List<String> variantNames = Arrays.asList("PRIMERA", "MATUTINA", "VESPERTINA", "NOCTURNA");
@@ -43,6 +44,25 @@ public final class TwitterParser {
 		Collection<String> variants = lottery.length > 1 ? select(variantNames, lottery[1]) : null;
 
 		TwitterBet bet = new TwitterBet(number, position, amount, date, lotteries, variants);
+
+		return bet;
+	}
+	
+	public static TwitterBet unmarshalControl(String tweet) {
+
+		String tw=tweet.replace(",", ".").replaceAll(" +", " ").toUpperCase();
+		
+		Preconditions.checkArgument(tw.matches(tweetControlPattern), "TWEET INVALIDO");
+
+		String str = tw.split(" ")[0];
+		String[] lottery = tw.substring(str.length()+1).split(" ");
+		
+		DateTime date = lottery.length>2?BirjanUtils.getDate(lottery[2]):new DateTime();
+
+		Collection<String> lotteries = select(lotteryNames, lottery[0]);
+		Collection<String> variants = lottery.length > 1 ? select(variantNames, lottery[1]) : null;
+
+		TwitterBet bet = new TwitterBet(null, null, null, date, lotteries, variants);
 
 		return bet;
 	}
