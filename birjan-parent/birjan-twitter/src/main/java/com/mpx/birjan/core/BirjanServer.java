@@ -34,7 +34,7 @@ public class BirjanServer {
 
 	@PostConstruct
 	public void start() throws TwitterException {
-		Date date = new DateTime(2013,6,31,11,0,0,0).toDate();
+		Date date = new DateTime(2013,8,5,11,0,0,0).toDate();
 //		Date date = new DateTime().toDate();
 		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
 		if(twitter!=null){
