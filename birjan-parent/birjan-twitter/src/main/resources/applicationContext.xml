@@ -31,7 +31,7 @@
 	
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:/build_dev_mysql.properties" />
+		<property name="location" value="classpath:/${environment}.properties" />
 	</bean>
 
 	<bean id="dataSource"
@@ -113,10 +113,10 @@
 	
 	<bean id="configurationBuilder" class="twitter4j.conf.ConfigurationBuilder" scope="prototype">
 		<property name="debugEnabled" value="true" />
-		<property name="OAuthConsumerKey" value="piozU7GCQ2sSgBkvyNs6pw"/>
-		<property name="OAuthConsumerSecret" value="iOqu91UxDEvQwC2fWSLeJjCJUynYKYx0MAO9uQNqQ"/>
-		<property name="OAuthAccessToken" value="1491434672-NOJCS5heHjAX563VhMZy3ENA7AKvpzGOZmtbnea"/>
-		<property name="OAuthAccessTokenSecret" value="3LVYeMxSTrUwp35TgySczMFenXmJk5BoZl3lsH34JPU"/>
+		<property name="OAuthConsumerKey" value="${twitter.OAuthConsumerKey}"/>
+		<property name="OAuthConsumerSecret" value="${twitter.OAuthConsumerSecret}"/>
+		<property name="OAuthAccessToken" value="${twitter.OAuthAccessToken}"/>
+		<property name="OAuthAccessTokenSecret" value="${twitter.OAuthAccessTokenSecret}"/>
 	</bean>
 	
 	<bean id="taskExecutor"

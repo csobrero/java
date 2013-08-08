@@ -1,4 +1,4 @@
-package com.mpx.birjan.core;
+package com.mpx.birjan.command;
 
 import twitter4j.DirectMessage;
 

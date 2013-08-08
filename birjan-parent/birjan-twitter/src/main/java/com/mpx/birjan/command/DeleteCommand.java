@@ -1,4 +1,4 @@
-package com.mpx.birjan.core;
+package com.mpx.birjan.command;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import twitter4j.DirectMessage;
 
+import com.mpx.birjan.core.BirjanManager;
 import com.mpx.birjan.tweeter.TwitterParser;
 
 @Repository

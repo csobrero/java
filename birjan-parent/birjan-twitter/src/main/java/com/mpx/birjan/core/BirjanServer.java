@@ -14,6 +14,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.mpx.birjan.tweeter.TwitterMessageHandler;
+
 import twitter4j.DirectMessage;
 import twitter4j.TwitterException;
 import twitter4j.TwitterStream;

@@ -14,12 +14,13 @@ import com.mpx.birjan.bean.TwitterBet;
 
 public final class TwitterParser {
 
-	public static String tweetBetPattern = "\\d{1,4}( \\d{1,2})? \\d([\\.,]\\d)? ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?\\.*";
-	public static String tweetDeletePattern = "BORRA [0-9|A-Z]{5}\\.*";
-	public static String tweetShowPattern = "VER [0-9|A-Z]{5}\\.*";
-	public static String tweetPayPattern = "PAGA [0-9|A-Z]{5}\\.*";
-	public static String tweetBalancePattern = "BALANCE( \\d{1,2})?\\.*";
-	public static String tweetControlPattern = "CONTROL ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?\\.*";
+	public static final String tweetBetPattern = "\\d{1,4}( \\d{1,2})? \\d([\\.,]\\d)? ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?\\.*";
+	public static final String tweetDeletePattern = "BORRA [0-9|A-Z]{5}\\.*";
+	public static final String tweetShowPattern = "VER [0-9|A-Z]{5}\\.*";
+	public static final String tweetPayPattern = "PAGA [0-9|A-Z]{5}\\.*";
+	public static final String tweetBalancePattern = "BALANCE( \\d{1,2})?\\.*";
+	public static final String tweetControlPattern = "CONTROL ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?\\.*";
+	public static final String tweetCloseBalancePattern = null;
 
 	public static final List<String> lotteryNames = Arrays.asList("NACIONAL", "PROVINCIA");
 	public static final List<String> variantNames = Arrays.asList("PRIMERA", "MATUTINA", "VESPERTINA", "NOCTURNA");

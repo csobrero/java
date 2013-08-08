@@ -8,10 +8,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import twitter4j.DirectMessage;
 
+import com.mpx.birjan.command.BalanceCommand;
+import com.mpx.birjan.command.Command;
+import com.mpx.birjan.command.ControlCommand;
+import com.mpx.birjan.command.CreateCommand;
+import com.mpx.birjan.command.DeleteCommand;
+import com.mpx.birjan.command.PayCommand;
+import com.mpx.birjan.command.ShowCommand;
 import com.mpx.birjan.tweeter.TwitterParser;
 
 @Component
@@ -27,6 +35,7 @@ public class TwitterManager {
 		map.put(TwitterParser.tweetPayPattern, PayCommand.class);
 		map.put(TwitterParser.tweetDeletePattern, DeleteCommand.class);
 		map.put(TwitterParser.tweetBalancePattern, BalanceCommand.class);
+		map.put(TwitterParser.tweetCloseBalancePattern, null);
 		
 		map.put(TwitterParser.tweetControlPattern, ControlCommand.class);
 	}
@@ -50,6 +59,16 @@ public class TwitterManager {
 		}
 
 		return "ERROR |" + directMessage.getText() + "|";
+	}
+	
+	@Scheduled(cron="0 0 21 * * MON-SAT")
+	public void closeBalances(){
+		beanFactory.getBean(BalanceCommand.class).closeAll();
+	}
+	
+	@Scheduled(cron="0 0 0 * * TUE-SUN")
+	public void activateBalances(){
+		beanFactory.getBean(BalanceCommand.class).activateAll();
 	}
 
 }

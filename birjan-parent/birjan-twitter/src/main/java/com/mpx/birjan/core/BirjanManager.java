@@ -1,10 +1,12 @@
 package com.mpx.birjan.core;
 
 import static com.mpx.birjan.common.Status.CLOSE;
+import static com.mpx.birjan.common.Status.DONE;
 import static com.mpx.birjan.common.Status.OPEN;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -91,6 +93,32 @@ public class BirjanManager {
 			});
 		}
 		return null;
+	}
+
+	@Transactional
+	public void closeAll() {
+		Filter<Status> openFilter = new Filter<Status>("state", OPEN);
+		Filter<Date> dateFilter = new Filter<Date>("date", (new DateMidnight()).toDate());
+		List<Balance> balances = balanceDao.findByFilter(openFilter, dateFilter);
+		if(balances!=null)
+			for (Balance balance : balances) {
+				balance.setState(CLOSE);
+			}
+		
+	}
+
+	@Transactional
+	public void activateAll() {
+		Filter<Status> closeFilter = new Filter<Status>("state", CLOSE);
+		Filter<Date> dateFilter = new Filter<Date>("date", (new DateMidnight()).toDate());
+		List<Balance> balances = balanceDao.findByFilter(closeFilter, dateFilter);
+		for (Balance closedBalance : balances) {
+			closedBalance.setState(DONE);
+			Balance nextBalance = new Balance(new DateTime().toDate(), closedBalance.getUser(),
+					closedBalance.getBalance());// ACTIVE
+			balanceDao.create(nextBalance);
+		}
+		
 	}
 
 	@Resource(name = "genericJpaDAO")

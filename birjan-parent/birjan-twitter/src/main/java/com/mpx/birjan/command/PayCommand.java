@@ -1,4 +1,4 @@
-package com.mpx.birjan.core;
+package com.mpx.birjan.command;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +16,7 @@ import com.google.common.base.Joiner;
 import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.common.Status;
+import com.mpx.birjan.core.BirjanManager;
 import com.mpx.birjan.tweeter.TwitterParser;
 
 @Repository

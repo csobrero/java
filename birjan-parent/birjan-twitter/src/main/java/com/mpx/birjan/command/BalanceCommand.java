@@ -1,4 +1,4 @@
-package com.mpx.birjan.core;
+package com.mpx.birjan.command;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -12,6 +12,8 @@ import com.google.common.base.Optional;
 import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.common.BalanceDTO;
+import com.mpx.birjan.core.BirjanManager;
+import com.mpx.birjan.core.TransactionalManager;
 import com.mpx.birjan.tweeter.TwitterParser;
 
 @Repository
@@ -37,7 +39,15 @@ public class BalanceCommand implements Command<String> {
 		String message = buildMessage(balance);
 		return message;
 	}
-	
+
+	public void closeAll() {
+		birjanManager.closeAll();
+	}
+
+	public void activateAll() {
+		birjanManager.activateAll();
+	}
+
 	private String buildMessage(BalanceDTO balance) {
 		
 		DateTime date = new DateTime(balance.getDate());

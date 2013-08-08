@@ -1,4 +1,4 @@
-package com.mpx.birjan.core;
+package com.mpx.birjan.command;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.TwitterBet;
 import com.mpx.birjan.common.Lottery;
+import com.mpx.birjan.core.BirjanManager;
 import com.mpx.birjan.tweeter.TwitterParser;
 
 import twitter4j.DirectMessage;

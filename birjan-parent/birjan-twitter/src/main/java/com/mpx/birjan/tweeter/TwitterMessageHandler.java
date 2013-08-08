@@ -1,4 +1,4 @@
-package com.mpx.birjan.core;
+package com.mpx.birjan.tweeter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import com.mpx.birjan.core.TwitterManager;
 
 import twitter4j.DirectMessage;
 import twitter4j.Twitter;
