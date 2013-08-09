@@ -56,7 +56,7 @@ public class TwitterMessageHandler {
 		} catch (TwitterException e) {
 			if (e.getErrorCode() == 151)
 				send(twitterSender, senderId, message + ".");
-			logger.error(e.getMessage());
+			logger.error("Exception sending: " + e.getMessage());
 		}
 
 	}

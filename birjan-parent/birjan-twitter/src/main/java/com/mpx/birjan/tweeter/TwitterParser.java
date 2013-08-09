@@ -20,7 +20,6 @@ public final class TwitterParser {
 	public static final String tweetPayPattern = "PAGA [0-9|A-Z]{5}\\.*";
 	public static final String tweetBalancePattern = "BALANCE( \\d{1,2})?\\.*";
 	public static final String tweetControlPattern = "CONTROL ([NP]{1,2}|T)( ([PMVN]{1,4}|T))?( \\d{1,2})?\\.*";
-	public static final String tweetCloseBalancePattern = null;
 
 	public static final List<String> lotteryNames = Arrays.asList("NACIONAL", "PROVINCIA");
 	public static final List<String> variantNames = Arrays.asList("PRIMERA", "MATUTINA", "VESPERTINA", "NOCTURNA");

@@ -12,6 +12,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import twitter4j.DirectMessage;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
 
 import com.mpx.birjan.command.BalanceCommand;
 import com.mpx.birjan.command.Command;
@@ -35,7 +37,6 @@ public class TwitterManager {
 		map.put(TwitterParser.tweetPayPattern, PayCommand.class);
 		map.put(TwitterParser.tweetDeletePattern, DeleteCommand.class);
 		map.put(TwitterParser.tweetBalancePattern, BalanceCommand.class);
-		map.put(TwitterParser.tweetCloseBalancePattern, null);
 		
 		map.put(TwitterParser.tweetControlPattern, ControlCommand.class);
 	}
@@ -60,14 +61,14 @@ public class TwitterManager {
 
 		return "ERROR |" + directMessage.getText() + "|";
 	}
-	
-	@Scheduled(cron="0 0 21 * * MON-SAT")
-	public void closeBalances(){
+
+	@Scheduled(cron = "* * 21 * * MON-SAT")
+	public void closeBalances() {
 		beanFactory.getBean(BalanceCommand.class).closeAll();
 	}
-	
-	@Scheduled(cron="0 0 0 * * TUE-SUN")
-	public void activateBalances(){
+
+	@Scheduled(cron = "* * 0 * * TUE-SAT")
+	public void activateBalances() {
 		beanFactory.getBean(BalanceCommand.class).activateAll();
 	}
 

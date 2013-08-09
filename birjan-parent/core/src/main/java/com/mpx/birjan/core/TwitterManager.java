@@ -26,7 +26,7 @@ public class TwitterManager {
 		map.put(TwitterParser.tweetShowPattern, ShowCommand.class);
 		map.put(TwitterParser.tweetPayPattern, PayCommand.class);
 		map.put(TwitterParser.tweetDeletePattern, DeleteCommand.class);
-		map.put(TwitterParser.tweetBalancePattern, BalanceCommand.class);
+//		map.put(TwitterParser.tweetBalancePattern, BalanceCommand.class);
 		
 		map.put(TwitterParser.tweetControlPattern, ControlCommand.class);
 	}

@@ -1,8 +1,11 @@
 package com.mpx.birjan.core;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.joda.time.DateTime;
@@ -15,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.mpx.birjan.bean.Draw;
+import com.mpx.birjan.command.NotifyManagerCommand;
 import com.mpx.birjan.common.Lottery;
 
 @Component
@@ -28,7 +32,12 @@ public class PrizeManager {
 	@Autowired
 	private TransactionalManager txManager;
 	
+	@Autowired
+	private NotifyManagerCommand command;
+	
 	private Map<Lottery, Future<String[]>> results = new HashMap<Lottery, Future<String[]>>();
+	
+	private Set<Lottery> notified = new HashSet<Lottery>();
 
 	private DateTime now;
 	
@@ -40,27 +49,53 @@ public class PrizeManager {
 
 		for (Entry<Lottery, Future<String[]>> result : results.entrySet()) {
 			try {
-				if (result.getValue().isDone() && result.getValue().get().length == 20) {
+				if (result.getValue().isDone()){ 
+					if(result.getValue().get().length == 20) {	
 					Draw draw = txManager.retrieveDraw(result.getKey(), now);
-					if(draw==null || draw.getNumbers().length<20){
-						txManager.createDraw(result.getKey(), now, result.getValue().get());
-						txManager.validateDraw(result.getKey(), now);
-						logger.info("Validated: " + result.getKey().name() + " || Date: " + now);
+						if(draw==null || draw.getNumbers().length<20){
+							
+							txManager.createDraw(result.getKey(), now, result.getValue().get());
+							txManager.validateDraw(result.getKey(), now);
+							
+							logger.info("Validated: " + result.getKey().name() + " || Date: " + now);
+						}
+					}
+					if(result.getValue().get()[0]!=null && !notified.contains(result.getKey())){
+						notified.add(result.getKey());
+						command.notifyManager("PREMIO " + result.getKey().getLotteryName() + " " + result.getKey().getVariantName()
+								+ " a la cabeza: " + result.getValue().get()[0]);
 					}
 				}
-			} catch (Exception e) {
-				logger.error("Exception: " + e.getClass().getName() + " || Message:  " + e.getMessage());
-				e.printStackTrace();
+			} catch (InterruptedException e) {
+				logError(e);
+			} catch (ExecutionException e) {
+				logError(e);
 			}
 		}
 		
 		
 		now = new DateTime();
 		for (Lottery lottery : Lottery.values()) {
-			if (lottery.getRule().getTo().isBefore(now)) {
+			if (lottery.getRule().getTo().isBefore(now) && lottery.getRule().getTo().plusHours(2).isAfter(now)) {
 				results.put(lottery, priceBoardWebService.retrieve(lottery, now));
+			} else {
+				notified.remove(lottery);
+				Future<String[]> result = results.remove(lottery);
+				try {
+					if(result!=null && result.isDone() && result.get().length < 20){							
+						command.notifyManager("PREMIO " + lottery.getLotteryName() + " " +
+								lottery.getVariantName() + " INCOMPLETO.");
+					}
+				} catch (Exception e) {
+					logError(e);
+				}
 			}
 		}
+	}
+
+	private void logError(Exception e) {
+		logger.error("Exception: " + e.getClass().getName() + " || Message:  " + e.getMessage());
+		e.printStackTrace();
 	}
 	
 }
