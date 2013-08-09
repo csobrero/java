@@ -62,14 +62,4 @@ public class TwitterManager {
 		return "ERROR |" + directMessage.getText() + "|";
 	}
 
-	@Scheduled(cron = "* * 21 * * MON-SAT")
-	public void closeBalances() {
-		beanFactory.getBean(BalanceCommand.class).closeAll();
-	}
-
-	@Scheduled(cron = "* * 0 * * TUE-SAT")
-	public void activateBalances() {
-		beanFactory.getBean(BalanceCommand.class).activateAll();
-	}
-
 }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+<log4j:configuration>
+
+	<!-- APPENDERS -->
+	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="|%d{ISO8601}|%p|%C{1}|%X{sessionID}|%m|%n" />
+		</layout>
+		<!--filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="DEBUG" />
+			<param name="LevelMax" value="FATAL" />
+		</filter-->
+	</appender>
+	
+	<category name="org.hibernate.tool.hbm2ddl" additivity="false">
+		<level value="WARN" />
+		<appender-ref ref="STDOUT" />
+	</category>
+
+	<category name="org.hibernate" additivity="false">
+		<level value="WARN" />
+		<appender-ref ref="STDOUT" />
+	</category>
+	
+	<category name="com.mpx.birjan" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="STDOUT" />
+	</category>
+
+	<!-- DEFAULT LOGGING LEVEL -->
+	<root>
+		<level value="WARN" />
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</log4j:configuration>

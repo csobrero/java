@@ -111,7 +111,7 @@ public class BirjanManager {
 	@Transactional
 	public void activateAll() {
 		Filter<Status> closeFilter = new Filter<Status>("state", CLOSE);
-		Filter<Date> dateFilter = new Filter<Date>("date", (new DateMidnight()).toDate());
+		Filter<Date> dateFilter = new Filter<Date>("date", (new DateMidnight()).minusDays(1).toDate());
 		List<Balance> balances = balanceDao.findByFilter(closeFilter, dateFilter);
 		for (Balance closedBalance : balances) {
 			closedBalance.setState(DONE);

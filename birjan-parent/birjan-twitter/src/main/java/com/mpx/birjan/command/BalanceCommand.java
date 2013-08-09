@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import twitter4j.DirectMessage;
@@ -40,10 +41,12 @@ public class BalanceCommand implements Command<String> {
 		return message;
 	}
 
+	@Scheduled(cron = "0 0 21 * * 1-6")
 	public void closeAll() {
 		birjanManager.closeAll();
 	}
 
+	@Scheduled(cron = "0 0 0 * * 0,2-6")
 	public void activateAll() {
 		birjanManager.activateAll();
 	}
