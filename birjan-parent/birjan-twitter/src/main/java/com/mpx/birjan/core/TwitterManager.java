@@ -8,12 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import twitter4j.DirectMessage;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 
 import com.mpx.birjan.command.BalanceCommand;
 import com.mpx.birjan.command.Command;

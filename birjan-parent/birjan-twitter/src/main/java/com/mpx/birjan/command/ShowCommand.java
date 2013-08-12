@@ -1,6 +1,9 @@
 package com.mpx.birjan.command;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -15,10 +18,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
-import com.mpx.birjan.bean.BirjanUtils;
+import com.google.common.collect.Ordering;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.core.BirjanManager;
 import com.mpx.birjan.tweeter.TwitterParser;
+import com.mpx.birjan.util.Utils;
 
 @Repository
 public class ShowCommand implements Command<String> {
@@ -47,19 +51,19 @@ public class ShowCommand implements Command<String> {
 
 		if (games != null) {
 			
-			Collection<String> lotteries = Collections2.transform(games, new Function<Game, String>() {
+			List<String> lotteries = new ArrayList<String>(Collections2.transform(games, new Function<Game, String>() {
 						public String apply(Game game) {
-							return game.getLottery().getLotteryName().substring(0, 2)
-									+ game.getLottery().getVariantName().substring(0, 1);
+							return game.getLottery().nameShort();
 						}
-					});
+					}));
 
 			Game game = Iterables.getFirst(games, null);
 			DateTime date = new DateTime(game.getDate());
 
-			message += " : $" + BirjanUtils.money.format(game.getAmount() * games.size())
+			Collections.sort(lotteries);
+			message += " : $" + Utils.money.format(game.getAmount() * games.size())
 					+ " : " + game.getNumber() + " " + game.getPosition() 
-					+ " $" + BirjanUtils.money.format(game.getAmount()) + " " + Joiner.on(',').join(lotteries) 
+					+ " $" + Utils.money.format(game.getAmount()) + " " + Joiner.on(',').join(lotteries) 
 					+ " : " + date.getDayOfMonth() + "/" + date.getMonthOfYear();
 		
 		} else {

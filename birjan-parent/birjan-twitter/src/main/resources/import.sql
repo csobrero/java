@@ -5,6 +5,7 @@ INSERT INTO `birjan`.`users` (`id`, `created`, `createdDate`, `enabled`, `passwo
 INSERT INTO `birjan`.`users` (`id`, `created`, `createdDate`, `enabled`, `password`, `username`, `commisionRate`) VALUES (NULL, NOW(), NOW(), '1', '', 'u3', '0.2');
 INSERT INTO `birjan`.`users` (`id`, `created`, `createdDate`, `enabled`, `password`, `username`, `commisionRate`) VALUES (NULL, NOW(), NOW(), '1', '', '1491378438', '0.2');
 INSERT INTO `birjan`.`agency` (`id`, `created`, `createdDate`, `enabled`, `principal_id`, `email`, `commisionRate`) VALUES (NULL, NOW(), NOW(), '1', '6', 'csobrero@gmail.com', '0.2');
+UPDATE `birjan`.`users` SET `agency_id` = '1' WHERE `users`.`id` =6;
 INSERT INTO `birjan`.`authorities` (`id`, `created`, `createdDate`, `authority`, `username`) VALUES (NULL, NOW(), NOW(), 'ROLE_ADMIN', 'ad');
 INSERT INTO `birjan`.`authorities` (`id`, `created`, `createdDate`, `authority`, `username`) VALUES (NULL, NOW(), NOW(), 'ROLE_MANAGER', 'ad');
 INSERT INTO `birjan`.`authorities` (`id`, `created`, `createdDate`, `authority`, `username`) VALUES (NULL, NOW(), NOW(), 'ROLE_USER', 'ad');

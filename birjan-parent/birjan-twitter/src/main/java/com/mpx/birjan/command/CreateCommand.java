@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 import twitter4j.DirectMessage;
 
 import com.google.common.base.Preconditions;
-import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.TwitterBet;
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.core.BirjanManager;
 import com.mpx.birjan.tweeter.TwitterParser;
+import com.mpx.birjan.util.Utils;
 
 @Repository
 public class CreateCommand implements Command<String> {
@@ -37,7 +37,7 @@ public class CreateCommand implements Command<String> {
 
 	private String buildMessage(TwitterBet bet, String hash) {
 
-		String message = hash + " : $" + BirjanUtils.money.format(bet.getAmount() * bet.getLotteries().size()) + " : "
+		String message = hash + " : $" + Utils.money.format(bet.getAmount() * bet.getLotteries().size()) + " : "
 				+ bet.asText() + " : " + bet.getDate().getDayOfMonth() + "/" + bet.getDate().getMonthOfYear();
 
 		return message.toUpperCase();
@@ -51,7 +51,7 @@ public class CreateCommand implements Command<String> {
 		for (String lotteryName : bet.getLotteryNames()) {
 			for (String variantName : bet.getVariantNames()) {
 				Lottery lottery = Lottery.valueOf(lotteryName + "_" + variantName);
-				Preconditions.checkArgument(BirjanUtils.isValid(lottery, date, true), "[" + lottery.name() + "]"
+				Preconditions.checkArgument(Utils.isValid(lottery, date, true), "[" + lottery.name() + "]"
 						+ " HORARIO NO VALIDO");
 				bet.add(lottery);
 			}

@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.pojomatic.annotations.AutoProperty;
 
 import com.google.common.base.Joiner;
+import com.mpx.birjan.util.Utils;
 
 @AutoProperty
 public final class TwitterBet extends BetImpl {
@@ -21,7 +22,7 @@ public final class TwitterBet extends BetImpl {
 	}
 	
 	public String asText(){
-		return number +" "+ (position!=null?position:"") +" $"+ BirjanUtils.money.format(amount) +" "+ 
+		return number +" "+ (position!=null?position:"") +" $"+ Utils.money.format(amount) +" "+ 
 				Joiner.on(',').skipNulls().join(lotteryNames.toArray()) +" "+ Joiner.on(',').skipNulls().join(variantNames.toArray());
 	}
 

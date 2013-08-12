@@ -17,7 +17,6 @@ public class WorkbookHandler {
 
 	public static Workbook build(Wrapper[] data) {
 			Workbook wb = null;
-			if(data!=null){
 				wb = new HSSFWorkbook();
 
 				Sheet summary = wb.createSheet("Resumen");
@@ -45,30 +44,32 @@ public class WorkbookHandler {
 				
 				Object[][] vector;
 				int rowIndex = 1;
-				for (int i = 0; i < data.length; i++) {
-					vector = data[i].getDataVector();
-					String status = data[i].getStatus();
-					Float prize = data[i].getPrize();
-					row = details.createRow((short) rowIndex++);
-					row.createCell(0).setCellValue(data[i].getHash());
-					row.createCell(1).setCellValue((String)vector[0][0]);
-					row.createCell(2).setCellValue((Integer)vector[0][1]);
-					map.get(status).add((Float)vector[0][2], prize);
-					row.createCell(3).setCellValue((Float)vector[0][2]);
-					row.createCell(4).setCellValue(status);
-					row.createCell(5).setCellValue((prize!=null)?prize.toString():"");
-					row.createCell(6).setCellValue(data[i].getUsername());
-					row.createCell(7).setCellValue(DateFormat.getDateTimeInstance(
-				            DateFormat.SHORT, DateFormat.SHORT).format(data[i].getCreatedDate()));
-					for (int j = 1; j < vector.length; j++) {// if more than 1 line.
+				if(data!=null){
+					for (int i = 0; i < data.length; i++) {
+						vector = data[i].getDataVector();
+						String status = data[i].getStatus();
+						Float prize = data[i].getPrize();
 						row = details.createRow((short) rowIndex++);
-						row.createCell(0);
-						row.createCell(1).setCellValue((String)vector[j][0]);
-						row.createCell(2).setCellValue((Integer)vector[j][1]);
-						map.get(status).addWithoutIncrementItem((Float)vector[j][2]);
-						row.createCell(3).setCellValue((Float)vector[j][2]);
+						row.createCell(0).setCellValue(data[i].getHash());
+						row.createCell(1).setCellValue((String)vector[0][0]);
+						row.createCell(2).setCellValue((Integer)vector[0][1]);
+						map.get(status).add((Float)vector[0][2], prize);
+						row.createCell(3).setCellValue((Float)vector[0][2]);
+						row.createCell(4).setCellValue(status);
+						row.createCell(5).setCellValue((prize!=null)?prize.toString():"");
+						row.createCell(6).setCellValue(data[i].getUsername());
+						row.createCell(7).setCellValue(DateFormat.getDateTimeInstance(
+					            DateFormat.SHORT, DateFormat.SHORT).format(data[i].getCreatedDate()));
+						for (int j = 1; j < vector.length; j++) {// if more than 1 line.
+							row = details.createRow((short) rowIndex++);
+							row.createCell(0);
+							row.createCell(1).setCellValue((String)vector[j][0]);
+							row.createCell(2).setCellValue((Integer)vector[j][1]);
+							map.get(status).addWithoutIncrementItem((Float)vector[j][2]);
+							row.createCell(3).setCellValue((Float)vector[j][2]);
+						}
+						rowIndex++;
 					}
-					rowIndex++;
 				}
 				
 
@@ -89,7 +90,6 @@ public class WorkbookHandler {
 						row.createCell(3).setCellValue(String.format("%.2f", entry.getValue().getTotalPrize()));
 					}
 				}
-			}
 			
 			return wb;
 		}

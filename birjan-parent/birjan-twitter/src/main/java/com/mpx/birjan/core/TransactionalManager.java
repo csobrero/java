@@ -33,7 +33,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.mpx.birjan.bean.Authorities;
 import com.mpx.birjan.bean.Balance;
-import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.User;
@@ -47,6 +46,7 @@ import com.mpx.birjan.common.Status;
 import com.mpx.birjan.common.Ticket;
 import com.mpx.birjan.service.dao.Filter;
 import com.mpx.birjan.service.dao.GenericJpaDAO;
+import com.mpx.birjan.util.Utils;
 
 @Controller
 public class TransactionalManager {
@@ -98,7 +98,7 @@ public class TransactionalManager {
 		Draw draw = drawDao.findUniqueByFilter(lotteryFilter, dateFilter);
 
 		if (draw != null) {
-			BirjanUtils.mergeDraw(draw.getNumbers(), numbers);
+			Utils.mergeDraw(draw.getNumbers(), numbers);
 			drawDao.update(draw);
 		} else {
 			drawDao.create(new Draw(lottery, date.toDate(), user, numbers));
@@ -177,7 +177,7 @@ public class TransactionalManager {
 		}
 
 		List<String> list = new ArrayList<String>();
-		list = BirjanUtils.retrieveVariantAvailability(view, Rule.National, day);
+		list = Utils.retrieveVariantAvailability(view, Rule.National, day);
 		return list.toArray(new String[list.size()]);
 	}
 

@@ -14,12 +14,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
-import com.mpx.birjan.tweeter.TwitterMessageHandler;
-
 import twitter4j.DirectMessage;
 import twitter4j.TwitterException;
 import twitter4j.TwitterStream;
 import twitter4j.UserStreamAdapter;
+
+import com.mpx.birjan.tweeter.TwitterMessageHandler;
 
 @Service
 public class BirjanServer {
@@ -36,9 +36,9 @@ public class BirjanServer {
 
 	@PostConstruct
 	public void start() throws TwitterException {
-//		Date date = new DateTime(2013,8,5,11,0,0,0).toDate();
+		Date date = new DateTime(2013,8,9,11,0,0,0).toDate();
 //		Date date = new DateTime().toDate();
-//		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
+		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
 		if(twitter!=null){
 			final long id = twitter.getId();
 			twitter.addListener(new UserStreamAdapter() {

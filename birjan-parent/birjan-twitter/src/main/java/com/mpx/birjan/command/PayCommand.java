@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import twitter4j.DirectMessage;
 
 import com.google.common.base.Joiner;
-import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.common.Status;
 import com.mpx.birjan.core.BirjanManager;
 import com.mpx.birjan.tweeter.TwitterParser;
+import com.mpx.birjan.util.Utils;
 
 @Repository
 public class PayCommand implements Command<String> {
@@ -60,12 +60,15 @@ public class PayCommand implements Command<String> {
 					} 
 				}
 	
-				if (!toPay.isEmpty()) {
-					message += " : PAGA $" + BirjanUtils.money.format(totalPrize) + " [" + Joiner.on(',').join(toPay) + "]";
-	
-				}
-				if (!paid.isEmpty()) {
-					message += " : YA COBRADO [" + Joiner.on(',').join(paid) + "]";
+				if(toPay.isEmpty() && paid.isEmpty()){
+					message += " : SIN PREMIO";
+				} else {
+					if (!toPay.isEmpty()) {
+						message += " : PAGA $" + Utils.money.format(totalPrize) + " [" + Joiner.on(',').join(toPay) + "]";
+					}
+					if (!paid.isEmpty()) {
+						message += " : YA COBRADO [" + Joiner.on(',').join(paid) + "]";
+					}
 				}
 	
 			} else {

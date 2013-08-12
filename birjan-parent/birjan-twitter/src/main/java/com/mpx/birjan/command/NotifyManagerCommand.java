@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+
+import com.mpx.birjan.util.Utils;
 
 @Repository
 public class NotifyManagerCommand extends AbstractCommand<String> {
@@ -24,17 +25,8 @@ public class NotifyManagerCommand extends AbstractCommand<String> {
 		logger.debug("Notifying Manager: " + username + " - message: " + message);
 		
 		Twitter twitterSender = twitterFactory.getInstance();
-		send(twitterSender, Long.parseLong(username), message);
+		Utils.send(twitterSender, Long.parseLong(username), message, logger);
 	}
 	
-	private void send(Twitter twitterSender, long senderId, String message) {
-		try {
-			twitterSender.sendDirectMessage(senderId, message);
-		} catch (TwitterException e) {
-			if (e.getErrorCode() == 151)
-				send(twitterSender, senderId, message + ".");
-			logger.error("Exception sending: " + e.getMessage());
-		}
-
-	}
+	
 }

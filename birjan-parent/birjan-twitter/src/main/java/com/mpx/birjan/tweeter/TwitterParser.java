@@ -9,8 +9,8 @@ import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
-import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.TwitterBet;
+import com.mpx.birjan.util.Utils;
 
 public final class TwitterParser {
 
@@ -38,7 +38,7 @@ public final class TwitterParser {
 		number = number.substring(number.length()-4, number.length());
 		Integer position = data.length > 2 ? Integer.parseInt(data[1]) : 1;
 		Float amount = data.length > 2 ? Float.parseFloat(data[2]) : Float.parseFloat(data[1]);
-		DateTime date = lottery.length>2?BirjanUtils.getDate(lottery[2]):new DateTime();
+		DateTime date = lottery.length>2?Utils.getDate(lottery[2]):new DateTime();
 
 		Collection<String> lotteries = select(lotteryNames, lottery[0]);
 		Collection<String> variants = lottery.length > 1 ? select(variantNames, lottery[1]) : null;
@@ -57,7 +57,7 @@ public final class TwitterParser {
 		String str = tw.split(" ")[0];
 		String[] lottery = tw.substring(str.length()+1).split(" ");
 		
-		DateTime date = lottery.length>2?BirjanUtils.getDate(lottery[2]):new DateTime();
+		DateTime date = lottery.length>2?Utils.getDate(lottery[2]):new DateTime();
 
 		Collection<String> lotteries = select(lotteryNames, lottery[0]);
 		Collection<String> variants = lottery.length > 1 ? select(variantNames, lottery[1]) : null;

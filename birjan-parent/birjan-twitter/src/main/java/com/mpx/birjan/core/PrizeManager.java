@@ -94,8 +94,8 @@ public class PrizeManager {
 	}
 
 	private void logError(Exception e) {
-		logger.error("Exception: " + e.getClass().getName() + " || Message:  " + e.getMessage());
 		e.printStackTrace();
+		logger.error("Exception: " + e.getClass().getName() + " || Message:  " + e.getMessage());
 	}
 	
 }

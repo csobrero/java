@@ -1,5 +1,8 @@
 package com.mpx.birjan.common;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 public enum Lottery {
 
@@ -27,12 +30,21 @@ public enum Lottery {
 		return this.name().split("_")[0];
 	}
 	
+	public String nameShort(){
+		return this.getLotteryName().substring(0, 2)
+				+ this.getVariantName().substring(0, 1);
+	}
+	
 	public String getVariantName(){
 		return this.name().split("_")[1];
 	}
 	
 	public static String[] getLotteryNames(){
-		return new String[]{"NACIONAL", "PROVINCIA"};
+		Set<String> set = new HashSet<String>();
+		for (Lottery lottery : Lottery.values()) {
+			set.add(lottery.getLotteryName());
+		}
+		return set.toArray(new String[set.size()]);
 	}
 
 	private static final float DEFAULT_WIN_RATIO = 70;

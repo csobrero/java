@@ -1,0 +1,20 @@
+FUNCIONALIDADES
+
+
+USUARIO:
+1.JUGAR
+	1.MENSAJES
+		1. completo del dia |99 1 2.5 NP PMVN| (OK)
+		2. reducido del dia  |99 2.5 NP PMVN| (OK)
+		3. completo/reducido dia subsiguiente |99 1 2.5 NP PMVN 18| (OK)
+		4. tiny |99 2,5 N| (-)
+		5. VER 9D003
+		6. PAGA 9D003
+		7. BORRA 9D003
+		8. balance actual |BALANCE| (OK)
+		9. balance dia anterior |BALANCE 16| (OK)
+	2.RESPUESTAS
+		1. 9D003 : $20 : XX99 1 $2.5 NACIONAL,PROVINCIA PRIMERA,MATUTINA,VESPERTINA,NOCTURNA : 9/8
+		2. ERROR|99 1 2.5 NP PMVN| (-)
+		3. ERROR|99 2.5 N M| FUERA DE HORARIO NAM. (-)
+		4. 17/8 : RECAUDACION=$16 : COMISION=$3.2 : PREMIOS PAGADOS=$0 : (4)PREMIOS A PAGAR=$28 : CAJA INICIAL=$0 (OK)

@@ -1,4 +1,4 @@
-package com.mpx.birjan.bean;
+package com.mpx.birjan.util;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -7,11 +7,15 @@ import java.util.List;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Rule;
 
-public class BirjanUtils {
+public class Utils {
 	
 	public static final DecimalFormat money = new DecimalFormat("#.##");
 
@@ -52,6 +56,17 @@ public class BirjanUtils {
 		}
 		return null;
 	}
+	
+	public static void send(Twitter twitterSender, long senderId, String message, Logger logger) {
+		try {
+			twitterSender.sendDirectMessage(senderId, message);
+		} catch (TwitterException e) {
+			if (e.getErrorCode() == 151)
+				Utils.send(twitterSender, senderId, message + ".", logger);
+			logger.error("Exception sending: " + e.getMessage());
+		}
+
+	}
 
 	public static void mergeDraw(String[] destination, String[] source) {
 		if (destination.length == source.length) {
@@ -67,7 +82,7 @@ public class BirjanUtils {
 
 	public static List<String> retrieveVariantAvailability(String view, Rule[] rules, String day) {
 		List<String> values = new ArrayList<String>();
-		DateTime date = BirjanUtils.getDate(day);
+		DateTime date = Utils.getDate(day);
 		if (date != null) {
 			DateTime today = new DateMidnight().toDateTime();
 			DateTime tomorrow = today.plusDays(1);
@@ -94,7 +109,7 @@ public class BirjanUtils {
 
 	public static List<Object> retrieveVariantAvailability(Lottery[] lottery, String day) {
 		List<Object> results = new ArrayList<Object>();
-		DateTime date = BirjanUtils.getDate(day);
+		DateTime date = Utils.getDate(day);
 		DateTime today = new DateMidnight().toDateTime();
 		DateTime tomorrow = today.plusDays(1);
 		for (Lottery lott : lottery) {

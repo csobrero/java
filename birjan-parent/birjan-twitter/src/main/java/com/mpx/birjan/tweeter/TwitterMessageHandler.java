@@ -12,12 +12,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.mpx.birjan.core.TwitterManager;
-
 import twitter4j.DirectMessage;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+
+import com.mpx.birjan.core.TwitterManager;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

@@ -10,12 +10,12 @@ import org.springframework.stereotype.Repository;
 import twitter4j.DirectMessage;
 
 import com.google.common.base.Optional;
-import com.mpx.birjan.bean.BirjanUtils;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.core.BirjanManager;
 import com.mpx.birjan.core.TransactionalManager;
 import com.mpx.birjan.tweeter.TwitterParser;
+import com.mpx.birjan.util.Utils;
 
 @Repository
 public class BalanceCommand implements Command<String> {
@@ -32,7 +32,7 @@ public class BalanceCommand implements Command<String> {
 	public String execute(DirectMessage directMessage) {
 		String day = TwitterParser.unmarshal(directMessage.getText());
 		
-		DateTime date = Optional.fromNullable(BirjanUtils.getDate(day)).or(new DateTime());
+		DateTime date = Optional.fromNullable(Utils.getDate(day)).or(new DateTime());
 		User user = txManager.identifyMe();
 		
 		BalanceDTO balance = txManager.performBalance(date, user, false);
@@ -56,11 +56,11 @@ public class BalanceCommand implements Command<String> {
 		DateTime date = new DateTime(balance.getDate());
 		String message = date.getDayOfMonth() + "/" + date.getMonthOfYear();
 		
-		message += " : RECAUDACION=$" + BirjanUtils.money.format(balance.getIncome()) + " : COMISION=$"
-				+ BirjanUtils.money.format(balance.getCommission()) + " : PREMIOS PAGADOS=$"
-				+ BirjanUtils.money.format(balance.getPayments()) + " : (" + BirjanUtils.money.format(balance.getWinners())
-				+ ")PREMIOS A PAGAR=$" + BirjanUtils.money.format(balance.getPrizes()) + " : CAJA INICIAL=$"
-				+ BirjanUtils.money.format(balance.getCash());
+		message += " : RECAUDACION=$" + Utils.money.format(balance.getIncome()) + " : COMISION=$"
+				+ Utils.money.format(balance.getCommission()) + " : PREMIOS PAGADOS=$"
+				+ Utils.money.format(balance.getPayments()) + " : (" + Utils.money.format(balance.getWinners())
+				+ ")PREMIOS A PAGAR=$" + Utils.money.format(balance.getPrizes()) + " : CAJA INICIAL=$"
+				+ Utils.money.format(balance.getCash());
 		
 		return message;
 	}
