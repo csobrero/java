@@ -36,9 +36,9 @@ public class BirjanServer {
 
 	@PostConstruct
 	public void start() throws TwitterException {
-		Date date = new DateTime(2013,8,9,11,0,0,0).toDate();
-//		Date date = new DateTime().toDate();
-		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
+//		Date date = new DateTime(2013,8,9,11,0,0,0).toDate();
+////		Date date = new DateTime().toDate();
+//		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
 		if(twitter!=null){
 			final long id = twitter.getId();
 			twitter.addListener(new UserStreamAdapter() {

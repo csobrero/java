@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.mpx.birjan.bean.Draw;
+import com.mpx.birjan.bean.User;
 import com.mpx.birjan.command.NotifyManagerCommand;
 import com.mpx.birjan.common.Lottery;
 
@@ -62,7 +63,7 @@ public class PrizeManager {
 					}
 					if(result.getValue().get()[0]!=null && !notified.contains(result.getKey())){
 						notified.add(result.getKey());
-						command.notifyManager("PREMIO " + result.getKey().getLotteryName() + " " + result.getKey().getVariantName()
+						command.notifyAllManagersByTwitter("PREMIO " + result.getKey().getLotteryName() + " " + result.getKey().getVariantName()
 								+ " a la cabeza: " + result.getValue().get()[0]);
 					}
 				}
@@ -82,8 +83,9 @@ public class PrizeManager {
 				notified.remove(lottery);
 				Future<String[]> result = results.remove(lottery);
 				try {
-					if(result!=null && result.isDone() && result.get().length < 20){							
-						command.notifyManager("PREMIO " + lottery.getLotteryName() + " " +
+					if(result!=null && result.isDone() && result.get().length < 20){		
+						User admin = txManager.identify("1491378438");
+						command.notifyUserByTwitter(admin, "PREMIO " + lottery.getLotteryName() + " " +
 								lottery.getVariantName() + " INCOMPLETO.");
 					}
 				} catch (Exception e) {

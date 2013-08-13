@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.mpx.birjan.bean.Agency;
 import com.mpx.birjan.bean.Authorities;
 import com.mpx.birjan.bean.Balance;
 import com.mpx.birjan.bean.Draw;
@@ -58,6 +59,8 @@ public class TransactionalManager {
 	private GenericJpaDAO<Wager> wagerDao;
 
 	private GenericJpaDAO<User> usersDao;
+
+	private GenericJpaDAO<Agency> agencyDao;
 
 	private GenericJpaDAO<Authorities> authoritiesDao;
 
@@ -227,6 +230,11 @@ public class TransactionalManager {
 		User user = usersDao.findUniqueByFilter(userFilter);
 		return user;
 	}
+	
+	@Transactional(readOnly = true)
+	public List<Agency> getAllAgencies() {
+		return agencyDao.getAll();
+	}
 
 	@Resource(name = "genericJpaDAO")
 	public void setDrawDao(final GenericJpaDAO<Draw> daoToSet) {
@@ -256,6 +264,12 @@ public class TransactionalManager {
 	public void setBalanceDao(final GenericJpaDAO<Balance> daoToSet) {
 		balanceDao = daoToSet;
 		balanceDao.setClazz(Balance.class);
+	}
+
+	@Resource(name = "genericJpaDAO")
+	public void setAgencyDao(final GenericJpaDAO<Agency> daoToSet) {
+		agencyDao = daoToSet;
+		agencyDao.setClazz(Agency.class);
 	}
 
 	@Resource(name = "genericJpaDAO")
