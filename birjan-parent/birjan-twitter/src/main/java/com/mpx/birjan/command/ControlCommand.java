@@ -3,32 +3,28 @@ package com.mpx.birjan.command;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Set;
 
 import javax.mail.internet.MimeMessage;
 
 import org.apache.poi.ss.usermodel.Workbook;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.util.InMemoryResource;
 import org.springframework.stereotype.Repository;
 
 import twitter4j.DirectMessage;
 
-import com.google.common.base.Throwables;
 import com.mpx.birjan.bean.Game;
 import com.mpx.birjan.bean.TwitterBet;
-import com.mpx.birjan.common.BalanceDTO;
 import com.mpx.birjan.common.Lottery;
+import com.mpx.birjan.common.Status;
 import com.mpx.birjan.common.Wrapper;
 import com.mpx.birjan.core.BirjanManager;
+import com.mpx.birjan.core.NotificationManager;
 import com.mpx.birjan.core.TransactionalManager;
 import com.mpx.birjan.tweeter.TwitterParser;
 import com.mpx.birjan.util.WorkbookHandler;
@@ -47,22 +43,24 @@ public class ControlCommand implements Command<String> {
 	private TransactionalManager txManager;
 	
 	@Autowired
+	private NotificationManager notificationManager;
+	
+	@Autowired
 	private JavaMailSender mailSender;
 
 	@Override
 	public String execute(DirectMessage directMessage) {
 
 		TwitterBet twitterBet = validate(directMessage);
+		Status status = null;
+		
 		String email = txManager.identifyMe().getAgency().getEmail();
 		
-		return proccess(email, twitterBet.getDate(),
-				twitterBet.getLotteries().toArray(new Lottery[twitterBet.getLotteries().size()]));
-	}
-
-	private String proccess(String email, DateTime date, Lottery... lotteries) {
-		for (Lottery lottery : lotteries) {
+//		notificationManager.send(email, subject, text, attaches)
+		
+		for (Lottery lottery : twitterBet.getLotteries()) {
 			
-			List<Game> games = txManager.retriveGames(null, lottery, date, null, null);
+			List<Game> games = txManager.retriveGames(status, lottery, twitterBet.getDate(), null, null);
 			
 			Wrapper[] values = null;
 			if (games != null && !games.isEmpty()) {
@@ -77,9 +75,9 @@ public class ControlCommand implements Command<String> {
 			}
 			
 			String subject = "Control: " + lottery.getLotteryName() + " " + lottery.getVariantName() + " : " +
-					date.getDayOfMonth()+"/"+date.getMonthOfYear();
+					twitterBet.getDate().getDayOfMonth()+"/"+twitterBet.getDate().getMonthOfYear();
 
-			Workbook wb = WorkbookHandler.build(values);
+			Workbook wb = null;//WorkbookHandler.build(values);
 
 			try {
 				//OutputStream outputStream = new FileOutputStream(new File(lottery.name()+".xls"));
@@ -95,15 +93,13 @@ public class ControlCommand implements Command<String> {
 				helper.setFrom(senderName);
 				helper.setTo(email);
 				helper.setSubject(subject);
-				helper.setText("ver documento adjunto.");
+				//helper.setText("");
 				helper.addAttachment(lottery.name()+".xls", resource);
 
 				mailSender.send(message);
 				
 			} catch (Exception e) {
-				e.printStackTrace();
 				logger.error("Exception email sending: " + e.getMessage());
-				Throwables.propagate(e);
 			}
 		}
 		
@@ -119,36 +115,9 @@ public class ControlCommand implements Command<String> {
 				bet.add(lottery);
 			}
 		}
-//		logger.debug(bet.toString());
+		logger.debug(bet.toString());
 
 		return bet;
 	}
-	
-//	@Scheduled(cron = "0 30 11 * * 1-6")
-//	public void report1130() {
-//		
-//		SecurityContextHolder.getContext().setAuthentication(
-//				new UsernamePasswordAuthenticationToken("ma", ""));
-//		
-//		BalanceDTO balance = txManager.performBalance(date, user, false);
-//		
-//		String message = buildMessage(balance);
-//		return message;
-//	}
-//	
-//	@Scheduled(cron = "0 0 14 * * 1-6")
-//	public void report1400() {
-//		birjanManager.closeAll();
-//	}
-//	
-//	@Scheduled(cron = "0 30 17 * * 1-6")
-//	public void report1730() {
-//		birjanManager.closeAll();
-//	}
-//	
-//	@Scheduled(cron = "0 0 21 * * 1-6")
-//	public void report2100() {
-//		birjanManager.closeAll();
-//	}
 
 }

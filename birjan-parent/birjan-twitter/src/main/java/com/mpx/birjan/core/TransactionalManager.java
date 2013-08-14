@@ -205,7 +205,15 @@ public class TransactionalManager {
 		return wager.getHash();
 	}
 
+	public List<Game> retriveGames(Lottery lottery, DateTime date, User user, Agency agency) {
+		return retriveGames(null, lottery, date, null, user, agency);
+	}
+	
 	public List<Game> retriveGames(Status status, Lottery lottery, DateTime date, DateTime created, User user) {
+		return retriveGames(status, lottery, date, created, user, null);
+	}
+	
+	public List<Game> retriveGames(Status status, Lottery lottery, DateTime date, DateTime created, User user, Agency agency) {
 
 		Filter<Status> statusFilter = new Filter<Status>("status", status);
 		Filter<Lottery> lotteryFilter = new Filter<Lottery>("lottery", lottery);
@@ -213,8 +221,9 @@ public class TransactionalManager {
 		Filter<Date> createdFilter = new Filter<Date>("createdDate", (created != null) ? created.toDateMidnight()
 				.toDate() : null);
 		Filter<User> userFilter = new Filter<User>("wager.user", user);
+		Filter<Agency> agencyFilter = new Filter<Agency>("wager.user.agency", agency);
 
-		List<Game> games = gameDao.findByFilter(statusFilter, lotteryFilter, dateFilter, createdFilter, userFilter);
+		List<Game> games = gameDao.findByFilter(statusFilter, lotteryFilter, dateFilter, createdFilter, userFilter, agencyFilter);
 
 		return games;
 	}

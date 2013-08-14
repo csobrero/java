@@ -4,6 +4,7 @@ import static com.mpx.birjan.common.Status.CLOSE;
 import static com.mpx.birjan.common.Status.DONE;
 import static com.mpx.birjan.common.Status.OPEN;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.mpx.birjan.bean.Authorities;
+import com.mpx.birjan.bean.Agency;
 import com.mpx.birjan.bean.Balance;
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.Game;
@@ -28,8 +29,11 @@ import com.mpx.birjan.bean.User;
 import com.mpx.birjan.bean.Wager;
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Status;
+import com.mpx.birjan.common.Wrapper;
 import com.mpx.birjan.service.dao.Filter;
 import com.mpx.birjan.service.dao.GenericJpaDAO;
+import com.mpx.birjan.util.WorkbookHandler;
+import com.mpx.birjan.util.WorkbookHandler.WorkbookHolder;
 
 @Controller
 public class BirjanManager {
@@ -46,8 +50,6 @@ public class BirjanManager {
 	private GenericJpaDAO<Wager> wagerDao;
 
 	private GenericJpaDAO<User> usersDao;
-
-	private GenericJpaDAO<Authorities> authoritiesDao;
 
 	private GenericJpaDAO<Balance> balanceDao;
 
@@ -152,6 +154,31 @@ public class BirjanManager {
 	public void setBalanceDao(final GenericJpaDAO<Balance> daoToSet) {
 		balanceDao = daoToSet;
 		balanceDao.setClazz(Balance.class);
+	}
+
+	@Transactional(readOnly=true)
+	public List<WorkbookHolder> getWorkbooks(Collection<Lottery> lotteries, DateTime date, Agency agency) {
+		List<WorkbookHolder> list = new ArrayList<WorkbookHolder>();
+		for (Lottery lottery : lotteries) {
+
+			List<Game> games = txManager.retriveGames(lottery, date, null, agency);
+
+			Wrapper[] values = null;//volar esto
+			if (games != null && !games.isEmpty()) {
+				values = new Wrapper[games.size()];
+				for (int i = 0; i < values.length; i++) {
+					Game game = games.get(i);
+					values[i] = new Wrapper(game.getWager().getHash(),
+							game.getData(), game.getStatus(), game.getPrize(),
+							game.getWager().getUser().getUsername(),
+							game.getCreated());
+				}
+			}
+
+			list.add(WorkbookHandler.build(lottery, date, values));
+
+		}
+		return list;
 	}
 
 }

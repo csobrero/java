@@ -34,6 +34,9 @@ public class PrizeManager {
 	private TransactionalManager txManager;
 	
 	@Autowired
+	private NotificationManager notificationManager;
+	
+	@Autowired
 	private NotifyManagerCommand command;
 	
 	private Map<Lottery, Future<String[]>> results = new HashMap<Lottery, Future<String[]>>();
@@ -42,7 +45,7 @@ public class PrizeManager {
 
 	private DateTime now;
 	
-	@Scheduled(fixedRate=900000) //15 mins.
+	@Scheduled(fixedRate=60000) //15 mins.
 	public void updatePrizes(){
 		
 		SecurityContextHolder.getContext().setAuthentication(
@@ -93,6 +96,26 @@ public class PrizeManager {
 				}
 			}
 		}
+	}
+	
+	@Scheduled(cron = "0 28 11 * * 1-5")
+	private void schedule1(){
+		notificationManager.sendControlSheetToManagers();
+	}
+	
+	@Scheduled(cron = "0 58 13 * * 1-5")
+	private void schedule2(){
+		notificationManager.sendControlSheetToManagers();
+	}
+	
+	@Scheduled(cron = "0 28 17 * * 1-5")
+	private void schedule3(){
+		notificationManager.sendControlSheetToManagers();
+	}
+	
+	@Scheduled(cron = "0 58 20 * * 1-5")
+	private void schedule4(){
+		notificationManager.sendControlSheetToManagers();
 	}
 
 	private void logError(Exception e) {

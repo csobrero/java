@@ -9,13 +9,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.joda.time.DateTime;
 
+import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Status;
 import com.mpx.birjan.common.Wrapper;
 
 public class WorkbookHandler {
 
-	public static Workbook build(Wrapper[] data) {
+	public static WorkbookHolder build(Lottery lottery, DateTime date, Wrapper[] data) {
 			Workbook wb = null;
 				wb = new HSSFWorkbook();
 
@@ -90,8 +92,8 @@ public class WorkbookHandler {
 						row.createCell(3).setCellValue(String.format("%.2f", entry.getValue().getTotalPrize()));
 					}
 				}
-			
-			return wb;
+				
+			return new WorkbookHolder(lottery, date, wb);
 		}
 	
 	protected static class Accumulator {
@@ -121,6 +123,39 @@ public class WorkbookHandler {
 		public float getTotalPrize() {
 			return totalPrize;
 		}
+	}
+	
+	public static final class WorkbookHolder{
+
+		private Lottery lottery;
+		private DateTime date;
+		private Workbook workbook;
+		
+		@SuppressWarnings("unused")
+		private WorkbookHolder() {}
+		
+		public WorkbookHolder(Lottery lottery, DateTime date, Workbook workbook) {
+			this.lottery = lottery;
+			this.date = date;
+			this.workbook = workbook;
+		}
+
+		public Lottery getLottery() {
+			return lottery;
+		}
+
+		public DateTime getDate() {
+			return date;
+		}
+
+		public Workbook getWorkbook() {
+			return workbook;
+		}
+
+		public String getFileName() {
+			return lottery.name()+"_"+date.getDayOfMonth()+"_"+date.getMonthOfYear()+".xls";
+		}
+		
 	}
 
 }
