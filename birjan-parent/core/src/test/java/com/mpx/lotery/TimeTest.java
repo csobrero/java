@@ -138,6 +138,17 @@ public class TimeTest {
 	}
 	
 	@Test
+	public void sasas(){
+		String[] s = new String[20];
+		s[1] = "a";
+		
+		if(s[0]!=null)
+			System.out.println("ola");
+		
+		System.out.println("chau");
+	}
+	
+	@Test
 	public void tweetTest() {
 		
 		String[] tws = {"22 1 N","22 1 N P","22 1 1 N","22 1 1 N P"};

@@ -51,8 +51,8 @@ public class CreateCommand implements Command<String> {
 		for (String lotteryName : bet.getLotteryNames()) {
 			for (String variantName : bet.getVariantNames()) {
 				Lottery lottery = Lottery.valueOf(lotteryName + "_" + variantName);
-				Preconditions.checkArgument(Utils.isValid(lottery, date, true), "[" + lottery.name() + "]"
-						+ " HORARIO NO VALIDO");
+				Preconditions.checkArgument(Utils.isValid(lottery, date, true), "[" + lottery.getLotteryName() +
+						" " + lottery.getVariantName() + "]" + " HORARIO FINALIZADO");
 				bet.add(lottery);
 			}
 		}

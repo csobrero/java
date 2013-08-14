@@ -9,8 +9,6 @@ import org.joda.time.DateTimeConstants;
 
 public abstract class Rule {
 
-	public abstract DateTime getFrom(DateTime date);
-
 	public abstract DateTime getTo();
 	public abstract DateTime getTo(DateTime date);
 	public static final Rule NAP = new Nacional(VARIANT.PRIMERA);
@@ -40,18 +38,12 @@ public abstract class Rule {
 	}
 	
 	public enum VARIANT {
-		PRIMERA(21, 0, 11, 30), MATUTINA(11, 30, 14, 00), VESPERTINA(14, 0,
-				17, 30), NOCTURNA(17, 30, 21, 0);
+		PRIMERA(11, 30), MATUTINA(14, 00), VESPERTINA(17, 30), NOCTURNA(21, 0);
 
-		VARIANT(int hourFrom, int minutesFrom, int hourTo, int minutesTo) {
-			this.hourFrom = hourFrom;
-			this.minutesFrom = minutesFrom;
+		VARIANT(int hourTo, int minutesTo) {
 			this.hourTo = hourTo;
 			this.minutesTo = minutesTo;
 		}
-
-		private final int hourFrom;
-		private final int minutesFrom;
 		private final int hourTo;
 		private final int minutesTo;
 	}
@@ -74,18 +66,6 @@ public abstract class Rule {
 
 		public Nacional(VARIANT variant) {
 			super(variant);
-		}
-
-		@Override
-		public DateTime getFrom(DateTime date) {
-			if (date.dayOfWeek().get() == DateTimeConstants.SUNDAY
-					|| variant.equals(VARIANT.VESPERTINA)
-					&& date.dayOfWeek().get() == DateTimeConstants.SATURDAY)
-				return null;
-
-			return new DateTime(date.year().get(), date.monthOfYear().get(),
-					date.dayOfMonth().get(), variant.hourFrom,
-					variant.minutesFrom, 0, 0);
 		}
 		
 		@Override

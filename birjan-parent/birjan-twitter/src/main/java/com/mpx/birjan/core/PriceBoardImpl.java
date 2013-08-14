@@ -68,6 +68,7 @@ public class PriceBoardImpl implements PriceBoardWebService {
 			final InputStream in = connection.getInputStream();
 			final Document doc = Jsoup.parse(in, connection.getContentEncoding(), "http://www.vivitusuerte.com");
 			final Elements matches = doc.select(":matchesOwn(\\d{4})");
+//			Thread.currentThread().sleep(20000);
 			if(matches!=null&&matches.size()>=idx){
 				List<Element> elements = matches.subList(idx-20, idx);
 				list = new String[elements.size()];
@@ -75,7 +76,6 @@ public class PriceBoardImpl implements PriceBoardWebService {
 					list[i + ((i % 2 == 0) ? 0 : 9) - ((i - (i/20)*20)/ 2)] = elements.get(i).childNode(0)
 							.outerHtml().replaceAll("\\s", "");
 				}
-//				Thread.currentThread().sleep(600000);
 			}
 		} catch (Exception e) {
 			logger.error("Exception: " + e.getClass().getName() + " || Message:  " + e.getMessage());

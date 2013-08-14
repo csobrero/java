@@ -50,7 +50,7 @@ public class PrizeManager {
 
 		for (Entry<Lottery, Future<String[]>> result : results.entrySet()) {
 			try {
-				if (result.getValue().isDone()){ 
+				if (result.getValue().isDone() && result.getValue().get().length > 0){ 
 					if(result.getValue().get().length == 20) {	
 					Draw draw = txManager.retrieveDraw(result.getKey(), now);
 						if(draw==null || draw.getNumbers().length<20){
@@ -63,7 +63,7 @@ public class PrizeManager {
 					}
 					if(result.getValue().get()[0]!=null && !notified.contains(result.getKey())){
 						notified.add(result.getKey());
-						command.notifyAllManagersByTwitter("PREMIO " + result.getKey().getLotteryName() + " " + result.getKey().getVariantName()
+						command.notifyAllManagersByTwitter("Premio: " + result.getKey().getLotteryName() + " " + result.getKey().getVariantName()
 								+ " a la cabeza: " + result.getValue().get()[0]);
 					}
 				}

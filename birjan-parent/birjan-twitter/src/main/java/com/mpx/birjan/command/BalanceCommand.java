@@ -46,7 +46,7 @@ public class BalanceCommand implements Command<String> {
 		birjanManager.closeAll();
 	}
 
-	@Scheduled(cron = "0 0 0 * * 0,2-6")
+	@Scheduled(cron = "0 0 0 * * 1-6")
 	public void activateAll() {
 		birjanManager.activateAll();
 	}

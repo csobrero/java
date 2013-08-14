@@ -12,8 +12,10 @@
 			<param name="LevelMax" value="FATAL" />
 		</filter-->
 	</appender>
-	<appender name="fileAppender" class="org.apache.log4j.FileAppender">
-      <param name="append" value="false"/>
+	<appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
+      <param name="append" value="true"/>
+      <param name="MaxFileSize" value="10MB"/>
+      <param name="MaxBackupIndex" value="3"/>
       <param name="file" value="${catalina.base}/logs/birjan.log"/>
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern" value="|%d{ISO8601}|%p|%C{1}|%X{sessionID}|%m|%n"/>

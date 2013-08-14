@@ -51,6 +51,8 @@ public class TwitterManager {
 				if (dm.matches(entry.getKey()))
 					return beanFactory.getBean(entry.getValue()).execute(directMessage);
 			}
+		} catch (IllegalArgumentException e){
+			return e.getMessage();
 		} catch (Throwable t) {
 			t.printStackTrace();
 			logger.error("Exception: " + t.getClass().getName() + " || Message:  " + t.getMessage());
