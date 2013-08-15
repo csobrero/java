@@ -1,4 +1,4 @@
-package com.mpx.birjan.core;
+package com.mpx.birjan.core.manager;
 
 import static com.mpx.birjan.common.Status.CLOSE;
 import static com.mpx.birjan.common.Status.DONE;

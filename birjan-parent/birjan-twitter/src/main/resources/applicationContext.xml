@@ -25,7 +25,12 @@
 	<task:executor id="taskExecutor" pool-size="5-20" queue-capacity="50" />
 	<task:scheduler id="taskScheduler" pool-size="10"/>
 	
-	
+	<task:scheduled-tasks scheduler="taskScheduler">
+	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 28 11 * * 1-5" />
+	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 58 13 * * 1-5" />
+	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 28 17 * * 1-5" />
+	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 58 20 * * 1-5" />
+	</task:scheduled-tasks>
 	
 	<!-- ========= CONFIGUTATION ============= -->
 	

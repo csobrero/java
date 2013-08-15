@@ -11,7 +11,7 @@ import twitter4j.DirectMessage;
 import com.google.common.base.Preconditions;
 import com.mpx.birjan.bean.TwitterBet;
 import com.mpx.birjan.common.Lottery;
-import com.mpx.birjan.core.BirjanManager;
+import com.mpx.birjan.core.manager.BirjanManager;
 import com.mpx.birjan.tweeter.TwitterParser;
 import com.mpx.birjan.util.Utils;
 

@@ -12,7 +12,7 @@ import twitter4j.TwitterFactory;
 
 import com.mpx.birjan.bean.Agency;
 import com.mpx.birjan.bean.User;
-import com.mpx.birjan.core.TransactionalManager;
+import com.mpx.birjan.core.manager.TransactionalManager;
 import com.mpx.birjan.util.Utils;
 
 @Repository

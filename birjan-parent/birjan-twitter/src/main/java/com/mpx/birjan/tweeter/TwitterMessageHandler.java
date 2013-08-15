@@ -17,7 +17,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 
-import com.mpx.birjan.core.TwitterManager;
+import com.mpx.birjan.core.manager.TwitterManager;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

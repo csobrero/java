@@ -20,7 +20,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.mpx.birjan.bean.Game;
-import com.mpx.birjan.core.BirjanManager;
+import com.mpx.birjan.core.manager.BirjanManager;
 import com.mpx.birjan.tweeter.TwitterParser;
 import com.mpx.birjan.util.Utils;
 

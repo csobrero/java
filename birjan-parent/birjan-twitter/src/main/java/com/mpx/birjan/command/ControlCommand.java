@@ -1,40 +1,30 @@
 package com.mpx.birjan.command;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.List;
 
-import javax.mail.internet.MimeMessage;
-
-import org.apache.poi.ss.usermodel.Workbook;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.util.InMemoryResource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import twitter4j.DirectMessage;
 
-import com.mpx.birjan.bean.Game;
+import com.mpx.birjan.bean.Agency;
 import com.mpx.birjan.bean.TwitterBet;
 import com.mpx.birjan.common.Lottery;
-import com.mpx.birjan.common.Status;
-import com.mpx.birjan.common.Wrapper;
-import com.mpx.birjan.core.BirjanManager;
-import com.mpx.birjan.core.NotificationManager;
-import com.mpx.birjan.core.TransactionalManager;
+import com.mpx.birjan.core.manager.BirjanManager;
+import com.mpx.birjan.core.manager.NotificationManager;
+import com.mpx.birjan.core.manager.TransactionalManager;
 import com.mpx.birjan.tweeter.TwitterParser;
-import com.mpx.birjan.util.WorkbookHandler;
+import com.mpx.birjan.util.Utils;
+import com.mpx.birjan.util.WorkbookHandler.WorkbookHolder;
 
 @Repository
 public class ControlCommand implements Command<String> {
 
 	final Logger logger = LoggerFactory.getLogger(ControlCommand.class);
-	
-	private final static String senderName = "QuiniTwitter";
 
 	@Autowired
 	private BirjanManager birjanManager;
@@ -44,65 +34,19 @@ public class ControlCommand implements Command<String> {
 	
 	@Autowired
 	private NotificationManager notificationManager;
-	
-	@Autowired
-	private JavaMailSender mailSender;
 
 	@Override
+	@Transactional
 	public String execute(DirectMessage directMessage) {
 
 		TwitterBet twitterBet = validate(directMessage);
-		Status status = null;
 		
-		String email = txManager.identifyMe().getAgency().getEmail();
+		Agency agency = txManager.identifyMe().getAgency();
+		List<WorkbookHolder> workbooks = birjanManager.getWorkbooks(twitterBet.getLotteries(), new DateTime(), agency);
 		
-//		notificationManager.send(email, subject, text, attaches)
-		
-		for (Lottery lottery : twitterBet.getLotteries()) {
-			
-			List<Game> games = txManager.retriveGames(status, lottery, twitterBet.getDate(), null, null);
-			
-			Wrapper[] values = null;
-			if (games != null && !games.isEmpty()) {
-				values = new Wrapper[games.size()];
-				for (int i = 0; i < values.length; i++) {
-					Game game = games.get(i);
-					values[i] = new Wrapper(game.getWager().getHash(),
-							game.getData(), game.getStatus(), game.getPrize(), game.getWager()
-									.getUser().getUsername(), game
-									.getCreated());
-				}
-			}
-			
-			String subject = "Control: " + lottery.getLotteryName() + " " + lottery.getVariantName() + " : " +
-					twitterBet.getDate().getDayOfMonth()+"/"+twitterBet.getDate().getMonthOfYear();
-
-			Workbook wb = null;//WorkbookHandler.build(values);
-
-			try {
-				//OutputStream outputStream = new FileOutputStream(new File(lottery.name()+".xls"));
-				OutputStream outputStream = new ByteArrayOutputStream();
-				wb.write(outputStream);
-				outputStream.flush();
-				outputStream.close();	
-				InMemoryResource resource = new InMemoryResource(((ByteArrayOutputStream) outputStream).toByteArray());
+		notificationManager.send(agency.getEmail(), "Control de Jugadas", 
+				"Ver planillas de control adjuntas.", Utils.transform(workbooks));
 				
-				MimeMessage message = mailSender.createMimeMessage();
-				
-				MimeMessageHelper helper = new MimeMessageHelper(message, true);
-				helper.setFrom(senderName);
-				helper.setTo(email);
-				helper.setSubject(subject);
-				//helper.setText("");
-				helper.addAttachment(lottery.name()+".xls", resource);
-
-				mailSender.send(message);
-				
-			} catch (Exception e) {
-				logger.error("Exception email sending: " + e.getMessage());
-			}
-		}
-		
 		return "Control enviado al manager.";
 	}
 	

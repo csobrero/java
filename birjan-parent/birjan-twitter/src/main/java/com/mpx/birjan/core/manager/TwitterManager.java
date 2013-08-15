@@ -1,4 +1,4 @@
-package com.mpx.birjan.core;
+package com.mpx.birjan.core.manager;
 
 import java.util.HashMap;
 import java.util.Map;

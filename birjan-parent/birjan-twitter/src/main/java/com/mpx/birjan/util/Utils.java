@@ -1,21 +1,35 @@
 package com.mpx.birjan.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.security.util.InMemoryResource;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.mpx.birjan.command.ControlCommand;
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Rule;
+import com.mpx.birjan.util.WorkbookHandler.WorkbookHolder;
 
 public class Utils {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 	
 	public static final DecimalFormat money = new DecimalFormat("#.##");
 
@@ -134,4 +148,21 @@ public class Utils {
 		return null;
 	}
 
+	public static Collection<Resource> transform(List<WorkbookHolder> workbooks) {
+		return Collections2.transform(workbooks, new Function<WorkbookHolder, Resource>() {
+			@Override
+			public Resource apply(@Nullable WorkbookHolder workbookHolder) {
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				try {
+					workbookHolder.getWorkbook().write(outputStream);
+					outputStream.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+					logger.error(e.getMessage());
+				}
+				Resource resource = new InMemoryResource(outputStream.toByteArray(), workbookHolder.getFileName());			
+				return resource;
+			}
+		});
+	}
 }

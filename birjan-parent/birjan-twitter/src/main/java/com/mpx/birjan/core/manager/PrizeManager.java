@@ -1,4 +1,4 @@
-package com.mpx.birjan.core;
+package com.mpx.birjan.core.manager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +21,7 @@ import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.command.NotifyManagerCommand;
 import com.mpx.birjan.common.Lottery;
+import com.mpx.birjan.core.PriceBoardWebService;
 
 @Component
 public class PrizeManager {
@@ -45,11 +46,10 @@ public class PrizeManager {
 
 	private DateTime now;
 	
-	@Scheduled(fixedRate=60000) //15 mins.
+	@Scheduled(fixedRate=60000)
 	public void updatePrizes(){
 		
-		SecurityContextHolder.getContext().setAuthentication(
-					new UsernamePasswordAuthenticationToken("ma", ""));
+		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("ma", ""));
 
 		for (Entry<Lottery, Future<String[]>> result : results.entrySet()) {
 			try {
@@ -80,7 +80,7 @@ public class PrizeManager {
 		
 		now = new DateTime();
 		for (Lottery lottery : Lottery.values()) {
-			if (lottery.getRule().getTo().isBefore(now) && lottery.getRule().getTo().plusHours(2).isAfter(now)) {
+			if (lottery.getRule().getTo().plusMinutes(10).isBefore(now) && lottery.getRule().getTo().plusMinutes(20).isAfter(now)) {
 				results.put(lottery, priceBoardWebService.retrieve(lottery, now));
 			} else {
 				notified.remove(lottery);
@@ -96,26 +96,6 @@ public class PrizeManager {
 				}
 			}
 		}
-	}
-	
-	@Scheduled(cron = "0 28 11 * * 1-5")
-	private void schedule1(){
-		notificationManager.sendControlSheetToManagers();
-	}
-	
-	@Scheduled(cron = "0 58 13 * * 1-5")
-	private void schedule2(){
-		notificationManager.sendControlSheetToManagers();
-	}
-	
-	@Scheduled(cron = "0 28 17 * * 1-5")
-	private void schedule3(){
-		notificationManager.sendControlSheetToManagers();
-	}
-	
-	@Scheduled(cron = "0 58 20 * * 1-5")
-	private void schedule4(){
-		notificationManager.sendControlSheetToManagers();
 	}
 
 	private void logError(Exception e) {

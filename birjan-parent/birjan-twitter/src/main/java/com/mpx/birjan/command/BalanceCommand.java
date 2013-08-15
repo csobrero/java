@@ -12,8 +12,8 @@ import twitter4j.DirectMessage;
 import com.google.common.base.Optional;
 import com.mpx.birjan.bean.User;
 import com.mpx.birjan.common.BalanceDTO;
-import com.mpx.birjan.core.BirjanManager;
-import com.mpx.birjan.core.TransactionalManager;
+import com.mpx.birjan.core.manager.BirjanManager;
+import com.mpx.birjan.core.manager.TransactionalManager;
 import com.mpx.birjan.tweeter.TwitterParser;
 import com.mpx.birjan.util.Utils;
 

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import twitter4j.DirectMessage;
 
-import com.mpx.birjan.core.BirjanManager;
+import com.mpx.birjan.core.manager.BirjanManager;
 import com.mpx.birjan.tweeter.TwitterParser;
 
 @Repository
