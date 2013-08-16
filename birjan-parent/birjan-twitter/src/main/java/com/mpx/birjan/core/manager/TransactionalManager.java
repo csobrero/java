@@ -240,7 +240,6 @@ public class TransactionalManager {
 		return user;
 	}
 	
-	@Transactional(readOnly = true)
 	public List<Agency> getAllAgencies() {
 		return agencyDao.getAll();
 	}

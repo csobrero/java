@@ -47,8 +47,8 @@ public class PriceBoardImpl implements PriceBoardWebService {
 	}
 
 	private String[] ajaxCall(Lottery lottery, DateTime date) {
-//		System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
-//		System.setProperty("http.proxyPort", "8080");
+		//System.setProperty("http.proxyHost", "webproxy.wlb2.nam.nsroot.net");
+		//System.setProperty("http.proxyPort", "8080");
 		final Integer lotteryNumber = lookup.get(lottery.getLotteryName());
 		final Integer idx = lookup.get(lottery.getVariantName());
 		String[] list = new String[]{};
@@ -61,14 +61,14 @@ public class PriceBoardImpl implements PriceBoardWebService {
 			final OutputStream outputStream = connection.getOutputStream();
 			outputStream.write(("fecha=" + date.getYear() + "/" + date.getMonthOfYear() + "/"
 					+ date.getDayOfMonth() + "&loteria=" + lotteryNumber).getBytes("UTF-8"));
-//			logger.info("fecha=" + date.getYear() + "/" + date.getMonthOfYear() + "/"
-//					+ date.getDayOfMonth() + "&loteria=" + lotteryNumber);
-			logger.info("Thread: " + Thread.currentThread().getName() + " | Id: " + Thread.currentThread().getId());
+			//logger.info("fecha=" + date.getYear() + "/" + date.getMonthOfYear() + "/"
+			//		+ date.getDayOfMonth() + "&loteria=" + lotteryNumber);
+			//logger.info("Thread: " + Thread.currentThread().getName() + " | Id: " + Thread.currentThread().getId());
 			outputStream.flush();
 			final InputStream in = connection.getInputStream();
 			final Document doc = Jsoup.parse(in, connection.getContentEncoding(), "http://www.vivitusuerte.com");
 			final Elements matches = doc.select(":matchesOwn(\\d{4})");
-//			Thread.currentThread().sleep(20000);
+			//Thread.currentThread().sleep(20000);
 			if(matches!=null&&matches.size()>=idx){
 				List<Element> elements = matches.subList(idx-20, idx);
 				list = new String[elements.size()];

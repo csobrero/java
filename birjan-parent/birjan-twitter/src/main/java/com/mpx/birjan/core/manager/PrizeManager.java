@@ -22,6 +22,7 @@ import com.mpx.birjan.bean.User;
 import com.mpx.birjan.command.NotifyManagerCommand;
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.core.PriceBoardWebService;
+import com.mpx.birjan.util.Messages;
 
 @Component
 public class PrizeManager {
@@ -37,12 +38,9 @@ public class PrizeManager {
 	@Autowired
 	private NotificationManager notificationManager;
 	
-	@Autowired
-	private NotifyManagerCommand command;
-	
 	private Map<Lottery, Future<String[]>> results = new HashMap<Lottery, Future<String[]>>();
 	
-	private Set<Lottery> notified = new HashSet<Lottery>();
+	private Set<Lottery> firstPrizeNotified = new HashSet<Lottery>();
 
 	private DateTime now;
 	
@@ -54,20 +52,20 @@ public class PrizeManager {
 		for (Entry<Lottery, Future<String[]>> result : results.entrySet()) {
 			try {
 				if (result.getValue().isDone() && result.getValue().get().length > 0){ 
-					if(result.getValue().get().length == 20) {	
+					if(result.getValue().get().length == 20) {
 					Draw draw = txManager.retrieveDraw(result.getKey(), now);
 						if(draw==null || draw.getNumbers().length<20){
 							
 							txManager.createDraw(result.getKey(), now, result.getValue().get());
 							txManager.validateDraw(result.getKey(), now);
+							notificationManager.notifyWinners(result.getKey(), now);
 							
-							logger.info("Validated: " + result.getKey().name() + " || Date: " + now);
+							//logger.info("Validated: " + result.getKey().name() + " || Date: " + now);
 						}
 					}
-					if(result.getValue().get()[0]!=null && !notified.contains(result.getKey())){
-						notified.add(result.getKey());
-						command.notifyAllManagersByTwitter("Premio: " + result.getKey().getLotteryName() + " " + result.getKey().getVariantName()
-								+ " a la cabeza: " + result.getValue().get()[0]);
+					if(result.getValue().get()[0]!=null && !firstPrizeNotified.contains(result.getKey())){
+						firstPrizeNotified.add(result.getKey());
+						notificationManager.notifyFirstPrize(Messages.build(result, now));
 					}
 				}
 			} catch (InterruptedException e) {
@@ -83,13 +81,13 @@ public class PrizeManager {
 			if (lottery.getRule().getTo().plusMinutes(10).isBefore(now) && lottery.getRule().getTo().plusMinutes(20).isAfter(now)) {
 				results.put(lottery, priceBoardWebService.retrieve(lottery, now));
 			} else {
-				notified.remove(lottery);
+				firstPrizeNotified.remove(lottery);
 				Future<String[]> result = results.remove(lottery);
 				try {
 					if(result!=null && result.isDone() && result.get().length < 20){		
 						User admin = txManager.identify("1491378438");
-						command.notifyUserByTwitter(admin, "PREMIO " + lottery.getLotteryName() + " " +
-								lottery.getVariantName() + " INCOMPLETO.");
+//						command.notifyUserByTwitter(admin, "PREMIO " + lottery.getLotteryName() + " " +
+//								lottery.getVariantName() + " INCOMPLETO.");
 					}
 				} catch (Exception e) {
 					logError(e);

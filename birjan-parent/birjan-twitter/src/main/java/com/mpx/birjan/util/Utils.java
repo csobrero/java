@@ -17,12 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.security.util.InMemoryResource;
 
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.mpx.birjan.command.ControlCommand;
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.common.Rule;
 import com.mpx.birjan.util.WorkbookHandler.WorkbookHolder;
@@ -69,17 +65,6 @@ public class Utils {
 			}
 		}
 		return null;
-	}
-	
-	public static void send(Twitter twitterSender, long senderId, String message, Logger logger) {
-		try {
-			twitterSender.sendDirectMessage(senderId, message);
-		} catch (TwitterException e) {
-			if (e.getErrorCode() == 151)
-				Utils.send(twitterSender, senderId, message + ".", logger);
-			logger.error("Exception sending: " + e.getMessage());
-		}
-
 	}
 
 	public static void mergeDraw(String[] destination, String[] source) {
