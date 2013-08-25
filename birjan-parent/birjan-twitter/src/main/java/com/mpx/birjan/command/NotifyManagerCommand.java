@@ -14,7 +14,7 @@ import com.mpx.birjan.core.manager.NotificationManager;
 @Repository
 public class NotifyManagerCommand implements Command<String> {
 
-	final Logger logger = LoggerFactory.getLogger(NotifyManagerCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(NotifyManagerCommand.class);
 
 	@Autowired
 	private NotificationManager notificationManager;

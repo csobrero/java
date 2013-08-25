@@ -22,7 +22,7 @@ import com.mpx.birjan.util.Utils;
 @Repository
 public class PayCommand implements Command<String> {
 
-	final Logger logger = LoggerFactory.getLogger(PayCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(PayCommand.class);
 
 	@Autowired
 	private BirjanManager birjanManager;

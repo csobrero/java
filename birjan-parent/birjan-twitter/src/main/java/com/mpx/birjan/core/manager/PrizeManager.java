@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import com.mpx.birjan.bean.Draw;
 import com.mpx.birjan.bean.User;
-import com.mpx.birjan.command.NotifyManagerCommand;
 import com.mpx.birjan.common.Lottery;
 import com.mpx.birjan.core.PriceBoardWebService;
 import com.mpx.birjan.util.Messages;
@@ -27,7 +26,7 @@ import com.mpx.birjan.util.Messages;
 @Component
 public class PrizeManager {
 	
-	final Logger logger = LoggerFactory.getLogger(PrizeManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(PrizeManager.class);
 	
 	@Autowired
 	private PriceBoardWebService priceBoardWebService;
@@ -78,7 +77,9 @@ public class PrizeManager {
 		
 		now = new DateTime();
 		for (Lottery lottery : Lottery.values()) {
-			if (lottery.getRule().getTo().plusMinutes(10).isBefore(now) && lottery.getRule().getTo().plusMinutes(20).isAfter(now)) {
+			if (lottery.getRule().getTo()!=null && 
+					lottery.getRule().getTo().plusMinutes(10).isBefore(now) && 
+					lottery.getRule().getTo().plusMinutes(20).isAfter(now)) {
 				results.put(lottery, priceBoardWebService.retrieve(lottery, now));
 			} else {
 				firstPrizeNotified.remove(lottery);

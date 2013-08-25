@@ -26,7 +26,7 @@ public class BirjanServer {
 	
 	private static final String CONFIG_PATH = "classpath*:applicationContext.xml";
 
-	final Logger logger = LoggerFactory.getLogger(BirjanServer.class);
+	private static final Logger logger = LoggerFactory.getLogger(BirjanServer.class);
 	
 	@Autowired
 	private TwitterStream twitter;
@@ -36,9 +36,9 @@ public class BirjanServer {
 
 	@PostConstruct
 	public void start() throws TwitterException {
-//		Date date = new DateTime(2013,8,13,11,30,0,0).toDate();
-////		Date date = new DateTime().toDate();
-//		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
+		Date date = new DateTime(2013,9,2,11,30,0,0).toDate();
+//		Date date = new DateTime().toDate();
+		DateTimeUtils.setCurrentMillisOffset(date.getTime()-new Date().getTime());
 		if(twitter!=null){
 			final long id = twitter.getId();
 			twitter.addListener(new UserStreamAdapter() {

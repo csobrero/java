@@ -18,3 +18,11 @@ USUARIO:
 		2. ERROR|99 1 2.5 NP PMVN| (-)
 		3. ERROR|99 2.5 N M| FUERA DE HORARIO NAM. (-)
 		4. 17/8 : RECAUDACION=$16 : COMISION=$3.2 : PREMIOS PAGADOS=$0 : (4)PREMIOS A PAGAR=$28 : CAJA INICIAL=$0 (OK)
+		
+		
+-Duser.timezone="America/Argentina/Buenos_Aires"
+-Denvironment=prod
+-Dlog4j.configuration=log4j_prod.xml
+JAVA_OPTS="$JAVA_OPTS -Duser.timezone=`America/Argentina/Buenos_Aires` -Denvironment=prod -Dlog4j.configuration=log4j_prod.xml"
+
+wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jdk-7u25-linux-i586.tar.gz"

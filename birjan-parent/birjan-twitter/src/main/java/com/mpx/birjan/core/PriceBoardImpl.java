@@ -25,7 +25,7 @@ import com.mpx.birjan.common.Lottery;
 @Service
 public class PriceBoardImpl implements PriceBoardWebService {
 
-	private final Logger logger = LoggerFactory.getLogger(PriceBoardImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(PriceBoardImpl.class);
 	
 	private static Map<String, Integer> lookup;
 	

@@ -26,10 +26,11 @@
 	<task:scheduler id="taskScheduler" pool-size="10"/>
 	
 	<task:scheduled-tasks scheduler="taskScheduler">
-	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 28 11 * * 1-5" />
+	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 28 11 * * 1-6" />
 	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 58 13 * * 1-5" />
+	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 58 14 * * 6" />
 	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 28 17 * * 1-5" />
-	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 58 20 * * 1-5" />
+	    <task:scheduled ref="notificationManager" method="sendControlSheetToManagers" cron="0 58 20 * * 1-6" />
 	</task:scheduled-tasks>
 	
 	<!-- ========= CONFIGUTATION ============= -->
@@ -45,6 +46,7 @@
 		<property name="url" value="${datasource.url}" />
 		<property name="username" value="${datasource.username}" />
 		<property name="password" value="${datasource.password}" />
+		
 	</bean>
 
 	<bean id="entityManagerFactory"

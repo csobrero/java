@@ -16,6 +16,7 @@ import com.mpx.birjan.command.BalanceCommand;
 import com.mpx.birjan.command.Command;
 import com.mpx.birjan.command.ControlCommand;
 import com.mpx.birjan.command.CreateCommand;
+import com.mpx.birjan.command.DateTimeCommand;
 import com.mpx.birjan.command.DeleteCommand;
 import com.mpx.birjan.command.PayCommand;
 import com.mpx.birjan.command.ShowCommand;
@@ -24,7 +25,7 @@ import com.mpx.birjan.tweeter.TwitterParser;
 @Component
 public class TwitterManager {
 
-	final Logger logger = LoggerFactory.getLogger(TwitterManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(TwitterManager.class);
 
 	private static final Map<String, Class<? extends Command<String>>> map = new HashMap<String, Class<? extends Command<String>>>();
 
@@ -34,6 +35,7 @@ public class TwitterManager {
 		map.put(TwitterParser.tweetPayPattern, PayCommand.class);
 		map.put(TwitterParser.tweetDeletePattern, DeleteCommand.class);
 		map.put(TwitterParser.tweetBalancePattern, BalanceCommand.class);
+		map.put(TwitterParser.tweetDateTimePattern, DateTimeCommand.class);
 		
 		map.put(TwitterParser.tweetControlPattern, ControlCommand.class);
 	}

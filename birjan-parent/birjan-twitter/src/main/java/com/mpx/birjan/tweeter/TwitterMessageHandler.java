@@ -23,7 +23,7 @@ import com.mpx.birjan.core.manager.TwitterManager;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TwitterMessageHandler {
 
-	final Logger logger = LoggerFactory.getLogger(TwitterMessageHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(TwitterMessageHandler.class);
 
 	@Autowired
 	private TwitterManager twitterManager;

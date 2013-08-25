@@ -36,7 +36,7 @@ import com.mpx.birjan.util.WorkbookHandler.WorkbookHolder;
 @Component
 public class NotificationManager {
 	
-	final Logger logger = LoggerFactory.getLogger(NotificationManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(NotificationManager.class);
 	
 	private final static String senderName = "QuiniTwitter";
 
@@ -57,7 +57,7 @@ public class NotificationManager {
 		
 		Collection<Lottery> lotteries = Collections2.filter(Arrays.asList(Lottery.values()), new Predicate<Lottery>() {
 			public boolean apply(@Nonnull Lottery lottery) {
-				return lottery.getRule().getTo().minusMinutes(2).isBeforeNow() 
+				return lottery.getRule().getTo()!=null && lottery.getRule().getTo().minusMinutes(2).isBeforeNow() 
 						&& lottery.getRule().getTo().isAfterNow();
 			}
 		});

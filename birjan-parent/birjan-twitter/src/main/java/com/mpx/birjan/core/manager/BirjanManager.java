@@ -38,7 +38,7 @@ import com.mpx.birjan.util.WorkbookHandler.WorkbookHolder;
 @Controller
 public class BirjanManager {
 	
-	final Logger logger = LoggerFactory.getLogger(BirjanManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(BirjanManager.class);
 	
 	@Autowired
 	private TransactionalManager txManager;

@@ -18,7 +18,7 @@ import com.mpx.birjan.util.Utils;
 @Repository
 public class CreateCommand implements Command<String> {
 
-	final Logger logger = LoggerFactory.getLogger(CreateCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreateCommand.class);
 
 	@Autowired
 	private BirjanManager birjanManager;
@@ -46,7 +46,6 @@ public class CreateCommand implements Command<String> {
 	private TwitterBet validate(DirectMessage directMessage) {
 		TwitterBet bet = TwitterParser.unmarshalBet(directMessage.getText());
 
-		// twitterBet.add(Lottery.valueOf(l+"_"+v));
 		DateTime date = bet.getDate();
 		for (String lotteryName : bet.getLotteryNames()) {
 			for (String variantName : bet.getVariantNames()) {

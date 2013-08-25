@@ -16,7 +16,7 @@
       <param name="append" value="true"/>
       <param name="MaxFileSize" value="10MB"/>
       <param name="MaxBackupIndex" value="3"/>
-      <param name="file" value="${catalina.base}/logs/birjan.log"/>
+      <param name="file" value="${catalina.home}/logs/birjan.log"/>
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern" value="|%d{ISO8601}|%p|%C{1}|%X{sessionID}|%m|%n"/>
       </layout>
@@ -36,9 +36,14 @@
 		<level value="WARN" />
 		<appender-ref ref="fileAppender" />
 	</category>
+
+	<category name="org.springframework.jdbc.datasource.DriverManagerDataSource" additivity="false">
+		<level value="WARN" />
+		<appender-ref ref="fileAppender" />
+	</category>
 	
 	<category name="com.mpx.birjan" additivity="false">
-		<level value="DEBUG" />
+		<level value="INFO" />
 		<appender-ref ref="fileAppender" />
 	</category>
 

@@ -20,7 +20,7 @@ import com.mpx.birjan.util.Utils;
 @Repository
 public class BalanceCommand implements Command<String> {
 
-	final Logger logger = LoggerFactory.getLogger(BalanceCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(BalanceCommand.class);
 
 	@Autowired
 	private BirjanManager birjanManager;

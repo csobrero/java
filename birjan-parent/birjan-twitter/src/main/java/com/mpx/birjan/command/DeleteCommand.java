@@ -13,7 +13,7 @@ import com.mpx.birjan.tweeter.TwitterParser;
 @Repository
 public class DeleteCommand implements Command<String> {
 
-	final Logger logger = LoggerFactory.getLogger(DeleteCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(DeleteCommand.class);
 
 	@Autowired
 	private BirjanManager birjanManager;

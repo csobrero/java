@@ -24,7 +24,7 @@ import com.mpx.birjan.util.WorkbookHandler.WorkbookHolder;
 @Repository
 public class ControlCommand implements Command<String> {
 
-	final Logger logger = LoggerFactory.getLogger(ControlCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(ControlCommand.class);
 
 	@Autowired
 	private BirjanManager birjanManager;

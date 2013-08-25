@@ -27,7 +27,7 @@ import com.mpx.birjan.util.Utils;
 @Repository
 public class ShowCommand implements Command<String> {
 
-	final Logger logger = LoggerFactory.getLogger(ShowCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(ShowCommand.class);
 
 	@Autowired
 	private BirjanManager birjanManager;
