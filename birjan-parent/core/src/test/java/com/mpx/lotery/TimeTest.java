@@ -106,6 +106,10 @@ public class TimeTest {
 		System.out.println(dt);
 		System.out.println(dt.getZone());
 		//-Duser.timezone="America/Argentina/Buenos_Aires"
+		
+		DateTime actualTime = new DateTime();
+		
+		System.out.println("Hora actual: " + actualTime.toString("dd/MM HH:mm:ss"));
 
 	}
 
